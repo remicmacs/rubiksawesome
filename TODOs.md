@@ -2,9 +2,9 @@
 
 * Define coding guidelines
 * Choose linter and use pre-commit hook (**Rémi**)
-* Set up GitLab server (**Alex**)
+* ~~Set up GitLab server (**Alex**)~~
 * Choose unit test framework and write howto (**Rémi**)
-* Choose graphical engine/library (**Rodolphe**)
+* ~~Choose graphical engine/library (**Rodolphe**)~~
 * Define data structure representing RCube's **state** (**Rémi**)
 * Define **controller** functions to control cube validity (**Alex**)
 * Find website for cube manipulation

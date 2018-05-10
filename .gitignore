@@ -1,3 +1,9 @@
 # Vim stuff
 *~
 *.un~
+
+# Executables
+main
+
+# C stuffs
+*.gch

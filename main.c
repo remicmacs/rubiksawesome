@@ -19,23 +19,32 @@ enum faceType {
 void drawCube2();
 
 int main(int argc, char **argv) {
-
   cube cubes[27];
 
   for (int cubeIndex = 0; cubeIndex < 27; cubeIndex++) {
     vector3 position = {
-      (float)(cubeIndex % 3),
-      (float)((cubeIndex % 9) / 3),
-      (float)(cubeIndex / 9)
+      (float)((cubeIndex % 3) - 1),
+      (float)(((cubeIndex % 9) / 3) - 1),
+      (float)((cubeIndex / 9) - 1)
     };
 
     transform cubeTransform = {
       position,
       (vector3) {0, 0, 0},
-      (vector3) {0.3, 0.3, 0.3}
+      (vector3) {0.45, 0.45, 0.45}
     };
     cubes[cubeIndex] = generateCube(cubeTransform);
   }
+
+  transform cubeTransform = {
+    (vector3) {0, 0, 0},
+    (vector3) {0, 0, 0},
+    (vector3) {1.4, 1.4, 1.4}
+  };
+  colour gray = {20, 20, 20};
+  cubes[13] = generateCube(cubeTransform);
+  setCubeColour(gray, cubes + 13);
+  printf("%d\n", cubes[13].faces[0].faceColour.r);
 
   // Window configuration
   SDL_Event event;
@@ -92,6 +101,8 @@ int main(int argc, char **argv) {
     for (int cubeIndex = 0; cubeIndex < 27; cubeIndex++) {
       drawCube(cubes[cubeIndex]);
     }
+
+    //drawSimpleCube();
 
     glFlush();
     SDL_GL_SwapBuffers();

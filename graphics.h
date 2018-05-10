@@ -1,6 +1,12 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
+typedef struct _colour {
+  int r;
+  int g;
+  int b;
+} colour;
+
 typedef struct _vector3 {
   float x;
   float y;
@@ -9,6 +15,7 @@ typedef struct _vector3 {
 
 typedef struct _face {
   vector3 corners[4];
+  colour faceColour;
 } face;
 
 typedef struct _transform {
@@ -23,6 +30,7 @@ typedef struct _cube {
 } cube;
 
 cube generateCube(transform cubeTransform);
+void setCubeColour(colour newColour, cube * selectedCube);
 void drawCube(cube drawnCube);
 void drawSimpleCube();
 

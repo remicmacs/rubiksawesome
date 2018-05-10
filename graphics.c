@@ -8,50 +8,54 @@ cube generateCube(transform cubeTransform) {
   float yScale = cubeTransform.scale.y;
   float zScale = cubeTransform.scale.z;
 
-  // Top face
   face topFace = {
     {
       (vector3) {1 * xScale, -1 * yScale, 1 * zScale},
       (vector3) {1 * xScale, 1 * yScale, 1 * zScale},
       (vector3) {-1 * xScale, 1 * yScale, 1 * zScale},
       (vector3) {-1 * xScale, -1 * yScale, 1 * zScale}
-    }
+    },
+    {255, 255, 255}
   };
 
-  face frontFace = {
+  face rightFace = {
     {
       (vector3) {1 * xScale, 1 * yScale, 1 * zScale},
       (vector3) {1 * xScale, 1 * yScale, -1 * zScale},
       (vector3) {-1 * xScale, 1 * yScale, -1 * zScale},
       (vector3) {-1 * xScale, 1 * yScale, 1 * zScale}
-    }
+    },
+    {0, 0, 255}
   };
 
-  face leftFace = {
+  face frontFace = {
     {
       (vector3) {1 * xScale, -1 * yScale, 1 * zScale},
       (vector3) {1 * xScale, -1 * yScale, -1 * zScale},
       (vector3) {1 * xScale, 1 * yScale, -1 * zScale},
       (vector3) {1 * xScale, 1 * yScale, 1 * zScale}
-    }
+    },
+    {255, 0, 0}
   };
 
-  face backFace = {
+  face leftFace = {
     {
       (vector3) {-1 * xScale, -1 * yScale, 1 * zScale},
       (vector3) {-1 * xScale, -1 * yScale, -1 * zScale},
       (vector3) {1 * xScale, -1 * yScale, -1 * zScale},
       (vector3) {1 * xScale, -1 * yScale, 1 * zScale}
-    }
+    },
+    {0, 255, 0}
   };
 
-  face rightFace = {
+  face backFace = {
     {
       (vector3) {-1 * xScale, 1 * yScale, 1 * zScale},
       (vector3) {-1 * xScale, 1 * yScale, -1 * zScale},
       (vector3) {-1 * xScale, -1 * yScale, -1 * zScale},
       (vector3) {-1 * xScale, -1 * yScale, 1 * zScale}
-    }
+    },
+    {255, 165, 0}
   };
 
   face bottomFace = {
@@ -60,7 +64,8 @@ cube generateCube(transform cubeTransform) {
       (vector3) {1 * xScale, -1 * yScale, -1 * zScale},
       (vector3) {-1 * xScale, -1 * yScale, -1 * zScale},
       (vector3) {-1 * xScale, 1 * yScale, -1 * zScale}
-    }
+    },
+    {255, 255, 0}
   };
 
   cube mainCube = {
@@ -78,11 +83,18 @@ cube generateCube(transform cubeTransform) {
   return mainCube;
 }
 
+void setCubeColour(colour newColour, cube * selectedCube) {
+  for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    selectedCube->faces[faceIndex].faceColour = newColour;
+  }
+}
+
 void drawCube(cube drawnCube) {
   glBegin(GL_QUADS);
 
   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-    glColor3ub((faceIndex + 1) * (255 / 6), 0, 0);
+    colour faceColour = drawnCube.faces[faceIndex].faceColour;
+    glColor3ub(faceColour.r, faceColour.g, faceColour.b);
 
     float xOffset = drawnCube.cubeTransform.position.x;
     float yOffset = drawnCube.cubeTransform.position.y;
@@ -101,46 +113,42 @@ void drawCube(cube drawnCube) {
 }
 
 void drawSimpleCube() {
-  glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+  /*glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
   glMatrixMode( GL_MODELVIEW );
   glLoadIdentity( );
 
-  gluLookAt(3,4,2,0,0,0,0,0,1);
+  gluLookAt(3,4,2,0,0,0,0,0,1);*/
 
   glBegin(GL_QUADS);
 
-  glColor3ub(255,0,0); //face rouge
+  glColor3ub(20, 20, 20);
+
   glVertex3d(1,1,1);
   glVertex3d(1,1,-1);
   glVertex3d(-1,1,-1);
   glVertex3d(-1,1,1);
 
-  glColor3ub(0,255,0); //face verte
   glVertex3d(1,-1,1);
   glVertex3d(1,-1,-1);
   glVertex3d(1,1,-1);
   glVertex3d(1,1,1);
 
-  glColor3ub(0,0,255); //face bleue
   glVertex3d(-1,-1,1);
   glVertex3d(-1,-1,-1);
   glVertex3d(1,-1,-1);
   glVertex3d(1,-1,1);
 
-  glColor3ub(255,255,0); //face jaune
   glVertex3d(-1,1,1);
   glVertex3d(-1,1,-1);
   glVertex3d(-1,-1,-1);
   glVertex3d(-1,-1,1);
 
-  glColor3ub(0,255,255); //face cyan
   glVertex3d(1,1,-1);
   glVertex3d(1,-1,-1);
   glVertex3d(-1,-1,-1);
   glVertex3d(-1,1,-1);
 
-  glColor3ub(255,0,255); //face magenta
   glVertex3d(1,-1,1);
   glVertex3d(1,1,1);
   glVertex3d(-1,1,1);
@@ -148,6 +156,6 @@ void drawSimpleCube() {
 
   glEnd();
 
-  glFlush();
-  SDL_GL_SwapBuffers();
+  /*glFlush();
+  SDL_GL_SwapBuffers();*/
 }
