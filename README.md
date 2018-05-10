@@ -11,3 +11,9 @@ See [`topic.pdf`](topic.pdf).
 ### Documentation
 [`RESOURCES.md`](RESOURCES.md)
 [`TODOs.md`](RESOURCES.md)
+
+## Compiling
+
+```bash
+gcc -Wall -lSDL -lGL -lGLU -lm main.c graphics.c -o main
+```
