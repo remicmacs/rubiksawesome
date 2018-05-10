@@ -10,4 +10,4 @@ See [`topic.pdf`](topic.pdf).
 ## File structure
 ### Documentation
 [`RESOURCES.md`](RESOURCES.md)
-[`TODOs.md`](RESOURCES.md)
+[`TODOs.md`](TODOs.md)
