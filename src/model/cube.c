@@ -45,3 +45,6 @@ void rotate(cube self, unsigned int id, _Bool cclw) {
             exitFatal(" in rotate() : operation not permitted");
     }
 }
+
+void rotateF(cube self){
+}
