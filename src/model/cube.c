@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "../controller/debugController.h"
 
 move mapCodeToMove(char * moveCode){
     // 15 base moves for 60 rotations implemented 
@@ -323,6 +324,7 @@ cube * rotateD(cube * self){
     return self;
 }
 
+
 cube * rotateFi(cube * self){
     for(int i=0; i < 3; i++)
     {
@@ -367,6 +369,7 @@ cube * rotateUi(cube * self){
     }
 
     return self;
+
 }
 
 cube * rotateDi(cube * self){
