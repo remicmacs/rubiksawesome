@@ -19,10 +19,10 @@
 
 typedef struct cubeStruct{
     unsigned char cube[6][3][3];
-    void (*rotate)(struct cubeStruct, _Bool);
+    struct cubeStruct (*rotate)(struct cubeStruct, unsigned int id, _Bool cclw);
 } cube ;
 
-void rotate(cube rubikscube, unsigned int id, _Bool cclw);
+cube rotate(cube rubikscube, unsigned int id, _Bool cclw);
 
 cube rotateF(cube rubikscube);
 cube rotateCurrentFace(cube rubikscube, int current);
