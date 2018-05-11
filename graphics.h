@@ -32,6 +32,5 @@ typedef struct _cube {
 cube generateCube(transform cubeTransform);
 void setCubeColour(colour newColour, cube * selectedCube);
 void drawCube(cube drawnCube);
-void drawSimpleCube();
 
 #endif

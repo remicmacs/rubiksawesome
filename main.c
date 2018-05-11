@@ -42,9 +42,15 @@ int main(int argc, char **argv) {
     (vector3) {1.4, 1.4, 1.4}
   };
   colour gray = {20, 20, 20};
-  cubes[13] = generateCube(cubeTransform);
-  setCubeColour(gray, cubes + 13);
-  printf("%d\n", cubes[13].faces[0].faceColour.r);
+  //cubes[13] = generateCube(cubeTransform);
+  //setCubeColour(gray, cubes + 13);
+
+  cube * backFace[9];
+  cube * frontFace[9];
+  cube * rightFace[9];
+  cube * leftFace[9];
+  cube * bottomFace[9];
+  cube * topFace[9];
 
   // Window configuration
   SDL_Event event;
@@ -63,6 +69,12 @@ int main(int argc, char **argv) {
 
   while (1) {
     SDL_WaitEvent(&event);
+
+    if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
+      for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+        cubes[cubeIndex].cubeTransform.rotation.z += PI / 2;
+      }
+    }
 
     if (event.key.keysym.sym == SDLK_DOWN && event.key.type == SDL_KEYDOWN) {
       if (cameraAngle.z > 0.000001) {
