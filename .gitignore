@@ -1,4 +1,8 @@
 # Vim stuff
 *~
 *.un~
-*.swp
+.*.swp
+.*.swo
+
+fake_main.c
+fake_main.h
