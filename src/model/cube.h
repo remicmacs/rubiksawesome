@@ -36,17 +36,17 @@ cube rotateU(cube rubikscube);
 
 cube rotateD(cube rubikscube);
 
-cube rotateFP(cube rubikscube);
+cube rotateFi(cube rubikscube);
 
-cube rotateBP(cube rubikscube);
+cube rotateBi(cube rubikscube);
 
-cube rotateRP(cube rubikscube);
+cube rotateRi(cube rubikscube);
 
-cube rotateLP(cube rubikscube);
+cube rotateLi(cube rubikscube);
 
-cube rotateUP(cube rubikscube);
+cube rotateUi(cube rubikscube);
 
-cube rotateDP(cube rubikscube);
+cube rotateDi(cube rubikscube);
 
 /**
  * Initialize the cube to :
