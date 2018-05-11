@@ -42,22 +42,52 @@ void rotate(cube self, unsigned int id, _Bool cclw) {
             rotateDP(self);
             break;
         default:
-            exitFatal(" in rotate() : operation not permitted");
+            break;
+    }
+}
+
+cube initCube(cube self){
+    unsigned char color[6] = {'G','B','R','O','W','Y'};
+    for (int faceIndex = F ; faceIndex < (int)D ; faceIndex++){
+        unsigned char ** face;
+        face = (unsigned char **) self.cube[faceIndex];
+        colorFace(face, color[faceIndex]);
+    }
+    return self;
+}
+
+void colorFace(unsigned char ** face, unsigned char color){
+    for (int index= 0 ; index < 3 ; index++){
+        for(int jindex = 0 ; jindex < 3 ; jindex++){
+            *(*(face+index)+jindex) = color;
+        }
     }
 }
 
 void rotateF(cube self){
 }
-
-
-void printCube(cube test){
-printf("       |%c|w|w|\n\
-	       |w|w|w|\n\
-	       |w|w|w|\n\
-        |o|o|o||g|g|g||r|r|r||b|b|b|\
-	|o|o|o||g|g|g||r|r|r||b|b|b|\n\
-	|o|o|o||g|g|g||r|r|r||b|b|b|\n\
-	       |y|y|y|\n\
-	       |y|y|y|\n\
-	       |y|y|y|\n", test.cube[0][0][0]);
+void rotateB(cube self){
+}
+void rotateR(cube self){
+}
+void rotateL(cube self){
+}
+void rotateU(cube self){
+}
+void rotateD(cube self){
+}
+void rotateFP(cube self){
+}
+void rotateBP(cube self){
+}
+void rotateRP(cube self){
+}
+void rotateLP(cube self){
+}
+void rotateUP(cube self){
+}
+void rotateDP(cube self){
+}
+void printCube(cube self){
+    printf("hello world");
 }

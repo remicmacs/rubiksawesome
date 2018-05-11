@@ -12,8 +12,8 @@
 #define DP 11
 
 #include <stdlib.h>
-#include <stdbool.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 typedef struct cubeStruct{
     unsigned char cube[6][3][3];
@@ -47,6 +47,18 @@ void rotateUP(cube rubikscube);
 void rotateDP(cube rubikscube);
 
 /**
- * Take a cube in argument and print it.
+ * Initialize the cube to :
+ *  F: Green
+ *  B: Blue
+ *  R: Red
+ *  L: Orange
+ *  U: White
+ *  D: Yellow
  */
+cube initCube(cube self);
+
+/**
+ * Sets a face to a given color
+ */
+void colorFace(unsigned char ** face, unsigned char color);
 void printCube(cube rubikscube);
