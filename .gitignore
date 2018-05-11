@@ -6,3 +6,7 @@
 
 fake_main.c
 fake_main.h
+
+# Test programs
+prog
+a.out
