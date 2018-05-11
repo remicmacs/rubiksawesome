@@ -51,7 +51,7 @@ void rotate(cube self, unsigned int id, _Bool cclw) {
 cube initCube(cube self){
     unsigned char color[6] = {'g','b','r','o','w','y'};
 
-    for (int faceIndex = F ; faceIndex < D ; faceIndex++){
+    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
         for (int index = 0 ; index < 3 ; index++){
             for (int jindex = 0 ; jindex < 3 ; jindex++){
                 self.cube[faceIndex][index][jindex] = color[faceIndex];
@@ -61,30 +61,159 @@ cube initCube(cube self){
     return self;
 }
 
-void rotateF(cube self){
+
+
+cube rotateF(cube self){
+	char swap;
+	self = rotateCurrentFace(self, F);
+
+	swap = self.cube[R][0][0];
+	self.cube[R][0][0] = self.cube[U][2][0];
+	self.cube[U][2][0] = swap;
+	swap = self.cube[D][0][2];
+	self.cube[D][0][2] = self.cube[U][2][0];
+	self.cube[U][2][0] = swap;
+       	swap = self.cube[L][2][2];
+	self.cube[L][2][2] = self.cube[U][2][0]; 
+	self.cube[U][2][0] = swap;	
+
+	swap = self.cube[R][1][0];
+	self.cube[R][1][0] = self.cube[U][2][1];
+	self.cube[U][2][1] = swap;
+	swap = self.cube[D][0][1];
+	self.cube[D][0][1] = self.cube[U][2][1];
+	self.cube[U][2][1] = swap;
+       	swap = self.cube[L][1][2];
+	self.cube[L][1][2] = self.cube[U][2][1]; 
+	self.cube[U][2][1] = swap;	
+
+	swap = self.cube[R][2][0];
+	self.cube[R][2][0] = self.cube[U][2][2];
+	self.cube[U][2][2] = swap;
+	swap = self.cube[D][0][0];
+	self.cube[D][0][0] = self.cube[U][2][2];
+	self.cube[U][2][2] = swap;
+       	swap = self.cube[L][0][2];
+	self.cube[L][0][2] = self.cube[U][2][2]; 
+	self.cube[U][2][2] = swap;	
+
+	return self;
 }
-void rotateB(cube self){
+
+cube rotateCurrentFace(cube self, int current){
+	char swap;
+	swap = self.cube[current][0][2]; 
+	self.cube[current][0][2] = self.cube[current][0][0];
+	self.cube[current][0][0] = swap;
+
+	swap = self.cube[current][1][2]; 
+	self.cube[current][1][2] = self.cube[current][0][1]; 
+	self.cube[current][0][1] = swap;
+	
+	swap = self.cube[current][2][2]; 
+	self.cube[current][2][2] = self.cube[current][0][0];
+	self.cube[current][0][0] = swap;
+
+	swap = self.cube[current][0][1];  
+	self.cube[current][0][1] = self.cube[current][1][0];
+	self.cube[current][1][0] = swap;
+	
+	swap = self.cube[current][2][1]; 
+	self.cube[current][2][1] = self.cube[current][1][0];
+	self.cube[current][1][0] = swap;
+
+	swap = self.cube[current][2][0]; 
+	self.cube[current][2][0] = self.cube[current][0][0];
+	self.cube[current][0][0] = swap;
+
+	return self;
 }
-void rotateR(cube self){
+
+cube rotateB(cube self){
+	char swap;
+	self = rotateCurrentFace(self, B);
+	return self;
 }
-void rotateL(cube self){
+cube rotateR(cube self){
+	char swap;
+	self = rotateCurrentFace(self, R);
+	return self;
+
 }
-void rotateU(cube self){
+cube rotateL(cube self){
+	char swap;
+self = rotateCurrentFace(self, L);
+	return self;
+
 }
-void rotateD(cube self){
+cube rotateU(cube self){
+	char swap;
+	self = rotateCurrentFace(self, U);
+	return self;
+
 }
-void rotateFP(cube self){
+cube rotateD(cube self){
+	char swap;
+	self = rotateCurrentFace(self, D);
+	return self;
+
 }
-void rotateBP(cube self){
+cube rotateFP(cube self){
+	for(int i; i < 3; i++)
+	{
+		self = rotateF(self);
+	}
+
+	return self;
 }
-void rotateRP(cube self){
+
+cube rotateBP(cube self){
+	for(int i; i < 3; i++)
+	{
+		self = rotateB(self);
+	}
+
+	return self;
+
 }
-void rotateLP(cube self){
+cube rotateRP(cube self){
+
 }
-void rotateUP(cube self){
+cube rotateLP(cube self){
 }
-void rotateDP(cube self){
+cube rotateUP(cube self){
 }
+cube rotateDP(cube self){
+}
+
+
 void printCube(cube self){
-    printf("hello world");
-}
+printf("\n\
+       |%c|%c|%c|\n\
+       |%c|%c|%c|\n\
+       |%c|%c|%c|\n\
+|%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
+|%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
+|%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
+       |%c|%c|%c|\n\
+       |%c|%c|%c|\n\
+       |%c|%c|%c|\n\n", 
+	  self.cube[U][0][0],self.cube[U][0][1], self.cube[U][0][2], 
+	  self.cube[U][1][0],self.cube[U][1][1], self.cube[U][1][2], 
+	  self.cube[U][2][0],self.cube[U][2][1], self.cube[U][2][2],
+	  self.cube[L][0][0],self.cube[L][0][1], self.cube[L][0][2], 
+	  self.cube[F][0][0],self.cube[F][0][1], self.cube[F][0][2],
+	  self.cube[R][0][0],self.cube[R][0][1], self.cube[R][0][2],
+	  self.cube[B][0][0],self.cube[B][0][1], self.cube[B][0][2],
+	  self.cube[L][1][0],self.cube[L][1][1], self.cube[L][1][2], 
+	  self.cube[F][1][0],self.cube[F][1][1], self.cube[F][1][2],
+	  self.cube[R][1][0],self.cube[R][1][1], self.cube[R][1][2],
+	  self.cube[B][1][0],self.cube[B][1][1], self.cube[B][1][2],
+	  self.cube[L][2][0],self.cube[L][2][1], self.cube[L][2][2], 
+	  self.cube[F][2][0],self.cube[F][2][1], self.cube[F][2][2],
+	  self.cube[R][2][0],self.cube[R][2][1], self.cube[R][2][2],
+	  self.cube[B][2][0],self.cube[B][2][1], self.cube[B][2][2],
+	  self.cube[D][0][0],self.cube[D][0][1], self.cube[D][0][2], 
+	  self.cube[D][1][0],self.cube[D][1][1], self.cube[D][1][2], 
+	  self.cube[D][2][0],self.cube[D][2][1], self.cube[D][2][2]);
+	 	  }

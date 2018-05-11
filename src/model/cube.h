@@ -24,29 +24,29 @@ typedef struct cubeStruct{
 
 void rotate(cube rubikscube, unsigned int id, _Bool cclw);
 
-void rotateF(cube rubikscube);
+cube rotateF(cube rubikscube);
+cube rotateCurrentFace(cube rubikscube, int current);
+cube rotateB(cube rubikscube);
 
-void rotateB(cube rubikscube);
+cube rotateR(cube rubikscube);
 
-void rotateR(cube rubikscube);
+cube rotateL(cube rubikscube);
 
-void rotateL(cube rubikscube);
+cube rotateU(cube rubikscube);
 
-void rotateU(cube rubikscube);
+cube rotateD(cube rubikscube);
 
-void rotateD(cube rubikscube);
+cube rotateFP(cube rubikscube);
 
-void rotateFP(cube rubikscube);
+cube rotateBP(cube rubikscube);
 
-void rotateBP(cube rubikscube);
+cube rotateRP(cube rubikscube);
 
-void rotateRP(cube rubikscube);
+cube rotateLP(cube rubikscube);
 
-void rotateLP(cube rubikscube);
+cube rotateUP(cube rubikscube);
 
-void rotateUP(cube rubikscube);
-
-void rotateDP(cube rubikscube);
+cube rotateDP(cube rubikscube);
 
 /**
  * Initialize the cube to :
