@@ -22,6 +22,8 @@ typedef struct cubeStruct{
     struct cubeStruct (*rotate)(struct cubeStruct, unsigned int id, _Bool cclw);
 } cube ;
 
+_Bool isEqual(cube aCube, cube bCube);
+
 cube rotate(cube rubikscube, unsigned int id, _Bool cclw);
 
 cube rotateF(cube rubikscube);

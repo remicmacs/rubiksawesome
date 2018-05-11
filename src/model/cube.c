@@ -202,7 +202,7 @@ cube rotateU(cube self){
 
     swap[0] = self.cube[B][0][2];
     swap[1] = self.cube[B][0][1];
-    swap[2] = self.cube[B][0][2];
+    swap[2] = self.cube[B][0][0];
 
     self.cube[B][0][2] = self.cube[L][0][2];
     self.cube[B][0][1] = self.cube[L][0][1];
@@ -236,7 +236,7 @@ cube rotateD(cube self){
 
     self.cube[R][2][0] = self.cube[F][2][0];
     self.cube[R][2][1] = self.cube[F][2][1];
-    self.cube[R][2][0] = self.cube[F][2][2];
+    self.cube[R][2][2] = self.cube[F][2][2];
 
     self.cube[F][2][0] = self.cube[L][2][0];
     self.cube[F][2][1] = self.cube[L][2][1];
@@ -249,7 +249,7 @@ cube rotateD(cube self){
 }
 
 cube rotateFi(cube self){
-    for(int i; i < 3; i++)
+    for(int i=0; i < 3; i++)
     {
         self = rotateF(self);
     }
@@ -258,7 +258,7 @@ cube rotateFi(cube self){
 }
 
 cube rotateBi(cube self){
-    for(int i; i < 3; i++)
+    for(int i=0; i < 3; i++)
     {
         self = rotateB(self);
     }
@@ -267,17 +267,20 @@ cube rotateBi(cube self){
 }
 
 cube rotateRi(cube self){
-    for(int i; i < 3; i++)
+    // printf("in rotateRi()\n");
+    for(int i=0; i < 3; i++)
     {
         self = rotateR(self);
+        // printCube(self);
     }
+    // printf("end \n");
 
     return self;
 
 }
 
 cube rotateLi(cube self){
-    for(int i; i < 3; i++)
+    for(int i=0; i < 3; i++)
     {
         self = rotateL(self);
     }
@@ -286,7 +289,7 @@ cube rotateLi(cube self){
 }
 
 cube rotateUi(cube self){
-    for(int i; i < 3; i++)
+    for(int i=0; i < 3; i++)
     {
         self = rotateU(self);
     }
@@ -295,7 +298,7 @@ cube rotateUi(cube self){
 }
 
 cube rotateDi(cube self){
-    for(int i; i < 3; i++)
+    for(int i=0; i < 3; i++)
     {
         self = rotateD(self);
     }
@@ -331,11 +334,12 @@ void printCube(cube self){
 
 _Bool isEqual(cube self, cube otherCube){
     for(int face = F; face <= D ; face++){
-        for(int index; index < 3 ; index++){
-            for(int jindex; index < 3 ; jindex++){
-                if (!(self.cube[face][index][jindex] ==
-                        otherCube.cube[face][index][jindex]))
+        for(int index = 0; index < 3 ; index++){
+            for(int jindex = 0; jindex < 3 ; jindex++){
+                if (self.cube[face][index][jindex] !=
+                        otherCube.cube[face][index][jindex]){
                     return false;
+                }
             }
         }
     }
