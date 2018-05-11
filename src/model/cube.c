@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "../controller/debugController.h"
 
 void rotate(cube self, unsigned int id, _Bool cclw) {
     if (cclw)
@@ -42,26 +43,22 @@ void rotate(cube self, unsigned int id, _Bool cclw) {
             rotateDP(self);
             break;
         default:
+            exitFatal(" in rotate(), no such operation");
             break;
     }
 }
 
 cube initCube(cube self){
-    unsigned char color[6] = {'G','B','R','O','W','Y'};
-    for (int faceIndex = F ; faceIndex < (int)D ; faceIndex++){
-        unsigned char ** face;
-        face = (unsigned char **) self.cube[faceIndex];
-        colorFace(face, color[faceIndex]);
-    }
-    return self;
-}
+    unsigned char color[6] = {'g','b','r','o','w','y'};
 
-void colorFace(unsigned char ** face, unsigned char color){
-    for (int index= 0 ; index < 3 ; index++){
-        for(int jindex = 0 ; jindex < 3 ; jindex++){
-            *(*(face+index)+jindex) = color;
+    for (int faceIndex = F ; faceIndex < D ; faceIndex++){
+        for (int index = 0 ; index < 3 ; index++){
+            for (int jindex = 0 ; jindex < 3 ; jindex++){
+                self.cube[faceIndex][index][jindex] = color[faceIndex];
+            }
         }
     }
+    return self;
 }
 
 void rotateF(cube self){

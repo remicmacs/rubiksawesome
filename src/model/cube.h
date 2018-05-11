@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include "../controller/errorController.h"
+
 typedef struct cubeStruct{
     unsigned char cube[6][3][3];
     void (*rotate)(struct cubeStruct, _Bool);
@@ -57,8 +59,4 @@ void rotateDP(cube rubikscube);
  */
 cube initCube(cube self);
 
-/**
- * Sets a face to a given color
- */
-void colorFace(unsigned char ** face, unsigned char color);
 void printCube(cube rubikscube);
