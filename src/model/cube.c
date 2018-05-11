@@ -49,8 +49,15 @@ void rotate(cube self, unsigned int id, _Bool cclw) {
 void rotateF(cube self){
 }
 
-void printCube(cube self){
-print("hello world";
 
-
+void printCube(cube test){
+printf("       |%c|w|w|\n\
+	       |w|w|w|\n\
+	       |w|w|w|\n\
+        |o|o|o||g|g|g||r|r|r||b|b|b|\
+	|o|o|o||g|g|g||r|r|r||b|b|b|\n\
+	|o|o|o||g|g|g||r|r|r||b|b|b|\n\
+	       |y|y|y|\n\
+	       |y|y|y|\n\
+	       |y|y|y|\n", test.cube[0][0][0]);
 }

@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct cubeStruct{
     unsigned char cube[6][3][3];
@@ -45,4 +46,7 @@ void rotateUP(cube rubikscube);
 
 void rotateDP(cube rubikscube);
 
+/**
+ * Take a cube in argument and print it.
+ */
 void printCube(cube rubikscube);
