@@ -48,3 +48,9 @@ void rotate(cube self, unsigned int id, _Bool cclw) {
 
 void rotateF(cube self){
 }
+
+void printCube(cube self){
+print("hello world";
+
+
+}

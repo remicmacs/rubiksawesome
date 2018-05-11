@@ -45,3 +45,4 @@ void rotateUP(cube rubikscube);
 
 void rotateDP(cube rubikscube);
 
+void printCube(cube rubikscube);
