@@ -29,6 +29,15 @@ typedef struct _cube {
   transform cubeTransform;
 } cube;
 
+enum faceType {
+  TOP,
+  BOTTOM,
+  FRONT,
+  BACK,
+  RIGHT,
+  LEFT
+};
+
 cube generateCube(transform cubeTransform);
 void setCubeColour(colour newColour, cube * selectedCube);
 void drawCube(cube drawnCube);
