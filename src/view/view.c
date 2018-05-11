@@ -10,7 +10,10 @@ void setWindow() {
   // Window configuration
   SDL_Init(SDL_INIT_VIDEO);
   atexit(SDL_Quit);
+
+  // Set the window title
   SDL_WM_SetCaption("Rubiksawesome", NULL);
+  // Set window size and colour depth
   SDL_SetVideoMode(640, 480, 32, SDL_OPENGL);
 
   glMatrixMode( GL_PROJECTION );
@@ -28,6 +31,8 @@ rubikview generateView() {
   rubikview mainView;
   mainView.cubes = generateCubes();
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
+
+  attachCubesToFaces(&mainView);
 
   return mainView;
 }
@@ -50,33 +55,75 @@ cube * generateCubes() {
     cubes[cubeIndex] = generateCube(cubeTransform);
   }
 
-  /*transform cubeTransform = {
+  transform cubeTransform = {
     (vector3) {0, 0, 0},
     (vector3) {0, 0, 0},
     (vector3) {1.4, 1.4, 1.4}
   };
   colour gray = {20, 20, 20};
-  //cubes[13] = generateCube(cubeTransform);
-  //setCubeColour(gray, cubes + 13);*/
+  cubes[13] = generateCube(cubeTransform);
+  setCubeColour(gray, cubes + 13);
 
   return cubes;
 }
 
-void update(camera * mainCamera, cube * cubes) {
-  SDL_Event event;
+void attachCubesToFaces(rubikview * mainView) {
+  // Mapping the bottom face
+  for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    mainView->bottomFace[cubeIndex] = &(mainView->cubes[cubeIndex]);
+  }
 
-  SDL_WaitEvent(&event);
+  // Mapping the top face
+  for (int cubeIndex = 18; cubeIndex < 27; cubeIndex++) {
+    mainView->topFace[cubeIndex - 18] = &(mainView->cubes[cubeIndex]);
+  }
 
-  if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      cubes[cubeIndex].cubeTransform.rotation.z += PI / 4;
+  // Mapping the left face
+  for (int cubeIndex = 0; cubeIndex < 27; cubeIndex += 3) {
+    mainView->leftFace[cubeIndex / 3] = &(mainView->cubes[cubeIndex]);
+  }
+
+  // Mapping the right face
+  for (int cubeIndex = 2; cubeIndex < 27; cubeIndex += 3) {
+    mainView->rightFace[(cubeIndex - 2) / 3] = &(mainView->cubes[cubeIndex]);
+  }
+
+  // Mapping the back face
+  for (int cubeIndex = 0; cubeIndex < 27; cubeIndex += 9) {
+    for (int cubeSubIndex = 0; cubeSubIndex < 3; cubeSubIndex++) {
+      mainView->backFace[cubeSubIndex + (cubeIndex / 3)] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
     }
   }
 
-  if (event.key.keysym.sym == SDLK_u && event.key.type == SDL_KEYDOWN) {
-    for (int cubeIndex = 18; cubeIndex < 27; cubeIndex++) {
-      cubes[cubeIndex].cubeTransform.rotation.z += PI / 4;
+  // Mapping the front face
+  for (int cubeIndex = 6; cubeIndex < 27; cubeIndex += 9) {
+    for (int cubeSubIndex = 0; cubeSubIndex < 3; cubeSubIndex++) {
+      mainView->frontFace[cubeSubIndex + ((cubeIndex - 1) / 3) - 1] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
     }
+  }
+}
+
+void update(rubikview * mainView) {
+  camera * mainCamera = &(mainView->mainCamera);
+  cube * cubes = mainView->cubes;
+
+  SDL_Event event;
+  SDL_WaitEvent(&event);
+
+  if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
+    rotateDown(mainView);
+  }
+
+  if (event.key.keysym.sym == SDLK_u && event.key.type == SDL_KEYDOWN) {
+    rotateUp(mainView);
+  }
+
+  if (event.key.keysym.sym == SDLK_r && event.key.type == SDL_KEYDOWN) {
+    rotateRight(mainView);
+  }
+
+  if (event.key.keysym.sym == SDLK_l && event.key.type == SDL_KEYDOWN) {
+    rotateLeft(mainView);
   }
 
   if (event.key.keysym.sym == SDLK_DOWN && event.key.type == SDL_KEYDOWN) {
@@ -119,6 +166,74 @@ void update(camera * mainCamera, cube * cubes) {
 
   glFlush();
   SDL_GL_SwapBuffers();
+}
+
+void rotateUp(rubikview * mainView) {
+  for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    mainView->topFace[cubeIndex]->cubeTransform.rotation.z += PI / 2;
+  }
+
+  cube * tempCubes[3];
+
+  tempCubes[0] = mainView->frontFace[6];
+  tempCubes[1] = mainView->frontFace[7];
+  tempCubes[2] = mainView->frontFace[8];
+
+  mainView->frontFace[6] = mainView->rightFace[6];
+  mainView->frontFace[7] = mainView->rightFace[7];
+  mainView->frontFace[8] = mainView->rightFace[8];
+
+  mainView->rightFace[6] = mainView->backFace[6];
+  mainView->rightFace[7] = mainView->backFace[7];
+  mainView->rightFace[8] = mainView->backFace[8];
+
+  mainView->backFace[6] = mainView->leftFace[6];
+  mainView->backFace[7] = mainView->leftFace[7];
+  mainView->backFace[8] = mainView->leftFace[8];
+
+  mainView->leftFace[6] = tempCubes[0];
+  mainView->leftFace[7] = tempCubes[1];
+  mainView->leftFace[8] = tempCubes[2];
+}
+
+void rotateDown(rubikview * mainView) {
+  for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    mainView->bottomFace[cubeIndex]->cubeTransform.rotation.z += PI / 2;
+  }
+
+  cube * tempCubes[3];
+
+  tempCubes[0] = mainView->frontFace[0];
+  tempCubes[1] = mainView->frontFace[1];
+  tempCubes[2] = mainView->frontFace[2];
+
+  mainView->frontFace[0] = mainView->rightFace[0];
+  mainView->frontFace[1] = mainView->rightFace[1];
+  mainView->frontFace[2] = mainView->rightFace[2];
+
+  mainView->rightFace[0] = mainView->backFace[0];
+  mainView->rightFace[1] = mainView->backFace[1];
+  mainView->rightFace[2] = mainView->backFace[2];
+
+  mainView->backFace[0] = mainView->leftFace[0];
+  mainView->backFace[1] = mainView->leftFace[1];
+  mainView->backFace[2] = mainView->leftFace[2];
+
+  mainView->leftFace[0] = tempCubes[0];
+  mainView->leftFace[1] = tempCubes[1];
+  mainView->leftFace[2] = tempCubes[2];
+}
+
+void rotateLeft(rubikview * mainView) {
+  for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    mainView->leftFace[cubeIndex]->cubeTransform.rotation.x += PI / 2;
+  }
+}
+
+void rotateRight(rubikview * mainView) {
+  for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    mainView->rightFace[cubeIndex]->cubeTransform.rotation.x += PI / 2;
+  }
 }
 
 void closeWindow() {

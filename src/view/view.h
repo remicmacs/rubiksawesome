@@ -28,7 +28,12 @@ typedef struct _rubikview {
 void setWindow();
 rubikview generateView();
 cube * generateCubes();
-void update(camera * mainCamera, cube * cubes);
+void attachCubesToFaces(rubikview * mainView);
+void update(rubikview * mainView);
+void rotateUp(rubikview * mainView);
+void rotateDown(rubikview * mainView);
+void rotateLeft(rubikview * mainView);
+void rotateRight(rubikview * mainView);
 void closeWindow();
 
 #endif
