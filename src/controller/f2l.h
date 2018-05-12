@@ -17,3 +17,4 @@ void searchWhiteEdge(cube rubikscube);
  * Test if the element is an edge
  */
 bool isEdge(int* element);
+

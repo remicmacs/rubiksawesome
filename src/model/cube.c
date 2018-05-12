@@ -1,4 +1,5 @@
 #include "cube.h"
+#include "../controller/debugController.h"
 
 cube initCube(cube self){
     unsigned char color[6] = {'g','b','r','o','w','y'};
@@ -248,6 +249,7 @@ cube rotateD(cube self){
     return self;
 }
 
+
 cube rotateFi(cube self){
     for(int i=0; i < 3; i++)
     {
@@ -295,6 +297,7 @@ cube rotateUi(cube self){
     }
 
     return self;
+
 }
 
 cube rotateDi(cube self){

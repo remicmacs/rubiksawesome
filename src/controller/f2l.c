@@ -15,6 +15,7 @@ for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
 				if (self.cube[faceIndex][index][jindex] == 'w'){
 				printf("this is a white edge");
 				};
+
 				}
 			}
 		}
@@ -32,4 +33,4 @@ bool isEdge(int* element){
 	}	
 	}
 	return false;
-}
+
