@@ -3,6 +3,12 @@
 cube initCube(cube self){
     unsigned char color[6] = {'g','b','r','o','w','y'};
     for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
+        unsigned char ** newFace = (unsigned char **) \
+            malloc(sizeof(unsigned char *)*3);
+        for (int index = 0; index < 3 ; index++) {
+            newFace[index] = (unsigned char *) malloc(sizeof(unsigned char)*3);
+        }
+        self.cube[faceIndex] = newFace;
         for (int index = 0 ; index < 3 ; index++){
             for (int jindex = 0 ; jindex < 3 ; jindex++){
                 self.cube[faceIndex][index][jindex] = color[faceIndex];
@@ -65,6 +71,24 @@ cube rotate(cube self, char * moveCode) {
         case(Di):
             chosenMoveFn = &rotateDi;
             break;
+        case(X):
+            chosenMoveFn = &rotateX;
+            break;
+        case(Y):
+            chosenMoveFn = &rotateY;
+            break;
+        case(Z):
+            chosenMoveFn = &rotateZ;
+            break;
+        case(Xi):
+            chosenMoveFn = &rotateXi;
+            break;
+        case(Yi):
+            chosenMoveFn = &rotateYi;
+            break;
+        case(Zi):
+            chosenMoveFn = &rotateZi;
+            break;
         default:
             exitFatal(" in return rotate(), no such operation");
             break;
@@ -103,6 +127,27 @@ cube rotateCurrentFace(cube self, int current){
     self.cube[current][2][0] = self.cube[current][0][0];
     self.cube[current][0][0] = swap;
 
+    return self;
+}
+
+
+cube rotateCurrentFaceCCLW(cube self, int current) {
+    char swap[3]; 
+    swap[0] = self.cube[current][0][0];
+    swap[1] = self.cube[current][0][1];
+    swap[2] = self.cube[current][0][2];
+
+    self.cube[current][0][1] = self.cube[current][1][2];
+    self.cube[current][0][2] = self.cube[current][2][2];
+
+    self.cube[current][2][2] = self.cube[current][2][0];
+    self.cube[current][1][2] = self.cube[current][2][1];
+
+    self.cube[current][2][1] = self.cube[current][1][0];
+
+    self.cube[current][2][0] = swap[0];
+    self.cube[current][1][0] = swap[1];
+    self.cube[current][0][0] = swap[2];
     return self;
 }
 
@@ -322,6 +367,97 @@ cube rotateDi(cube self){
     return self;
 }
 
+cube rotateX(cube self) {
+    self = rotateCurrentFace(
+            rotateCurrentFaceCCLW(self, L),
+            R);
+    unsigned char ** faceSwap = self.cube[F];
+    self.cube[F] = self.cube[D];
+    self.cube[D] = self.cube[B];
+    self.cube[B] = self.cube[U];
+    self.cube[U] = faceSwap;
+
+    self = rotateCurrentFace(
+            rotateCurrentFace(
+                rotateCurrentFace(
+                    rotateCurrentFace(
+                        self,
+                        D
+                        ),
+                    D
+                    ),
+                B
+                ),
+            B
+            ); // The face swap changed the orientation of certain faces
+               // which need to be straighten
+    return self;
+}
+
+cube rotateY(cube self) {
+    self = rotateCurrentFace(
+            rotateCurrentFaceCCLW(self, D),
+            U);
+    unsigned char ** faceSwap = self.cube[F];
+    self.cube[F] = self.cube[R];
+    self.cube[R] = self.cube[B];
+    self.cube[B] = self.cube[L];
+    self.cube[L] = faceSwap;
+
+    return self;
+}
+
+cube rotateZ(cube self) {
+    self = rotateCurrentFace(
+            rotateCurrentFaceCCLW(self, B),
+            F);
+    unsigned char ** faceSwap = self.cube[U];
+    self.cube[U] = self.cube[L];
+    self.cube[L] = self.cube[D];
+    self.cube[D] = self.cube[R];
+    self.cube[R] = faceSwap;
+
+    self = rotateCurrentFace(
+            rotateCurrentFace(
+                rotateCurrentFace(
+                    rotateCurrentFace(
+                        self,
+                        D
+                        ),
+                    R
+                    ),
+                L
+                ),
+            U
+            ); // The face swap changed the orientation of certain faces
+               // which need to be straighten
+    return self;
+}
+
+cube rotateXi(cube self) {
+    for(int index = 0 ; index < 3 ; index++) {
+        self = rotateX(self);
+    }
+
+    return self;
+}
+
+cube rotateYi(cube self) {
+    for(int index = 0 ; index < 3 ; index++) {
+        self = rotateY(self);
+    }
+
+    return self;
+}
+
+cube rotateZi(cube self) {
+    for(int index = 0 ; index < 3 ; index++) {
+        self = rotateZ(self);
+    }
+
+    return self;
+}
+
 void printCube(cube self){
     fprintf(stderr, "\n        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
@@ -354,7 +490,8 @@ _Bool isEqual(cube self, cube otherCube){
             for(int jindex = 0; jindex < 3 ; jindex++){
                 if (self.cube[face][index][jindex] !=
                         otherCube.cube[face][index][jindex]){
-                    return false;
+                    return false; // If any face of a cubelet does not match
+                                  // cubes are not equal
                 }
             }
         }
