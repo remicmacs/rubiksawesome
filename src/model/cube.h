@@ -1,15 +1,11 @@
-#define F 0
-#define B 1
-#define R 2
-#define L 3
-#define U 4
-#define D 5
-#define FP 6
-#define BP 7
-#define RP 8
-#define LP 9
-#define UP 10
-#define DP 11
+typedef enum {
+    F,B,R,L,U,D,
+    f,b,r,l,u,d,
+    X,Y,Z,
+    Fi,Bi,Ri,Li,Ui,Di,
+    fi,bi,ri,li,ui,di,
+    Xi,Yi,Zi
+} move;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,17 +13,38 @@
 
 #include "../controller/errorController.h"
 
+/**
+ * Data structure to hold cube state function handle to manipulate cube
+ */
 typedef struct cubeStruct{
     unsigned char cube[6][3][3];
-    struct cubeStruct (*rotate)(struct cubeStruct, unsigned int id, _Bool cclw);
+    struct cubeStruct (*rotate)(struct cubeStruct, char * moveCode);
 } cube ;
 
-_Bool isEqual(cube aCube, cube bCube);
+/**
+ * Initialize the cube to :
+ *  F: Green
+ *  B: Blue
+ *  R: Red
+ *  L: Orange
+ *  U: White
+ *  D: Yellow
+ */
+cube initCube(cube self);
 
-cube rotate(cube rubikscube, unsigned int id, _Bool cclw);
+/**
+ * Returns true if both cubes are equivalent
+ *
+ * TODO : Implement verification with each orientation of cube
+ */
+_Bool cubeAreEqual(cube aCube, cube bCube);
+
+
+cube rotate(cube rubikscube, char * moveCode);
+
+cube rotateCurrentFace(cube rubikscube, int current);
 
 cube rotateF(cube rubikscube);
-cube rotateCurrentFace(cube rubikscube, int current);
 cube rotateB(cube rubikscube);
 
 cube rotateR(cube rubikscube);
@@ -51,14 +68,8 @@ cube rotateUi(cube rubikscube);
 cube rotateDi(cube rubikscube);
 
 /**
- * Initialize the cube to :
- *  F: Green
- *  B: Blue
- *  R: Red
- *  L: Orange
- *  U: White
- *  D: Yellow
+ * Helper function to print cube map to stderr
  */
-cube initCube(cube self);
-
 void printCube(cube rubikscube);
+
+move mapCodeToMove(char moveCode);

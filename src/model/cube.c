@@ -12,53 +12,69 @@ cube initCube(cube self){
     return self;
 }
 
-cube rotate(cube self, unsigned int id, _Bool cclw) {
-    if (cclw) {
-        id += 6 ;
+cube rotate(cube self, char * moveCode) {
+    _Bool doubleMove = false;
+    char moveChar = moveCode[0];
+
+    move chosenMove = mapCodeToMove(moveChar);
+
+    if (moveCode[1] == 'i') { // Is rotation counter-clockwise ?
+        chosenMove += 15;     // If it is, offset code of 15
     }
 
-    switch(id){
+    if (moveCode[1] == '2' || (moveCode[1] == 'i' && moveCode[2] == '2')) {
+        doubleMove = true;
+    }
+
+    cube (* chosenMoveFn)(cube);
+
+    switch(chosenMove){
         case(F):
-            return rotateF(self);
+            chosenMoveFn = &rotateF;
             break;
         case(B):
-            return rotateB(self);
+            chosenMoveFn = &rotateB;
             break;
         case(R):
-            return rotateR(self);
+            chosenMoveFn = &rotateR;
             break;
         case(L):
-            return rotateL(self);
+            chosenMoveFn = &rotateL;
             break;
         case(U):
-            return rotateU(self);
+            chosenMoveFn = &rotateU;
             break;
         case(D):
-            return rotateD(self);
+            chosenMoveFn = &rotateD;
             break;
-        case(FP):
-            return rotateFi(self);
+        case(Fi):
+            chosenMoveFn = &rotateFi;
             break;
-        case(BP):
-            return rotateBi(self);
+        case(Bi):
+            chosenMoveFn = &rotateBi;
             break;
-        case(RP):
-            return rotateRi(self);
+        case(Ri):
+            chosenMoveFn = &rotateRi;
             break;
-        case(LP):
-            return rotateLi(self);
+        case(Li):
+            chosenMoveFn = &rotateLi;
             break;
-        case(UP):
-            return rotateUi(self);
+        case(Ui):
+            chosenMoveFn = &rotateUi;
             break;
-        case(DP):
-            return rotateDi(self);
+        case(Di):
+            chosenMoveFn = &rotateDi;
             break;
         default:
             exitFatal(" in return rotate(), no such operation");
             break;
     }
-    return self;
+
+    if (doubleMove) {
+        self = chosenMoveFn(self);
+    }
+
+    return chosenMoveFn(self);
 }
 
 cube rotateCurrentFace(cube self, int current){
@@ -307,7 +323,7 @@ cube rotateDi(cube self){
 }
 
 void printCube(cube self){
-    printf("\n        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\
+    fprintf(stderr, "\n        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
@@ -344,4 +360,18 @@ _Bool isEqual(cube self, cube otherCube){
         }
     }
     return true;
+}
+
+move mapCodeToMove(char moveCode){
+    char codes[15] = {
+        'F', 'B', 'R', 'L', 'U', 'D',
+        'f', 'b', 'r', 'l', 'u', 'd',
+        'X', 'Y', 'Z'
+    };
+
+    int code = -1;
+
+    while(codes[++code] != moveCode); // increment code while it doesn't match
+
+    return (move) code;
 }
