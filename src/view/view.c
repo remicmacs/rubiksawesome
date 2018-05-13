@@ -1,3 +1,7 @@
+/**
+ * @file view.c
+ */
+
 #include "view.h"
 #include "graphics.h"
 #include "math.h"
@@ -5,6 +9,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <stdbool.h>
 
 void setWindow() {
   // Window configuration
@@ -16,7 +21,7 @@ void setWindow() {
   // Set window size and colour depth
   SDL_SetVideoMode(640, 480, 32, SDL_OPENGL);
 
-  glMatrixMode( GL_PROJECTION );
+  glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(70, (double)640 / 480, 1, 1000);
   glEnable(GL_DEPTH_TEST);
@@ -55,6 +60,11 @@ cube * generateCubes() {
     cubes[cubeIndex] = generateCube(cubeTransform);
   }
 
+  /**
+   * We use conditional compilation to enable/disable the center cube
+   * Add -DCENTER_CUBE to your gcc compilation line to enable the center cube
+   */
+  #ifdef CENTER_CUBE
   transform cubeTransform = {
     (vector3) {0, 0, 0},
     (vector3) {0, 0, 0},
@@ -63,6 +73,7 @@ cube * generateCubes() {
   colour gray = {20, 20, 20};
   cubes[13] = generateCube(cubeTransform);
   setCubeColour(gray, cubes + 13);
+  #endif
 
   return cubes;
 }
@@ -88,17 +99,17 @@ void attachCubesToFaces(rubikview * mainView) {
     mainView->rightFace[(cubeIndex - 2) / 3] = &(mainView->cubes[cubeIndex]);
   }
 
-  // Mapping the back face
+  // Mapping the front face
   for (int cubeIndex = 0; cubeIndex < 27; cubeIndex += 9) {
     for (int cubeSubIndex = 0; cubeSubIndex < 3; cubeSubIndex++) {
-      mainView->backFace[cubeSubIndex + (cubeIndex / 3)] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
+      mainView->frontFace[cubeSubIndex + (cubeIndex / 3)] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
     }
   }
 
-  // Mapping the front face
+  // Mapping the back face
   for (int cubeIndex = 6; cubeIndex < 27; cubeIndex += 9) {
     for (int cubeSubIndex = 0; cubeSubIndex < 3; cubeSubIndex++) {
-      mainView->frontFace[cubeSubIndex + ((cubeIndex - 1) / 3) - 1] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
+      mainView->backFace[cubeSubIndex + ((cubeIndex - 1) / 3) - 1] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
     }
   }
 }
@@ -124,6 +135,14 @@ void update(rubikview * mainView) {
 
   if (event.key.keysym.sym == SDLK_l && event.key.type == SDL_KEYDOWN) {
     rotateLeft(mainView);
+  }
+
+  if (event.key.keysym.sym == SDLK_f && event.key.type == SDL_KEYDOWN) {
+    rotateFront(mainView);
+  }
+
+  if (event.key.keysym.sym == SDLK_b && event.key.type == SDL_KEYDOWN) {
+    rotateBack(mainView);
   }
 
   if (event.key.keysym.sym == SDLK_DOWN && event.key.type == SDL_KEYDOWN) {
@@ -161,18 +180,26 @@ void update(rubikview * mainView) {
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
   for (int cubeIndex = 0; cubeIndex < 27; cubeIndex++) {
-    drawCube(cubes[cubeIndex]);
+    drawCube(cubes[cubeIndex], false);
   }
+
+  // colour magenta = {255, 0, 255};
+  // setCubeColour(magenta, mainView->frontFace[2]);
 
   glFlush();
   SDL_GL_SwapBuffers();
 }
 
 void rotateUp(rubikview * mainView) {
+  // We change the rotation on the display
   for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-    mainView->topFace[cubeIndex]->cubeTransform.rotation.z += PI / 2;
+    mainView->topFace[cubeIndex]->cubeTransform.rotation.z -= PI / 2;
   }
 
+  // Then we need to move each topest row from the contiguous faces to the
+  // next face. In this case, we will put the Right on Front, the Back on
+  // Right, the Left on Back and the Front on Left.
+  // R <- F <- L <- B
   cube * tempCubes[3];
 
   tempCubes[0] = mainView->frontFace[6];
@@ -194,6 +221,23 @@ void rotateUp(rubikview * mainView) {
   mainView->leftFace[6] = tempCubes[0];
   mainView->leftFace[7] = tempCubes[1];
   mainView->leftFace[8] = tempCubes[2];
+
+  // We also need to rotate the face we are rotating (here, the Top)
+  tempCubes[0] = mainView->topFace[0];
+  tempCubes[1] = mainView->topFace[1];
+  tempCubes[2] = mainView->topFace[2];
+
+  // Rotate bottom corners
+  mainView->topFace[0] = mainView->topFace[2];
+  mainView->topFace[2] = mainView->topFace[8];
+  mainView->topFace[8] = mainView->topFace[6];
+  mainView->topFace[6] = tempCubes[0];
+
+  // Rotate edges
+  mainView->topFace[1] = mainView->topFace[5];
+  mainView->topFace[5] = mainView->topFace[7];
+  mainView->topFace[7] = mainView->topFace[3];
+  mainView->topFace[3] = tempCubes[1];
 }
 
 void rotateDown(rubikview * mainView) {
@@ -201,7 +245,7 @@ void rotateDown(rubikview * mainView) {
     mainView->bottomFace[cubeIndex]->cubeTransform.rotation.z += PI / 2;
   }
 
-  cube * tempCubes[3];
+  /*cube * tempCubes[3];
 
   tempCubes[0] = mainView->frontFace[0];
   tempCubes[1] = mainView->frontFace[1];
@@ -221,7 +265,7 @@ void rotateDown(rubikview * mainView) {
 
   mainView->leftFace[0] = tempCubes[0];
   mainView->leftFace[1] = tempCubes[1];
-  mainView->leftFace[2] = tempCubes[2];
+  mainView->leftFace[2] = tempCubes[2];*/
 }
 
 void rotateLeft(rubikview * mainView) {
@@ -232,7 +276,56 @@ void rotateLeft(rubikview * mainView) {
 
 void rotateRight(rubikview * mainView) {
   for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-    mainView->rightFace[cubeIndex]->cubeTransform.rotation.x += PI / 2;
+    mainView->rightFace[cubeIndex]->cubeTransform.rotation.x -= PI / 2;
+  }
+
+  // Then we need to move each row on the left from the contiguous faces to the
+  // next face.
+  // F <- D <- B <- T
+  cube * tempCubes[3];
+
+  tempCubes[0] = mainView->frontFace[2];
+  tempCubes[1] = mainView->frontFace[5];
+  tempCubes[2] = mainView->frontFace[8];
+
+  mainView->frontFace[2] = mainView->bottomFace[8];
+  mainView->frontFace[5] = mainView->bottomFace[5];
+  mainView->frontFace[8] = mainView->bottomFace[2];
+
+  mainView->bottomFace[8] = mainView->backFace[8];
+  mainView->bottomFace[5] = mainView->backFace[5];
+  mainView->bottomFace[2] = mainView->backFace[2];
+
+  mainView->backFace[8] = mainView->topFace[2];
+  mainView->backFace[5] = mainView->topFace[5];
+  mainView->backFace[2] = mainView->topFace[8];
+
+  mainView->topFace[2] = tempCubes[0];
+  mainView->topFace[5] = tempCubes[1];
+  mainView->topFace[8] = tempCubes[2];
+
+  // We also need to rotate the face we are rotating (here, the Top)
+  /*cube * tempCube;
+  tempCube = mainView->rightFace[0];
+  mainView->rightFace[0] = mainView->rightFace[3];
+  mainView->rightFace[3] = mainView->rightFace[6];
+  mainView->rightFace[6] = mainView->rightFace[7];
+  mainView->rightFace[7] = mainView->rightFace[8];
+  mainView->rightFace[8] = mainView->rightFace[5];
+  mainView->rightFace[5] = mainView->rightFace[2];
+  mainView->rightFace[2] = mainView->rightFace[1];
+  mainView->rightFace[1] = tempCube;*/
+}
+
+void rotateFront(rubikview * mainView) {
+  for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    mainView->frontFace[cubeIndex]->cubeTransform.rotation.y += PI / 2;
+  }
+}
+
+void rotateBack(rubikview * mainView) {
+  for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    mainView->backFace[cubeIndex]->cubeTransform.rotation.y -= PI / 2;
   }
 }
 

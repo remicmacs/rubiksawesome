@@ -7,3 +7,9 @@ main
 
 # C stuffs
 *.gch
+
+# Doxygen files (just for testing on my side)
+doc/view/Doxyfile
+doc/view/*.md
+doc/view/xml/*
+doc/view/html/*
