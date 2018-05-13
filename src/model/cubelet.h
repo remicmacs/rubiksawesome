@@ -16,7 +16,7 @@ int col;
 }tile;
 
 typedef struct adjacentTiles{
-tile *tiles;
+tile tiles[2];
 int nb;
 }adjacentTiles;
 
@@ -46,7 +46,7 @@ typedef struct edge{
 	}edge;
 
 typedef struct adjacentFaces{
-		int *faces;
+		int faces[2];
 		int nb;
 }adjacentFaces;
 
@@ -59,7 +59,10 @@ edge defineEdge(cube self, tile elt);
 
 void printEdge(cube self, edge elt);
 
-
+/**
+ * Test if one of the edge’s tiles is on the selected face
+ */
+bool isEdgeOnFace(edge elt, int face);
 
 /****************************
  * Misc
