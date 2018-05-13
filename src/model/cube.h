@@ -95,6 +95,18 @@ cube rotateZ(cube self);
 cube rotateXi(cube self);
 cube rotateYi(cube self);
 cube rotateZi(cube self);
+cube rotatef(cube self);
+cube rotateb(cube self);
+cube rotater(cube self);
+cube rotatel(cube self);
+cube rotateu(cube self);
+cube rotated(cube self);
+cube rotatefi(cube self);
+cube rotatebi(cube self);
+cube rotateri(cube self);
+cube rotateli(cube self);
+cube rotateui(cube self);
+cube rotatedi(cube self);
 
 /**
  * Helper function to print cube map to stderr

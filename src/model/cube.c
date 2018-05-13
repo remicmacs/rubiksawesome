@@ -89,6 +89,42 @@ cube rotate(cube self, char * moveCode) {
         case(Zi):
             chosenMoveFn = &rotateZi;
             break;
+        case(f):
+            chosenMoveFn = &rotatef;
+            break;
+        case(b):
+            chosenMoveFn = &rotateb;
+            break;
+        case(r):
+            chosenMoveFn = &rotater;
+            break;
+        case(l):
+            chosenMoveFn = &rotatel;
+            break;
+        case(u):
+            chosenMoveFn = &rotateu;
+            break;
+        case(d):
+            chosenMoveFn = &rotated;
+            break;
+        case(fi):
+            chosenMoveFn = &rotatefi;
+            break;
+        case(bi):
+            chosenMoveFn = &rotatebi;
+            break;
+        case(ri):
+            chosenMoveFn = &rotateri;
+            break;
+        case(li):
+            chosenMoveFn = &rotateli;
+            break;
+        case(ui):
+            chosenMoveFn = &rotateui;
+            break;
+        case(di):
+            chosenMoveFn = &rotatedi;
+            break;
         default:
             exitFatal(" in return rotate(), no such operation");
             break;
@@ -456,6 +492,78 @@ cube rotateZi(cube self) {
     }
 
     return self;
+}
+
+cube rotatef(cube self) {
+    return rotateZ(
+            rotateB(self)
+            );
+}
+
+cube rotateb(cube self) {
+    return rotateZi(
+            rotateF(self)
+            );
+}
+
+cube rotater(cube self) {
+    return rotateX(
+            rotateL(self)
+            );
+}
+
+cube rotatel(cube self) {
+    return rotateXi(
+            rotateR(self)
+            );
+}
+
+cube rotateu(cube self) {
+    return rotateY(
+            rotateD(self)
+            );
+}
+
+cube rotated(cube self) {
+    return rotateYi(
+            rotateU(self)
+            );
+}
+
+cube rotatefi(cube self){
+    return rotateBi(
+            rotateZi(self)
+            );
+}
+
+cube rotatebi(cube self){
+    return rotateFi(
+            rotateZ(self)
+            );
+}
+
+cube rotateri(cube self){
+    return rotateLi(
+            rotateXi(self)
+            );
+}
+
+cube rotateli(cube self){
+    return rotateRi(
+            rotateX(self)
+            );
+}
+
+cube rotateui(cube self){
+    return rotateDi(
+            rotateYi(self)
+            );
+}
+
+cube rotatedi(cube self){
+    return rotateUi(
+            rotateY(self)
+            );
 }
 
 void printCube(cube self){
