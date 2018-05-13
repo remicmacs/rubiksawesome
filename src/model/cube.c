@@ -40,6 +40,24 @@ move mapCodeToMove(char * moveCode){
     return (move) code;
 }
 
+
+cube voidCube(cube self){
+    unsigned char color[6] = {'g','b','r','o','w','y'};
+    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
+        for (int index = 0 ; index < 3 ; index++){
+            for (int jindex = 0 ; jindex < 3 ; jindex++){
+					if(jindex == 1 && index == 1){
+                self.cube[faceIndex][index][jindex] = color[faceIndex];
+					}
+					else{
+self.cube[faceIndex][index][jindex] = ' '; 
+					}
+            }
+        }
+    }
+    return self;
+}
+
 cube * initCube() {
     // Initialization of cube
     cube * self = (cube *) malloc(sizeof(cube)); // Memory allocation
@@ -63,10 +81,11 @@ cube * initCube() {
             for (int jindex = 0 ; jindex < 3 ; jindex++){
                 self->cube[faceIndex][index][jindex] = color[faceIndex];
             }
-        }
+        } 
     }
     return self;
 }
+
 
 /////////////////////////////// PRIVATE FUNCTIONS ////////////////////////////
 

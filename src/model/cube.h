@@ -1,3 +1,6 @@
+#ifndef CUBE
+#define CUBE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -14,6 +17,7 @@ typedef struct cubeStruct{
     _Bool (*equals)(struct cubeStruct *, struct cubeStruct *);
     void (*print)(struct cubeStruct *);
 } cube ;
+
 
 /**
  * Enumeration of all moves implemented by the public method rotate.
@@ -32,6 +36,13 @@ typedef enum {
     fi2,bi2,ri2,li2,ui2,di2,
     xi2,yi2,zi2
 } move;
+
+/**
+ * Init a void cube
+ */
+cube voidCube(cube self);
+
+
 
 /**
  * Function to map a char * token to a given move.
@@ -156,4 +167,6 @@ void printCube(cube * self);
 void destroyCube(cube * self);
 
 
+
+#endif
 
