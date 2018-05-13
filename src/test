@@ -1,0 +1,1 @@
+gcc fake_main.c model/cubelet.c model/cube.c controller/errorController.c controller/f2l.c -o prog && ./prog
