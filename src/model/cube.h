@@ -1,3 +1,6 @@
+#ifndef CUBE
+#define CUBE
+
 #define F 0
 #define B 1
 #define R 2
@@ -23,6 +26,11 @@ typedef struct cubeStruct{
 } cube ;
 
 _Bool isEqual(cube aCube, cube bCube);
+
+/**
+ * Init a void cube
+ */
+cube voidCube(cube self);
 
 cube rotate(cube rubikscube, unsigned int id, _Bool cclw);
 
@@ -62,3 +70,6 @@ cube rotateDi(cube rubikscube);
 cube initCube(cube self);
 
 void printCube(cube rubikscube);
+
+
+#endif

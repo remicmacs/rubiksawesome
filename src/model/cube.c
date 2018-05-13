@@ -13,6 +13,23 @@ cube initCube(cube self){
     return self;
 }
 
+cube voidCube(cube self){
+    unsigned char color[6] = {'g','b','r','o','w','y'};
+    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
+        for (int index = 0 ; index < 3 ; index++){
+            for (int jindex = 0 ; jindex < 3 ; jindex++){
+					if(jindex == 1 && index == 1){
+                self.cube[faceIndex][index][jindex] = color[faceIndex];
+					}
+					else{
+self.cube[faceIndex][index][jindex] = ' '; 
+					}
+            }
+        }
+    }
+    return self;
+}
+
 cube rotate(cube self, unsigned int id, _Bool cclw) {
     if (cclw) {
         id += 6 ;
