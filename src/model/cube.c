@@ -1,16 +1,63 @@
 #include "cube.h"
 
-cube * initCube(cube * self){
-    self = (cube *) malloc(sizeof(cube));
+move mapCodeToMove(char * moveCode){
+    // 15 base moves for 60 rotations implemented 
+    //  (double and counter-clockwise)
+    char codes[15] = {
+        'F', 'B', 'R', 'L', 'U', 'D',
+        'f', 'b', 'r', 'l', 'u', 'd',
+        'X', 'Y', 'Z'
+    };
+
+    char moveChar = moveCode[0]; // retrieving first letter
+
+    // Mapping letter to base code
+    move code = F-1;
+    // increment code while it doesn't match
+    while(++code < Fi && codes[code] != moveChar);
+
+    // Exception handling of unknown move
+    if (code == Fi) {
+        char errorMessage[83];
+        sprintf(
+                errorMessage,
+                "in mapCodeToMove(), \'%c\' is not a valid move",
+                moveChar
+                );
+        exitFatal(errorMessage);
+    }
+
+    if (moveCode[1] == 'i' || moveCode[1] == '\'') {
+        // Is rotation counter-clockwise ?
+        code += 15;     // If it is, offset code of 15
+    }
+
+    if (moveCode[1] == '2' || (moveCode[1] == 'i' && moveCode[2] == '2')) {
+        code += 30;   // If a double move is wanted, offset code of 30
+    }
+
+    return (move) code;
+}
+
+cube * initCube() {
+    // Initialization of cube
+    cube * self = (cube *) malloc(sizeof(cube)); // Memory allocation
     self->rotate = &rotate;
+    self->copy = &copyCube;
+    self->equals = &cubeIsEqual;
+    self->print = &printCube;                    // Public method attachment
+
+    // Cube colorization
     unsigned char color[6] = {'g','b','r','o','w','y'};
-    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
+    for (int faceIndex = F ; faceIndex <= D ; faceIndex++){
         unsigned char ** newFace = (unsigned char **) \
-            malloc(sizeof(unsigned char *)*3);
+            malloc(sizeof(unsigned char *)*3);    // Face memory allocation
         for (int index = 0; index < 3 ; index++) {
             newFace[index] = (unsigned char *) malloc(sizeof(unsigned char)*3);
-        }
+        } // Rows memory allocation
         self->cube[faceIndex] = newFace;
+
+        // Face color filling
         for (int index = 0 ; index < 3 ; index++){
             for (int jindex = 0 ; jindex < 3 ; jindex++){
                 self->cube[faceIndex][index][jindex] = color[faceIndex];
@@ -20,8 +67,17 @@ cube * initCube(cube * self){
     return self;
 }
 
+/////////////////////////////// PRIVATE FUNCTIONS ////////////////////////////
+
 /**
- * Factorised function to rotate the current face matrix
+ * Factored function to rotate the current face matrix.
+ *
+ * Only factored function in rotation. Current face may be rotated the same way
+ * for any given face. But all edges translations are specific.
+ *
+ * @param self Pointer to the cube subject of rotation
+ * @param current Index of face to be rotated
+ * @returns Pointer to self
  */
 cube * rotateCurrentFace(cube * self, int current){
     char swap;
@@ -53,8 +109,9 @@ cube * rotateCurrentFace(cube * self, int current){
 }
 
 /**
- * Complementary function to rotateCurrentFace
+ * Complementary function to rotateCurrentFace.
  * Useful for full cube rotations
+ * @see rotateCurrentFace()
  */
 cube * rotateCurrentFaceCCLW(cube * self, int current) {
     char swap[3]; 
@@ -76,12 +133,37 @@ cube * rotateCurrentFaceCCLW(cube * self, int current) {
     return self;
 }
 
-///////////// Unary rotation functions ////////////////////////////////////////
+    /////////// Unary rotation functions /////////////////////////////////
 
 /**
- * Functions for specific rotations
- * Each function uses rotateCurrentFace for the main rotation,
- * then each has its own mapping of edges
+ * Functions for specific rotations.
+ * Each function uses rotateCurrentFace for the main rotation, then each
+ * implements its own edges translations
+ *
+ * If not specified, each rotation is clockwise, if the face was in front of
+ * the eyes of the person performing the rotation.
+ *
+ * Each rotation may be indiced by `i` meaning that the move will be
+ * counter-clockwise rather than clockwise.
+ *
+ * Rotations are :
+ * * F : Front face
+ * * B : Back face
+ * * R : Right face
+ * * L : Left face
+ * * U : Up face
+ * * D : Down face
+ * * f : The two front layers
+ * * b : the two back layers
+ * * r : the two right layers
+ * * u : the two up layers
+ * * d : the two down layers
+ * * X : full cube rotation in the same angle as R
+ * * Y : full cube rotation in the same angle as U
+ * * Z : full cube rotation in the same angle as F
+ *
+ * @param self Reference to the cube to be rotated
+ * @returns Reference to the rotated cube
  */
 cube * rotateF(cube * self){
     char swap[3];
@@ -459,24 +541,81 @@ cube * rotatedi(cube * self){
             );
 }
 
+/**
+ * Function to bring center cublets in standard position.
+ * Standard position of center cublets are :
+ *  * green on front
+ *  * blue on back
+ *  * red on right
+ *  * orange on left
+ *  * white on top
+ *  * yellow on down
+ *
+ *  This function is a helper to the cubeIsEqual function.
+ *
+ *  @param self Reference to cube to be redressed
+ *  @returns Reference to redressed cube
+ */
+cube * redressCube(cube * self) {
+
+    // Fixing green center position : two axes are solved
+    // 6 positions are possible, with only one valid
+    int greenPos = F - 1;
+    while(self->cube[++greenPos][1][1] != 'g');
+    switch(greenPos) {
+        case(R):
+            self->rotate(self, "Y");
+            break;
+        case(L):
+            self->rotate(self, "Yi");
+            break;
+        case(U):
+            self->rotate(self, "Xi");
+            break;
+        case(D):
+            self->rotate(self, "X");
+            break;
+        case(B):
+            self->rotate(self, "X2");
+            break;
+    }
+
+    // Fixing red center position : only one axis has to be solved
+    // 4 positions are possible, with only one valid
+    int redPos = R - 1;
+    while(self->cube[++redPos][1][1] != 'r');
+
+    switch(redPos) {
+        case(U):
+            self->rotate(self, "Z");
+            break;
+        case(L):
+            self->rotate(self, "Z2");
+            break;
+        case(D):
+            self->rotate(self, "Zi");
+            break;
+    }
+
+    return self;
+}
 ///////////////////////////////////////////////////////////////////////////////
 
+////////////////////  PUBLIC API OF CUBE DATA STRUCT /////////////////////////
 cube * rotate(cube * self, char * moveCode) {
     _Bool doubleMove = false;
-    char moveChar = moveCode[0];
 
-    move chosenMove = mapCodeToMove(moveChar);
+    // Retrieving code of move
+    move chosenMove = mapCodeToMove(moveCode);
 
-    if (moveCode[1] == 'i') { // Is rotation counter-clockwise ?
-        chosenMove += 15;     // If it is, offset code of 15
-    }
-
-    if (moveCode[1] == '2' || (moveCode[1] == 'i' && moveCode[2] == '2')) {
+    if (chosenMove >= 30) {
         doubleMove = true;
-    }
+        chosenMove -= 30;
+    } // If move is a double move, switch boolean and remove offset
 
     cube * (* chosenMoveFn)(cube *);
 
+    // Scary big ass switch statement : chooses correct private function
     switch(chosenMove){
         case(F):
             chosenMoveFn = &rotateF;
@@ -569,7 +708,7 @@ cube * rotate(cube * self, char * moveCode) {
             chosenMoveFn = &rotatedi;
             break;
         default:
-            exitFatal(" in return rotate(), no such operation");
+            exitFatal(" in rotate(), no such operation");
             break;
     }
 
@@ -578,6 +717,48 @@ cube * rotate(cube * self, char * moveCode) {
     }
 
     return chosenMoveFn(self);
+}
+
+cube * copyCube(cube * self) {
+    cube * newCube = initCube();
+
+    for (int faceIndex = F ; faceIndex <= D ; faceIndex++) {
+        for (int index = 0; index < 3 ; index++) {
+            for (int jindex = 0; jindex < 3 ; jindex++) {
+                newCube->cube[faceIndex][index][jindex] =
+                    self->cube[faceIndex][index][jindex];
+            }
+        }
+    }
+
+    return newCube;
+}
+
+_Bool cubeIsEqual(cube * self, cube * otherCube){
+    // Copying data to avoid modification
+    cube * aCube = copyCube(self);
+    cube * bCube = copyCube(otherCube);
+
+    redressCube(aCube);
+    redressCube(bCube);
+
+    for(int face = F; face <= D ; face++){
+        for(int index = 0; index < 3 ; index++){
+            for(int jindex = 0; jindex < 3 ; jindex++){
+                if (aCube->cube[face][index][jindex] !=
+                        bCube->cube[face][index][jindex]){
+                    return false; // If any face of a cubelet does not match
+                                  // cubes are not equal
+                }
+            }
+        }
+    }
+
+    // Destroying copies
+    destroyCube(aCube);
+    destroyCube(bCube);
+
+    return true;
 }
 
 void printCube(cube * self){
@@ -605,32 +786,19 @@ void printCube(cube * self){
             self->cube[D][1][0],self->cube[D][1][1], self->cube[D][1][2], 
             self->cube[D][2][0],self->cube[D][2][1], self->cube[D][2][2]);
 }
+//////////////////////////////////////////////////////////////////////////////
 
-_Bool isEqual(cube * self, cube * otherCube){
-    for(int face = F; face <= D ; face++){
-        for(int index = 0; index < 3 ; index++){
-            for(int jindex = 0; jindex < 3 ; jindex++){
-                if (self->cube[face][index][jindex] !=
-                        otherCube->cube[face][index][jindex]){
-                    return false; // If any face of a cubelet does not match
-                                  // cubes are not equal
-                }
-            }
+// Public method
+// Should be static in object ?
+void destroyCube(cube * self) {
+    for (int faceIndex = F ; faceIndex <= D ; faceIndex++) {
+        unsigned char ** oldFace = self->cube[faceIndex];
+        for (int index = 0; index < 3 ; index++) {
+            unsigned char * oldRow = oldFace[index];
+            free(oldRow);
         }
+        free(oldFace);
     }
-    return true;
-}
-
-move mapCodeToMove(char moveCode){
-    char codes[15] = {
-        'F', 'B', 'R', 'L', 'U', 'D',
-        'f', 'b', 'r', 'l', 'u', 'd',
-        'X', 'Y', 'Z'
-    };
-
-    int code = -1;
-
-    while(codes[++code] != moveCode); // increment code while it doesn't match
-
-    return (move) code;
+    free(self);
+    return;
 }
