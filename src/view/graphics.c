@@ -36,86 +36,129 @@
 
 cube generateCube(transform cubeTransform) {
 
-  /** The Top face is white */
-  face topFace = {
-    {
-      (vector3) {1, -1, 1},
-      (vector3) {1, 1, 1},
-      (vector3) {-1, 1, 1},
-      (vector3) {-1, -1, 1}
-    },
-    {255, 255, 255}
-  };
-
-  /** The right face is blue */
-  face rightFace = {
-    {
-      (vector3) {1, 1, 1},
-      (vector3) {1, 1, -1},
-      (vector3) {-1, 1, -1},
-      (vector3) {-1, 1, 1}
-    },
-    {0, 0, 255}
-  };
-
-  /** The Front face is red */
-  face frontFace = {
-    {
-      (vector3) {1, -1, 1},
-      (vector3) {1, -1, -1},
-      (vector3) {1, 1, -1},
-      (vector3) {1, 1, 1}
-    },
-    {255, 0, 0}
-  };
-
-  /** The Left face is green */
-  face leftFace = {
-    {
-      (vector3) {-1, -1, 1},
-      (vector3) {-1, -1, -1},
-      (vector3) {1, -1, -1},
-      (vector3) {1, -1, 1}
-    },
-    {0, 255, 0}
-  };
-
-  /** The Back face is orange */
-  face backFace = {
-    {
-      (vector3) {-1, 1, 1},
-      (vector3) {-1, 1, -1},
-      (vector3) {-1, -1, -1},
-      (vector3) {-1, -1, 1}
-    },
-    {255, 165, 0}
-  };
-
-  /** The Down face is yellow */
-  face bottomFace = {
-    {
-      (vector3) {1, 1, -1},
-      (vector3) {1, -1, -1},
-      (vector3) {-1, -1, -1},
-      (vector3) {-1, 1, -1}
-    },
-    {255, 255, 0}
-  };
-
   /** We build the cube by giving it the faces and the transform structure */
   cube mainCube = {
     {
-      topFace,
-      bottomFace,
-      frontFace,
-      backFace,
-      leftFace,
-      rightFace
+      generateFace(cubeTransform, TOP),
+      generateFace(cubeTransform, DOWN),
+      generateFace(cubeTransform, FRONT),
+      generateFace(cubeTransform, BACK),
+      generateFace(cubeTransform, LEFT),
+      generateFace(cubeTransform, RIGHT)
     },
     cubeTransform
   };
 
   return mainCube;
+}
+
+
+face generateFace(transform cubeTransform, enum FaceType faceType) {
+  face newFace;
+  switch(faceType) {
+    case TOP:
+      newFace = (face) {
+        {
+          (vector3) {1, -1, 1},
+          (vector3) {1, 1, 1},
+          (vector3) {-1, 1, 1},
+          (vector3) {-1, -1, 1}
+        },
+        {255, 255, 255}
+      };
+      break;
+    case DOWN:
+      newFace = (face) {
+        {
+          (vector3) {1, 1, -1},
+          (vector3) {1, -1, -1},
+          (vector3) {-1, -1, -1},
+          (vector3) {-1, 1, -1}
+        },
+        {255, 255, 0}
+      };
+      break;
+    case FRONT:
+      newFace = (face) {
+        {
+          (vector3) {1, -1, 1},
+          (vector3) {1, -1, -1},
+          (vector3) {1, 1, -1},
+          (vector3) {1, 1, 1}
+        },
+        {255, 0, 0}
+      };
+      break;
+    case BACK:
+      newFace = (face) {
+        {
+          (vector3) {-1, 1, 1},
+          (vector3) {-1, 1, -1},
+          (vector3) {-1, -1, -1},
+          (vector3) {-1, -1, 1}
+        },
+        {255, 165, 0}
+      };
+      break;
+    case RIGHT:
+      newFace = (face) {
+        {
+          (vector3) {1, 1, 1},
+          (vector3) {1, 1, -1},
+          (vector3) {-1, 1, -1},
+          (vector3) {-1, 1, 1}
+        },
+        {0, 0, 255}
+      };
+      break;
+    case LEFT:
+      newFace = (face) {
+        {
+          (vector3) {-1, -1, 1},
+          (vector3) {-1, -1, -1},
+          (vector3) {1, -1, -1},
+          (vector3) {1, -1, 1}
+        },
+        {0, 255, 0}
+      };
+      break;
+  }
+
+  float xOffset = cubeTransform.position.x;
+  float yOffset = cubeTransform.position.y;
+  float zOffset = cubeTransform.position.z;
+
+  float xScale = cubeTransform.scale.x;
+  float yScale = cubeTransform.scale.y;
+  float zScale = cubeTransform.scale.z;
+
+  for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
+    float x = newFace.corners[vertexIndex].x;
+    float y = newFace.corners[vertexIndex].y;
+    float z = newFace.corners[vertexIndex].z;
+
+    x = (x * xScale) + xOffset;
+    y = (y * yScale) + yOffset;
+    z = (z * zScale) + zOffset;
+
+    float faceR = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+    float faceTheta = faceR == 0 ? acos(0) : acos(z / faceR);
+    float facePhi = atan2(y, x);
+
+    faceR += cubeTransform.delta.x;
+    faceTheta += cubeTransform.delta.y;
+    facePhi += cubeTransform.delta.z;
+
+    x = faceR * sin(faceTheta) * cos(facePhi);
+    y = faceR * sin(faceTheta) * sin(facePhi);
+    z = faceR * cos(faceTheta);
+
+    newFace.corners[vertexIndex].x = x;
+    newFace.corners[vertexIndex].y = y;
+    newFace.corners[vertexIndex].z = z;
+  }
+
+  return newFace;
 }
 
 
@@ -127,47 +170,13 @@ void setCubeColour(colour newColour, cube * selectedCube) {
 }
 
 void drawCube(cube drawnCube, bool debug) {
-  /**
-   * Using glRotatef
-   * This solution doesn't seem to be good, see the header of the file for
-   * more information. Uncomment to try it. There is another block below to
-   * uncomment. Comment it if you're trying the other method.
-   */
-  /***************************************************************************/
-  // float xOffset = drawnCube.cubeTransform.position.x;
-  // float yOffset = drawnCube.cubeTransform.position.y;
-  // float zOffset = drawnCube.cubeTransform.position.z;
-
-  // float xRotation = drawnCube.cubeTransform.rotation.x;
-  // float yRotation = drawnCube.cubeTransform.rotation.y;
-  // float zRotation = drawnCube.cubeTransform.rotation.z;
-
-  /** We store the current matrix transformation */
-  // glPushMatrix();
-
-  /** We rotate z, y, and x in that order */
-  // glRotatef(zRotation * (180 / PI), 0, 0, 1);
-  // glRotatef(yRotation * (180 / PI), 0, 1, 0);
-  // glRotatef(xRotation * (180 / PI), 1, 0, 0);
-
-  /** We translate the cube to where it will be */
-  // glTranslatef(xOffset, yOffset, zOffset);*/
-  /***************************************************************************/
-
-  /** And we draw the faces */
+  /** We draw the faces */
   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-    drawFace(drawnCube.faces[faceIndex], drawnCube.cubeTransform.position, drawnCube.cubeTransform.rotation, drawnCube.cubeTransform.scale, debug);
+    drawFace(drawnCube.faces[faceIndex], debug);
   }
-
-  /**
-   * Uncomment this as well for the openGL rotation method. More below.
-   */
-  /***************************************************************************/
-  // glPopMatrix();
-  /***************************************************************************/
 }
 
-void drawFace(face drawnFace, vector3 position, vector3 rotation, vector3 scale, bool debug) {
+void drawFace(face drawnFace, bool debug) {
   colour faceColour;
 
   /**
@@ -182,71 +191,57 @@ void drawFace(face drawnFace, vector3 position, vector3 rotation, vector3 scale,
   /** We set the colour of the vertices */
   glColor3ub(faceColour.r, faceColour.g, faceColour.b);
 
-  float xScale = scale.x;
-  float yScale = scale.y;
-  float zScale = scale.z;
-
-  float xOffset = position.x;
-  float yOffset = position.y;
-  float zOffset = position.z;
-
-  float xRotation = rotation.x;
-  float yRotation = rotation.y;
-  float zRotation = rotation.z;
-
   glBegin(GL_QUADS);
   for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
     float x = drawnFace.corners[vertexIndex].x;
     float y = drawnFace.corners[vertexIndex].y;
     float z = drawnFace.corners[vertexIndex].z;
-
-    /**
-     * Uncomment this for glRotatef. Now we have to disable the calculated
-     * method. See below.
-     */
-    /**************************************************************************/
-    // x = x * xScale;
-    // y = y * yScale;
-    // z = z * zScale;
-
-    // glVertex3d(x, y, z);
-
-    /**
-     * Comment this if you're trying the openGL rotation method. You're good
-     * to go !
-     */
-    /**************************************************************************/
-    x = (x * xScale) + xOffset;
-    y = (y * yScale) + yOffset;
-    z = (z * zScale) + zOffset;
-
-    /**
-     * We apply the z-axis rotation
-     */
-    float xPrime = x * cosf(zRotation) - y * sinf(zRotation);
-    float yPrime = x * sinf(zRotation) + y * cosf(zRotation);
-    float zPrime = z;
-
-    /**
-     * We apply the y-axis rotation
-     */
-    float xPrime2 = xPrime;
-    float yPrime2 = yPrime * cosf(xRotation) - zPrime * sinf(xRotation);
-    float zPrime2 = yPrime * sinf(xRotation) + zPrime * cosf(xRotation);
-
-    /**
-     * We apply the x-axis rotation
-     */
-    float xPrime3 = zPrime2 * sinf(yRotation) + xPrime2 * cosf(yRotation);
-    float yPrime3 = yPrime2;
-    float zPrime3 = zPrime2 * cosf(yRotation) - xPrime2 * sinf(yRotation);
-    /**************************************************************************/
-    /*
-     * Stop commenting here !
-     */
-
-    /** We draw the vertex */
-    glVertex3d(xPrime3, yPrime3, zPrime3);
+    glVertex3d(x, y, z);
   }
   glEnd();
+}
+
+
+void rotateFaceY(face * currentFace, bool ccw) {
+  for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
+    float x = currentFace->corners[cornerIndex].x;
+    float z = currentFace->corners[cornerIndex].z;
+    float yRotation = ccw == true ? - PI / 2 : PI / 2;
+
+    float xPrime = z * sinf(yRotation) + x * cosf(yRotation);
+    float zPrime = z * cosf(yRotation) - x * sinf(yRotation);
+
+    currentFace->corners[cornerIndex].x = xPrime;
+    currentFace->corners[cornerIndex].z = zPrime;
+  }
+}
+
+
+void rotateFaceZ(face * currentFace, bool ccw) {
+  for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
+    float x = currentFace->corners[cornerIndex].x;
+    float y = currentFace->corners[cornerIndex].y;
+    float zRotation = ccw == true ? - PI / 2 : PI / 2;
+
+    float xPrime = x * cosf(zRotation) - y * sinf(zRotation);
+    float yPrime = x * sinf(zRotation) + y * cosf(zRotation);
+
+    currentFace->corners[cornerIndex].x = xPrime;
+    currentFace->corners[cornerIndex].y = yPrime;
+  }
+}
+
+
+void rotateFaceX(face * currentFace, bool ccw) {
+  for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
+    float z = currentFace->corners[cornerIndex].z;
+    float y = currentFace->corners[cornerIndex].y;
+    float xRotation = ccw == true ? - PI / 2 : PI / 2;
+
+    float zPrime = y * sinf(xRotation) + z * cosf(xRotation);
+    float yPrime = y * cosf(xRotation) - z * sinf(xRotation);
+
+    currentFace->corners[cornerIndex].z = zPrime;
+    currentFace->corners[cornerIndex].y = yPrime;
+  }
 }

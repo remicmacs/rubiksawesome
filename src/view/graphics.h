@@ -52,6 +52,7 @@ typedef struct _face {
  */
 typedef struct _transform {
   vector3 position; /**< The object's position */
+  vector3 delta;    /**< Position's delta */
   vector3 rotation; /**< The object's rotation */
   vector3 scale;    /**< The object's scale */
 } transform;
@@ -69,9 +70,9 @@ typedef struct _cube {
 /**
  * Not used yet.
  */
-enum faceType {
+enum FaceType {
   TOP,
-  BOTTOM,
+  DOWN,
   FRONT,
   BACK,
   RIGHT,
@@ -86,6 +87,14 @@ enum faceType {
  * @return               A cube structure
  */
 cube generateCube(transform cubeTransform);
+
+/**
+ * [generateFace description]
+ * @param  cubeTransform [description]
+ * @param  faceType      [description]
+ * @return               [description]
+ */
+face generateFace(transform cubeTransform, enum FaceType faceType);
 
 
 /**
@@ -107,11 +116,12 @@ void drawCube(cube drawnCube, bool debug);
 /**
  * Draw a face (basically a quad). Used by drawCube.
  * @param drawnFace The face to be drawn
- * @param position  The position of the face
- * @param rotation  The rotation of the face
- * @param scale     The scale of the face
  * @param debug     true to display the face in magenta
  */
-void drawFace(face drawnFace, vector3 position, vector3 rotation, vector3 scale, bool debug);
+void drawFace(face drawnFace, bool debug);
+
+void rotateFaceY(face * currentFace, bool ccw);
+void rotateFaceZ(face * currentFace, bool ccw);
+void rotateFaceX(face * currentFace, bool ccw);
 
 #endif

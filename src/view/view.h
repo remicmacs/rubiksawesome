@@ -116,7 +116,6 @@ void rotateFront(rubikview * mainView);
  */
 void rotateBack(rubikview * mainView);
 
-
 /**
  * Close the window
  */
