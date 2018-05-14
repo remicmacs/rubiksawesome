@@ -202,11 +202,11 @@ void drawFace(face drawnFace, bool debug) {
 }
 
 
-void rotateFaceY(face * currentFace, bool ccw) {
+void rotateFaceY(face * currentFace, float angle, bool ccw) {
   for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
     float x = currentFace->corners[cornerIndex].x;
     float z = currentFace->corners[cornerIndex].z;
-    float yRotation = ccw == true ? - PI / 2 : PI / 2;
+    float yRotation = ccw == true ? - angle : angle;
 
     float xPrime = z * sinf(yRotation) + x * cosf(yRotation);
     float zPrime = z * cosf(yRotation) - x * sinf(yRotation);
@@ -217,11 +217,11 @@ void rotateFaceY(face * currentFace, bool ccw) {
 }
 
 
-void rotateFaceZ(face * currentFace, bool ccw) {
+void rotateFaceZ(face * currentFace, float angle, bool ccw) {
   for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
     float x = currentFace->corners[cornerIndex].x;
     float y = currentFace->corners[cornerIndex].y;
-    float zRotation = ccw == true ? - PI / 2 : PI / 2;
+    float zRotation = ccw == true ? - angle : angle;
 
     float xPrime = x * cosf(zRotation) - y * sinf(zRotation);
     float yPrime = x * sinf(zRotation) + y * cosf(zRotation);
@@ -232,11 +232,11 @@ void rotateFaceZ(face * currentFace, bool ccw) {
 }
 
 
-void rotateFaceX(face * currentFace, bool ccw) {
+void rotateFaceX(face * currentFace, float angle, bool ccw) {
   for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
     float z = currentFace->corners[cornerIndex].z;
     float y = currentFace->corners[cornerIndex].y;
-    float xRotation = ccw == true ? - PI / 2 : PI / 2;
+    float xRotation = ccw == true ? - angle : angle;
 
     float zPrime = y * sinf(xRotation) + z * cosf(xRotation);
     float yPrime = y * cosf(xRotation) - z * sinf(xRotation);

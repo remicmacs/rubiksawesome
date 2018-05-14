@@ -25,6 +25,14 @@ typedef struct _camera {
 } camera;
 
 
+typedef struct _animation {
+  bool isActive;
+  int targetStep;
+  int currentStep;
+  enum FaceType animatedFace;
+} animation;
+
+
 /**
  * A structure holding all the informations related to the view
  */
@@ -39,6 +47,7 @@ typedef struct _rubikview {
   cube * topFace[9];          /**< The cubes composing the top face **/
   bool isMoving;
   animation cubeAnimation;
+  bool animationsEnabled;
 } rubikview;
 
 
@@ -118,6 +127,16 @@ void rotateFront(rubikview * mainView);
  * @param mainView The structure holding the view
  */
 void rotateBack(rubikview * mainView);
+
+void animateUp(rubikview * mainView);
+void animateDown(rubikview * mainView);
+void animateLeft(rubikview * mainView);
+void animateRight(rubikview * mainView);
+void animateFront(rubikview * mainView);
+void animateBack(rubikview * mainView);
+
+void rotateDataUp(rubikview * mainView);
+void rotateDataDown(rubikview * mainView);
 
 /**
  * Close the window
