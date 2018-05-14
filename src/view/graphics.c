@@ -245,3 +245,41 @@ void rotateFaceX(face * currentFace, bool ccw) {
     currentFace->corners[cornerIndex].y = yPrime;
   }
 }
+
+
+void rotateFaceData(cube ** rotatedFace, bool ccw) {
+  if (ccw) {
+    // Here is counterclockwise
+    cube * tempCube;
+
+    // Rotate corners
+    tempCube = rotatedFace[0];
+    rotatedFace[0] = rotatedFace[6];
+    rotatedFace[6] = rotatedFace[8];
+    rotatedFace[8] = rotatedFace[2];
+    rotatedFace[2] = tempCube;
+
+    // Rotate edges
+    tempCube = rotatedFace[1];
+    rotatedFace[1] = rotatedFace[3];
+    rotatedFace[3] = rotatedFace[7];
+    rotatedFace[7] = rotatedFace[5];
+    rotatedFace[5] = tempCube;
+  } else {
+    cube * tempCube;
+
+    // Rotate corners
+    tempCube = rotatedFace[0];
+    rotatedFace[0] = rotatedFace[2];
+    rotatedFace[2] = rotatedFace[8];
+    rotatedFace[8] = rotatedFace[6];
+    rotatedFace[6] = tempCube;
+
+    // Rotate edges
+    tempCube = rotatedFace[1];
+    rotatedFace[1] = rotatedFace[5];
+    rotatedFace[5] = rotatedFace[7];
+    rotatedFace[7] = rotatedFace[3];
+    rotatedFace[3] = tempCube;
+  }
+}

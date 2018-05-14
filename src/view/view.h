@@ -12,6 +12,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <stdbool.h>
 #include "graphics.h"
 
 
@@ -36,6 +37,8 @@ typedef struct _rubikview {
   cube * leftFace[9];         /**< The cubes composing the left face **/
   cube * bottomFace[9];       /**< The cubes composing the down face **/
   cube * topFace[9];          /**< The cubes composing the top face **/
+  bool isMoving;
+  animation cubeAnimation;
 } rubikview;
 
 

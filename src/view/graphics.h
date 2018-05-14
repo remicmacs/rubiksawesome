@@ -67,6 +67,12 @@ typedef struct _cube {
 } cube;
 
 
+typedef struct _animation {
+  bool isActive;
+  void (* update)();
+} animation;
+
+
 /**
  * Not used yet.
  */
@@ -123,5 +129,6 @@ void drawFace(face drawnFace, bool debug);
 void rotateFaceY(face * currentFace, bool ccw);
 void rotateFaceZ(face * currentFace, bool ccw);
 void rotateFaceX(face * currentFace, bool ccw);
+void rotateFaceData(cube ** rotatedFace, bool ccw);
 
 #endif
