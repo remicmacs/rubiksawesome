@@ -1,47 +1,159 @@
-#define F 0
-#define B 1
-#define R 2
-#define L 3
-#define U 4
-#define D 5
-#define FP 6
-#define BP 7
-#define RP 8
-#define LP 9
-#define UP 10
-#define DP 11
-
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 
+#include "../controller/errorController.h"
+
+/**
+ * Data structure to hold cube state function handle to manipulate cube.
+ */
 typedef struct cubeStruct{
-    unsigned char cube[6][3][3];
-    void (*rotate)(struct cubeStruct, _Bool);
+    unsigned char ** cube[6];
+    struct cubeStruct * (*rotate)(struct cubeStruct *, char *);
+    struct cubeStruct * (*copy)(struct cubeStruct *);
+    _Bool (*equals)(struct cubeStruct *, struct cubeStruct *);
+    void (*print)(struct cubeStruct *);
 } cube ;
 
-void rotate(cube rubikscube, unsigned int id, _Bool cclw);
+/**
+ * Enumeration of all moves implemented by the public method rotate.
+ */
+typedef enum {
+    F,B,R,L,U,D,
+    f,b,r,l,u,d,
+    x,y,z,
+    Fi,Bi,Ri,Li,Ui,Di,
+    fi,bi,ri,li,ui,di,
+    xi,yi,zi,
+    F2,B2,R2,L2,U2,D2,
+    f2,b2,r2,l2,u2,d2,
+    x2,y2,z2,
+    Fi2,Bi2,Ri2,Li2,Ui2,Di2,
+    fi2,bi2,ri2,li2,ui2,di2,
+    xi2,yi2,zi2
+} move;
 
-void rotateF(cube rubikscube);
+/**
+ * Function to map a char * token to a given move.
+ *
+ * The function maps a valid string token to all the 60 moves implemented.
+ * The token format is the following :
+ *  <BASEMOVE>[i][2]
+ *  
+ *  BASEMOVE : F|B|R|L|U|D
+ *
+ *  [i] : counter-clockwise rotation notation
+ *  [2] : double rotation
+ *
+ * @param moveCode the string token of the given move
+ *
+ * @returns a enum move representing the rotation
+ * @see enum move
+ */
+move mapCodeToMove(char * moveCode);
 
-void rotateB(cube rubikscube);
+/**
+ * Cube initialization to unscrambled Rubik's Cube.
+ *
+ * Initialize the cube to :
+ *  F: Green == 'g'
+ *  B: Blue == 'b'
+ *  R: Red == 'r'
+ *  L: Orange == 'o'
+ *  U: White == 'w'
+ *  D: Yellow == 'y'
+ *  Links public methods to data structures
+ *  Initialized cube carries an interface with itself :
+ *      ```C
+ *          cube * newCube = initCube();
+ *          newCube->rotate(newCube,"F"); // rotate cube
+ *          // Make a deep copy of the cube
+ *          cube * copyCube = newCube->copy(newCube);
+ *          // Compares two cubes
+ *          _Bool cubesAreEqual = newCube->equals(newCube, copyCube);
+ *          newCube->print(newCube); // prints cube to stderr
+ *      ```
+ *  @returns the initialized cube pointer is returned
+ */
+cube * initCube();
 
-void rotateR(cube rubikscube);
+////////////////////////////////////// PUBLIC METHODS //////////////////////////
 
-void rotateL(cube rubikscube);
+/**
+ * Main handle to change cube data structure.
+ *
+ * Rotates the cube given a string token. Tokens may be longer than 3 chars byt
+ *  won't be parsed further than moveCode[2], given mapCodeToMove()
+ *  implementation.
+ * 
+ *
+ * Inputs :
+ *   @param self cube to be modified
+ *   @param moveCode Code of unique rotation to apply in a string token
+ *      Rotations can be :
+ *          * Unique or double with a "2" modifier at the end of string
+ *          * Clockwise or counter-clockwise with a "i" modifier between the
+ *              face code and the double modifier if it exists
+ *
+ *      Examples of valid rotations:
+ *          "R"
+ *          "Ri"
+ *          "U2"
+ *          "Fi2"
+ *
+ *  Output :
+ *  @returns modified cube data structure
+ *
+ *  @see mapCodeToMove()
+ */
+cube * rotate(cube * self, char * moveCode);
 
-void rotateU(cube rubikscube);
+/**
+ * Deep copy function to copy a cube.
+ *
+ * Does a deep copy of the cube pointed to by self. This is a **deep** copy and
+ * not a **clone**. Hence, new faces and rows are created and allocated.
+ * Therefore modifying the original won't have any influence on the copy and
+ * vice-versa.
+ * All cubes created with this function should be properly destroyed with
+ * destroyCube(cube *)
+ *
+ *  @param self pointer to cube to be copied
+ *  @returns a pointer to the copy of passed cube
+ *
+ *  @see destroyCube()
+ */
+cube * copyCube(cube * self);
 
-void rotateD(cube rubikscube);
+/**
+ * Returns true if both cubes are equivalent.
+ *
+ * This function implements an equality check between cubes.
+ * Both cubes are copied and redressed, and then compared.
+ * Two cubes are equal if the combination is the same, even if they are not
+ * oriented in the same direction.
+ *
+ * @param aCube Reference cube. Is self when called with 
+ *  aCube->equals(aCube, bCube)
+ * @param bCube Cube to compare to aCube
+ *
+ * @returns true if cubes are equivalent, false else
+ */
+_Bool cubeIsEqual(cube * aCube, cube * bCube);
 
-void rotateFP(cube rubikscube);
+/**
+ * Helper function to print cube map to stderr.
+ *
+ * Function may be called by aCube->print(aCube)
+ * @param self cube to print to stderr.
+ */
+void printCube(cube * self);
 
-void rotateBP(cube rubikscube);
+/**
+ * Function to delete cube properly and avoid memory leaks
+ * @param self pointer to cube to delete
+ */
+void destroyCube(cube * self);
 
-void rotateRP(cube rubikscube);
 
-void rotateLP(cube rubikscube);
-
-void rotateUP(cube rubikscube);
-
-void rotateDP(cube rubikscube);
 
