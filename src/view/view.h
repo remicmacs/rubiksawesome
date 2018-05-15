@@ -37,20 +37,20 @@ typedef struct _animation {
  * A structure holding all the informations related to the view
  */
 typedef struct _rubikview {
-  camera mainCamera;          /**< The camera in the view **/
-  cube * cubes;               /**< All the cubes composing the Rubik's cube **/
-  cube * backFace[9];         /**< The cubes composing the back face **/
-  cube * frontFace[9];        /**< The cubes composing the front face **/
-  cube * rightFace[9];        /**< The cubes composing the right face **/
-  cube * leftFace[9];         /**< The cubes composing the left face **/
-  cube * bottomFace[9];       /**< The cubes composing the down face **/
-  cube * topFace[9];          /**< The cubes composing the top face **/
-  cube * xSlice[9];
-  cube * ySlice[9];
-  cube * zSlice[9];
-  bool isMoving;
-  animation cubeAnimation;
-  bool animationsEnabled;
+  camera mainCamera;          /**< The camera in the view */
+  cube * cubes;               /**< All the cubes composing the Rubik's cube */
+  cube * backFace[9];         /**< The cubes composing the back face */
+  cube * frontFace[9];        /**< The cubes composing the front face */
+  cube * rightFace[9];        /**< The cubes composing the right face */
+  cube * leftFace[9];         /**< The cubes composing the left face */
+  cube * bottomFace[9];       /**< The cubes composing the down face */
+  cube * topFace[9];          /**< The cubes composing the top face */
+  cube * xSlice[9];           /**< The cubes composing the x slice */
+  cube * ySlice[9];           /**< The cubes composing the y slice */
+  cube * zSlice[9];           /**< The cubes composing the z slice */
+  bool isMoving;              /**< Indicates if the cube is moving */
+  animation cubeAnimation;    /**< Holds the current animation */
+  bool animationsEnabled;     /**< Enables or disables animations */
 } rubikview;
 
 
@@ -119,6 +119,13 @@ void rotateRight(rubikview * mainView);
 
 
 /**
+ * Rotate the y slice
+ * @param mainView The structure holding the view
+ */
+void rotateMiddle(rubikview * mainView);
+
+
+/**
  * Rotate the Front face
  * @param mainView The structure holding the view
  */
@@ -135,11 +142,16 @@ void animateUp(rubikview * mainView);
 void animateDown(rubikview * mainView);
 void animateLeft(rubikview * mainView);
 void animateRight(rubikview * mainView);
+void animateMiddle(rubikview * mainView);
 void animateFront(rubikview * mainView);
 void animateBack(rubikview * mainView);
 
 void rotateDataUp(rubikview * mainView);
 void rotateDataDown(rubikview * mainView);
+void rotateDataLeft(rubikview * mainView);
+void rotateDataRight(rubikview * mainView);
+void rotateDataFront(rubikview * mainView);
+void rotateDataBack(rubikview * mainView);
 
 /**
  * Close the window

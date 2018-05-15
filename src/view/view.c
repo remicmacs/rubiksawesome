@@ -104,6 +104,7 @@ cube * generateCubes() {
   return cubes;
 }
 
+
 void attachCubesToFaces(rubikview * mainView) {
   // Mapping the bottom face
   for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
@@ -156,6 +157,7 @@ void attachCubesToFaces(rubikview * mainView) {
     }
   }
 }
+
 
 void update(rubikview * mainView) {
   camera * mainCamera = &(mainView->mainCamera);
@@ -213,6 +215,10 @@ void update(rubikview * mainView) {
     if (event.key.keysym.sym == SDLK_b && event.key.type == SDL_KEYDOWN) {
       rotateBack(mainView);
     }
+
+    if (event.key.keysym.sym == SDLK_m && event.key.type == SDL_KEYDOWN) {
+      rotateMiddle(mainView);
+    }
   }
 
   if (mainView->isMoving) {
@@ -235,14 +241,11 @@ void update(rubikview * mainView) {
       case BACK:
         animateBack(mainView);
         break;
+      case MIDDLE:
+        animateMiddle(mainView);
+        break;
     }
   }
-
-  // switch(event.type) {
-  //   case SDL_QUIT:
-  //     exit(0);
-  //     break;
-  // }
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -259,12 +262,10 @@ void update(rubikview * mainView) {
     drawCube(cubes[cubeIndex], false);
   }
 
-  // colour magenta = {255, 0, 255};
-  // setCubeColour(magenta, mainView->frontFace[2]);
-
   glFlush();
   SDL_GL_SwapBuffers();
 }
+
 
 void rotateUp(rubikview * mainView) {
   if (!mainView->animationsEnabled) {
@@ -283,6 +284,7 @@ void rotateUp(rubikview * mainView) {
   }
 }
 
+
 void rotateDown(rubikview * mainView) {
   if (!mainView->animationsEnabled) {
     for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
@@ -300,6 +302,7 @@ void rotateDown(rubikview * mainView) {
   }
 }
 
+
 void rotateLeft(rubikview * mainView) {
   if (!mainView->animationsEnabled) {
     for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
@@ -307,6 +310,7 @@ void rotateLeft(rubikview * mainView) {
         rotateFaceX(&(mainView->leftFace[cubeIndex]->faces[faceIndex]), PI / 2, false);
       }
     }
+    rotateDataLeft(mainView);
   } else {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
@@ -315,33 +319,9 @@ void rotateLeft(rubikview * mainView) {
     mainView->cubeAnimation.animatedFace = LEFT;
   }
 
-  /**
-   * F <- T <- B <- D
-   */
-  cube * tempCubes[3];
-
-  tempCubes[0] = mainView->frontFace[0];
-  tempCubes[1] = mainView->frontFace[3];
-  tempCubes[2] = mainView->frontFace[6];
-
-  mainView->frontFace[0] = mainView->topFace[0];
-  mainView->frontFace[3] = mainView->topFace[3];
-  mainView->frontFace[6] = mainView->topFace[6];
-
-  mainView->topFace[0] = mainView->backFace[6];
-  mainView->topFace[3] = mainView->backFace[3];
-  mainView->topFace[6] = mainView->backFace[0];
-
-  mainView->backFace[6] = mainView->bottomFace[6];
-  mainView->backFace[3] = mainView->bottomFace[3];
-  mainView->backFace[0] = mainView->bottomFace[0];
-
-  mainView->bottomFace[6] = tempCubes[0];
-  mainView->bottomFace[3] = tempCubes[1];
-  mainView->bottomFace[0] = tempCubes[2];
-
   rotateFaceData(mainView->leftFace, true);
 }
+
 
 void rotateRight(rubikview * mainView) {
   if (!mainView->animationsEnabled) {
@@ -350,6 +330,7 @@ void rotateRight(rubikview * mainView) {
         rotateFaceX(&(mainView->rightFace[cubeIndex]->faces[faceIndex]), PI / 2, true);
       }
     }
+    rotateDataRight(mainView);
   } else {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
@@ -358,33 +339,26 @@ void rotateRight(rubikview * mainView) {
     mainView->cubeAnimation.animatedFace = RIGHT;
   }
 
-  // Then we need to move each row on the left from the contiguous faces to the
-  // next face.
-  // F <- D <- B <- T
-  cube * tempCubes[3];
-
-  tempCubes[0] = mainView->frontFace[2];
-  tempCubes[1] = mainView->frontFace[5];
-  tempCubes[2] = mainView->frontFace[8];
-
-  mainView->frontFace[2] = mainView->bottomFace[8];
-  mainView->frontFace[5] = mainView->bottomFace[5];
-  mainView->frontFace[8] = mainView->bottomFace[2];
-
-  mainView->bottomFace[8] = mainView->backFace[8];
-  mainView->bottomFace[5] = mainView->backFace[5];
-  mainView->bottomFace[2] = mainView->backFace[2];
-
-  mainView->backFace[8] = mainView->topFace[2];
-  mainView->backFace[5] = mainView->topFace[5];
-  mainView->backFace[2] = mainView->topFace[8];
-
-  mainView->topFace[2] = tempCubes[0];
-  mainView->topFace[5] = tempCubes[1];
-  mainView->topFace[8] = tempCubes[2];
-
   rotateFaceData(mainView->rightFace, false);
 }
+
+
+void rotateMiddle(rubikview * mainView) {
+  if (!mainView->animationsEnabled) {
+    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+        rotateFaceX(&(mainView->xSlice[cubeIndex]->faces[faceIndex]), PI / 2, false);
+      }
+    }
+  } else {
+    mainView->cubeAnimation.currentStep = 0;
+    mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
+    mainView->cubeAnimation.isActive = true;
+    mainView->isMoving = true;
+    mainView->cubeAnimation.animatedFace = MIDDLE;
+  }
+}
+
 
 void rotateFront(rubikview * mainView) {
   if (!mainView->animationsEnabled) {
@@ -393,6 +367,7 @@ void rotateFront(rubikview * mainView) {
         rotateFaceY(&(mainView->frontFace[cubeIndex]->faces[faceIndex]), PI / 2, false);
       }
     }
+    rotateDataFront(mainView);
   } else {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
@@ -400,29 +375,6 @@ void rotateFront(rubikview * mainView) {
     mainView->isMoving = true;
     mainView->cubeAnimation.animatedFace = FRONT;
   }
-
-  /** L <- B <- R <- T */
-  cube * tempCubes[3];
-
-  tempCubes[0] = mainView->leftFace[6];
-  tempCubes[1] = mainView->leftFace[3];
-  tempCubes[2] = mainView->leftFace[0];
-
-  mainView->leftFace[6] = mainView->bottomFace[0];
-  mainView->leftFace[3] = mainView->bottomFace[1];
-  mainView->leftFace[0] = mainView->bottomFace[2];
-
-  mainView->bottomFace[0] = mainView->rightFace[0];
-  mainView->bottomFace[1] = mainView->rightFace[3];
-  mainView->bottomFace[2] = mainView->rightFace[6];
-
-  mainView->rightFace[0] = mainView->topFace[2];
-  mainView->rightFace[3] = mainView->topFace[1];
-  mainView->rightFace[6] = mainView->topFace[0];
-
-  mainView->topFace[2] = tempCubes[0];
-  mainView->topFace[1] = tempCubes[1];
-  mainView->topFace[0] = tempCubes[2];
 
   rotateFaceData(mainView->frontFace, false);
 }
@@ -435,6 +387,7 @@ void rotateBack(rubikview * mainView) {
         rotateFaceY(&(mainView->backFace[cubeIndex]->faces[faceIndex]), PI / 2, true);
       }
     }
+    rotateDataBack(mainView);
   } else {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
@@ -443,31 +396,15 @@ void rotateBack(rubikview * mainView) {
     mainView->cubeAnimation.animatedFace = BACK;
   }
 
-  /** L <- T <- R <- B */
-  cube * tempCubes[3];
-
-  tempCubes[0] = mainView->leftFace[2];
-  tempCubes[1] = mainView->leftFace[5];
-  tempCubes[2] = mainView->leftFace[8];
-
-  mainView->leftFace[2] = mainView->topFace[6];
-  mainView->leftFace[5] = mainView->topFace[7];
-  mainView->leftFace[8] = mainView->topFace[8];
-
-  mainView->topFace[6] = mainView->rightFace[8];
-  mainView->topFace[7] = mainView->rightFace[5];
-  mainView->topFace[8] = mainView->rightFace[2];
-
-  mainView->rightFace[8] = mainView->bottomFace[8];
-  mainView->rightFace[5] = mainView->bottomFace[7];
-  mainView->rightFace[2] = mainView->bottomFace[6];
-
-  mainView->bottomFace[8] = tempCubes[0];
-  mainView->bottomFace[7] = tempCubes[1];
-  mainView->bottomFace[6] = tempCubes[2];
-
   rotateFaceData(mainView->backFace, true);
 }
+
+
+/*******************************************************************************
+ * ANIMATIONS
+ * Define animations functions. They are called everytime we need to update the
+ * animations
+ ******************************************************************************/
 
 
 void animateUp(rubikview * mainView) {
@@ -509,6 +446,7 @@ void animateDown(rubikview * mainView) {
   }
 }
 
+
 void animateLeft(rubikview * mainView) {
   int currentStep = mainView->cubeAnimation.currentStep;
   int targetStep = mainView->cubeAnimation.targetStep;
@@ -517,6 +455,7 @@ void animateLeft(rubikview * mainView) {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
+    rotateDataLeft(mainView);
   } else {
     for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
       for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
@@ -527,6 +466,7 @@ void animateLeft(rubikview * mainView) {
   }
 }
 
+
 void animateRight(rubikview * mainView) {
   int currentStep = mainView->cubeAnimation.currentStep;
   int targetStep = mainView->cubeAnimation.targetStep;
@@ -535,6 +475,7 @@ void animateRight(rubikview * mainView) {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
+    rotateDataRight(mainView);
   } else {
     for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
       for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
@@ -545,6 +486,26 @@ void animateRight(rubikview * mainView) {
   }
 }
 
+
+void animateMiddle(rubikview * mainView) {
+  int currentStep = mainView->cubeAnimation.currentStep;
+  int targetStep = mainView->cubeAnimation.targetStep;
+
+  if (currentStep == targetStep) {
+    mainView->cubeAnimation.currentStep = 0;
+    mainView->cubeAnimation.isActive = false;
+    mainView->isMoving = false;
+  } else {
+    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+        rotateFaceX(&(mainView->xSlice[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+      }
+    }
+    mainView->cubeAnimation.currentStep++;
+  }
+}
+
+
 void animateFront(rubikview * mainView) {
   int currentStep = mainView->cubeAnimation.currentStep;
   int targetStep = mainView->cubeAnimation.targetStep;
@@ -553,6 +514,7 @@ void animateFront(rubikview * mainView) {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
+    rotateDataFront(mainView);
   } else {
     for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
       for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
@@ -563,6 +525,7 @@ void animateFront(rubikview * mainView) {
   }
 }
 
+
 void animateBack(rubikview * mainView) {
   int currentStep = mainView->cubeAnimation.currentStep;
   int targetStep = mainView->cubeAnimation.targetStep;
@@ -571,6 +534,7 @@ void animateBack(rubikview * mainView) {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
+    rotateDataBack(mainView);
   } else {
     for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
       for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
@@ -580,6 +544,12 @@ void animateBack(rubikview * mainView) {
     mainView->cubeAnimation.currentStep++;
   }
 }
+
+
+/*******************************************************************************
+ * DATA ROTATION
+ * Here we rotate the data
+ ******************************************************************************/
 
 
 void rotateDataUp(rubikview * mainView) {
@@ -644,6 +614,114 @@ void rotateDataDown(rubikview * mainView) {
   mainView->rightFace[0] = tempCubes[2];
 
   rotateFaceData(mainView->bottomFace, true);
+}
+
+
+void rotateDataLeft(rubikview * mainView) {
+  /**
+   * F <- T <- B <- D
+   */
+  cube * tempCubes[3];
+
+  tempCubes[0] = mainView->frontFace[0];
+  tempCubes[1] = mainView->frontFace[3];
+  tempCubes[2] = mainView->frontFace[6];
+
+  mainView->frontFace[0] = mainView->topFace[0];
+  mainView->frontFace[3] = mainView->topFace[3];
+  mainView->frontFace[6] = mainView->topFace[6];
+
+  mainView->topFace[0] = mainView->backFace[6];
+  mainView->topFace[3] = mainView->backFace[3];
+  mainView->topFace[6] = mainView->backFace[0];
+
+  mainView->backFace[6] = mainView->bottomFace[6];
+  mainView->backFace[3] = mainView->bottomFace[3];
+  mainView->backFace[0] = mainView->bottomFace[0];
+
+  mainView->bottomFace[6] = tempCubes[0];
+  mainView->bottomFace[3] = tempCubes[1];
+  mainView->bottomFace[0] = tempCubes[2];
+}
+
+
+void rotateDataRight(rubikview * mainView) {
+  // Then we need to move each row on the left from the contiguous faces to the
+  // next face.
+  // F <- D <- B <- T
+  cube * tempCubes[3];
+
+  tempCubes[0] = mainView->frontFace[2];
+  tempCubes[1] = mainView->frontFace[5];
+  tempCubes[2] = mainView->frontFace[8];
+
+  mainView->frontFace[2] = mainView->bottomFace[8];
+  mainView->frontFace[5] = mainView->bottomFace[5];
+  mainView->frontFace[8] = mainView->bottomFace[2];
+
+  mainView->bottomFace[8] = mainView->backFace[8];
+  mainView->bottomFace[5] = mainView->backFace[5];
+  mainView->bottomFace[2] = mainView->backFace[2];
+
+  mainView->backFace[8] = mainView->topFace[2];
+  mainView->backFace[5] = mainView->topFace[5];
+  mainView->backFace[2] = mainView->topFace[8];
+
+  mainView->topFace[2] = tempCubes[0];
+  mainView->topFace[5] = tempCubes[1];
+  mainView->topFace[8] = tempCubes[2];
+}
+
+
+void rotateDataFront(rubikview * mainView) {
+  /** L <- D <- R <- T */
+  cube * tempCubes[3];
+
+  tempCubes[0] = mainView->leftFace[6];
+  tempCubes[1] = mainView->leftFace[3];
+  tempCubes[2] = mainView->leftFace[0];
+
+  mainView->leftFace[6] = mainView->bottomFace[0];
+  mainView->leftFace[3] = mainView->bottomFace[1];
+  mainView->leftFace[0] = mainView->bottomFace[2];
+
+  mainView->bottomFace[0] = mainView->rightFace[0];
+  mainView->bottomFace[1] = mainView->rightFace[3];
+  mainView->bottomFace[2] = mainView->rightFace[6];
+
+  mainView->rightFace[0] = mainView->topFace[2];
+  mainView->rightFace[3] = mainView->topFace[1];
+  mainView->rightFace[6] = mainView->topFace[0];
+
+  mainView->topFace[2] = tempCubes[0];
+  mainView->topFace[1] = tempCubes[1];
+  mainView->topFace[0] = tempCubes[2];
+}
+
+
+void rotateDataBack(rubikview * mainView) {
+  /** L <- T <- R <- D */
+  cube * tempCubes[3];
+
+  tempCubes[0] = mainView->leftFace[2];
+  tempCubes[1] = mainView->leftFace[5];
+  tempCubes[2] = mainView->leftFace[8];
+
+  mainView->leftFace[2] = mainView->topFace[6];
+  mainView->leftFace[5] = mainView->topFace[7];
+  mainView->leftFace[8] = mainView->topFace[8];
+
+  mainView->topFace[6] = mainView->rightFace[8];
+  mainView->topFace[7] = mainView->rightFace[5];
+  mainView->topFace[8] = mainView->rightFace[2];
+
+  mainView->rightFace[8] = mainView->bottomFace[8];
+  mainView->rightFace[5] = mainView->bottomFace[7];
+  mainView->rightFace[2] = mainView->bottomFace[6];
+
+  mainView->bottomFace[8] = tempCubes[0];
+  mainView->bottomFace[7] = tempCubes[1];
+  mainView->bottomFace[6] = tempCubes[2];
 }
 
 

@@ -44,7 +44,7 @@ cube generateCube(transform cubeTransform) {
       generateFace(cubeTransform, FRONT),
       generateFace(cubeTransform, BACK),
       generateFace(cubeTransform, LEFT),
-      generateFace(cubeTransform, RIGHT)
+      generateFace(cubeTransform, RIGHT),
     },
     cubeTransform
   };
@@ -121,6 +121,8 @@ face generateFace(transform cubeTransform, enum FaceType faceType) {
         },
         {0, 255, 0}
       };
+      break;
+    default:
       break;
   }
 

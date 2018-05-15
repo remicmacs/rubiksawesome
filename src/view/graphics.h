@@ -76,7 +76,8 @@ enum FaceType {
   FRONT,
   BACK,
   RIGHT,
-  LEFT
+  LEFT,
+  MIDDLE
 };
 
 
