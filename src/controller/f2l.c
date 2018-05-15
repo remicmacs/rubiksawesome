@@ -6,7 +6,7 @@ cube doWhiteCross(cube self){
 	char colors[4] ={'o','b','g','r'};
 	for(int i=0; i <4; i++){
 		while(correctPositionCross(self, e) == false ){
-			e = searchWhiteEdge(self, 'b');	
+			e = searchWhiteEdge(self, 'o');	
 			self = rotateR(self);
 			if(isEdgeOnFace(e,D)){
 											break;
