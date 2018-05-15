@@ -115,6 +115,11 @@ void attachCubesToFaces(rubikview * mainView) {
     mainView->topFace[cubeIndex - 18] = &(mainView->cubes[cubeIndex]);
   }
 
+  // Mapping the z slice
+  for (int cubeIndex = 9; cubeIndex < 18; cubeIndex++) {
+    mainView->zSlice[cubeIndex - 9] = &(mainView->cubes[cubeIndex]);
+  }
+
   // Mapping the left face
   for (int cubeIndex = 0; cubeIndex < 27; cubeIndex += 3) {
     mainView->leftFace[cubeIndex / 3] = &(mainView->cubes[cubeIndex]);
@@ -123,6 +128,11 @@ void attachCubesToFaces(rubikview * mainView) {
   // Mapping the right face
   for (int cubeIndex = 2; cubeIndex < 27; cubeIndex += 3) {
     mainView->rightFace[(cubeIndex - 2) / 3] = &(mainView->cubes[cubeIndex]);
+  }
+
+  // Mapping the x slice
+  for (int cubeIndex = 1; cubeIndex < 27; cubeIndex += 3) {
+    mainView->xSlice[(cubeIndex - 1) / 3] = &(mainView->cubes[cubeIndex]);
   }
 
   // Mapping the front face
@@ -135,7 +145,14 @@ void attachCubesToFaces(rubikview * mainView) {
   // Mapping the back face
   for (int cubeIndex = 6; cubeIndex < 27; cubeIndex += 9) {
     for (int cubeSubIndex = 0; cubeSubIndex < 3; cubeSubIndex++) {
-      mainView->backFace[cubeSubIndex + ((cubeIndex - 1) / 3) - 1] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
+      mainView->backFace[cubeSubIndex + (cubeIndex / 3) - 2] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
+    }
+  }
+
+  // Mapping the y slice
+  for (int cubeIndex = 3; cubeIndex < 27; cubeIndex += 9) {
+    for (int cubeSubIndex = 0; cubeSubIndex < 3; cubeSubIndex++) {
+      mainView->ySlice[cubeSubIndex + (cubeIndex / 3) - 1] = &(mainView->cubes[cubeIndex + cubeSubIndex]);
     }
   }
 }

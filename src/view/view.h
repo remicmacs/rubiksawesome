@@ -45,6 +45,9 @@ typedef struct _rubikview {
   cube * leftFace[9];         /**< The cubes composing the left face **/
   cube * bottomFace[9];       /**< The cubes composing the down face **/
   cube * topFace[9];          /**< The cubes composing the top face **/
+  cube * xSlice[9];
+  cube * ySlice[9];
+  cube * zSlice[9];
   bool isMoving;
   animation cubeAnimation;
   bool animationsEnabled;
