@@ -21,16 +21,16 @@ typedef struct cubeStruct{
 typedef enum {
     F,B,R,L,U,D,
     f,b,r,l,u,d,
-    X,Y,Z,
+    x,y,z,
     Fi,Bi,Ri,Li,Ui,Di,
     fi,bi,ri,li,ui,di,
-    Xi,Yi,Zi,
+    xi,yi,zi,
     F2,B2,R2,L2,U2,D2,
     f2,b2,r2,l2,u2,d2,
-    X2,Y2,Z2,
+    x2,y2,z2,
     Fi2,Bi2,Ri2,Li2,Ui2,Di2,
     fi2,bi2,ri2,li2,ui2,di2,
-    Xi2,Yi2,Zi2
+    xi2,yi2,zi2
 } move;
 
 /**

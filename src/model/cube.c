@@ -6,7 +6,7 @@ move mapCodeToMove(char * moveCode){
     char codes[15] = {
         'F', 'B', 'R', 'L', 'U', 'D',
         'f', 'b', 'r', 'l', 'u', 'd',
-        'X', 'Y', 'Z'
+        'x', 'y', 'z'
     };
 
     char moveChar = moveCode[0]; // retrieving first letter
@@ -158,9 +158,9 @@ cube * rotateCurrentFaceCCLW(cube * self, int current) {
  * * r : the two right layers
  * * u : the two up layers
  * * d : the two down layers
- * * X : full cube rotation in the same angle as R
- * * Y : full cube rotation in the same angle as U
- * * Z : full cube rotation in the same angle as F
+ * * x : full cube rotation in the same angle as R
+ * * y : full cube rotation in the same angle as U
+ * * z : full cube rotation in the same angle as F
  *
  * @param self Reference to the cube to be rotated
  * @returns Reference to the rotated cube
@@ -378,7 +378,7 @@ cube * rotateDi(cube * self){
     return self;
 }
 
-cube * rotateX(cube * self) {
+cube * rotatex(cube * self) {
     self = rotateCurrentFace(
             rotateCurrentFaceCCLW(self, L),
             R);
@@ -405,7 +405,7 @@ cube * rotateX(cube * self) {
     return self;
 }
 
-cube * rotateY(cube * self) {
+cube * rotatey(cube * self) {
     self = rotateCurrentFace(
             rotateCurrentFaceCCLW(self, D),
             U);
@@ -418,7 +418,7 @@ cube * rotateY(cube * self) {
     return self;
 }
 
-cube * rotateZ(cube * self) {
+cube * rotatez(cube * self) {
     self = rotateCurrentFace(
             rotateCurrentFaceCCLW(self, B),
             F);
@@ -445,99 +445,99 @@ cube * rotateZ(cube * self) {
     return self;
 }
 
-cube * rotateXi(cube * self) {
+cube * rotatexi(cube * self) {
     for(int index = 0 ; index < 3 ; index++) {
-        rotateX(self);
+        rotatex(self);
     }
 
     return self;
 }
 
-cube * rotateYi(cube * self) {
+cube * rotateyi(cube * self) {
     for(int index = 0 ; index < 3 ; index++) {
-        rotateY(self);
+        rotatey(self);
     }
 
     return self;
 }
 
-cube * rotateZi(cube * self) {
+cube * rotatezi(cube * self) {
     for(int index = 0 ; index < 3 ; index++) {
-        rotateZ(self);
+        rotatez(self);
     }
 
     return self;
 }
 
 cube * rotatef(cube * self) {
-    return rotateZ(
+    return rotatez(
             rotateB(self)
             );
 }
 
 cube * rotateb(cube * self) {
-    return rotateZi(
+    return rotatezi(
             rotateF(self)
             );
 }
 
 cube * rotater(cube * self) {
-    return rotateX(
+    return rotatex(
             rotateL(self)
             );
 }
 
 cube * rotatel(cube * self) {
-    return rotateXi(
+    return rotatexi(
             rotateR(self)
             );
 }
 
 cube * rotateu(cube * self) {
-    return rotateY(
+    return rotatey(
             rotateD(self)
             );
 }
 
 cube * rotated(cube * self) {
-    return rotateYi(
+    return rotateyi(
             rotateU(self)
             );
 }
 
 cube * rotatefi(cube * self){
     return rotateBi(
-            rotateZi(self)
+            rotatezi(self)
             );
 }
 
 cube * rotatebi(cube * self){
     return rotateFi(
-            rotateZ(self)
+            rotatez(self)
             );
 }
 
 cube * rotateri(cube * self){
     return rotateLi(
-            rotateXi(self)
+            rotatexi(self)
             );
 }
 
 cube * rotateli(cube * self){
     return rotateRi(
-            rotateX(self)
+            rotatex(self)
             );
 }
 
 cube * rotateui(cube * self){
     return rotateDi(
-            rotateYi(self)
+            rotateyi(self)
             );
 }
 
 cube * rotatedi(cube * self){
     return rotateUi(
-            rotateY(self)
+            rotatey(self)
             );
 }
 
@@ -564,19 +564,19 @@ cube * redressCube(cube * self) {
     while(self->cube[++greenPos][1][1] != 'g');
     switch(greenPos) {
         case(R):
-            self->rotate(self, "Y");
+            self->rotate(self, "y");
             break;
         case(L):
-            self->rotate(self, "Yi");
+            self->rotate(self, "yi");
             break;
         case(U):
-            self->rotate(self, "Xi");
+            self->rotate(self, "xi");
             break;
         case(D):
-            self->rotate(self, "X");
+            self->rotate(self, "x");
             break;
         case(B):
-            self->rotate(self, "X2");
+            self->rotate(self, "x2");
             break;
     }
 
@@ -587,13 +587,13 @@ cube * redressCube(cube * self) {
 
     switch(redPos) {
         case(U):
-            self->rotate(self, "Z");
+            self->rotate(self, "z");
             break;
         case(L):
-            self->rotate(self, "Z2");
+            self->rotate(self, "z2");
             break;
         case(D):
-            self->rotate(self, "Zi");
+            self->rotate(self, "zi");
             break;
     }
 
@@ -653,23 +653,23 @@ cube * rotate(cube * self, char * moveCode) {
         case(Di):
             chosenMoveFn = &rotateDi;
             break;
-        case(X):
-            chosenMoveFn = &rotateX;
+        case(x):
+            chosenMoveFn = &rotatex;
             break;
-        case(Y):
-            chosenMoveFn = &rotateY;
+        case(y):
+            chosenMoveFn = &rotatey;
             break;
-        case(Z):
-            chosenMoveFn = &rotateZ;
+        case(z):
+            chosenMoveFn = &rotatez;
             break;
-        case(Xi):
-            chosenMoveFn = &rotateXi;
+        case(xi):
+            chosenMoveFn = &rotatexi;
             break;
-        case(Yi):
-            chosenMoveFn = &rotateYi;
+        case(yi):
+            chosenMoveFn = &rotateyi;
             break;
-        case(Zi):
-            chosenMoveFn = &rotateZi;
+        case(zi):
+            chosenMoveFn = &rotatezi;
             break;
         case(f):
             chosenMoveFn = &rotatef;
