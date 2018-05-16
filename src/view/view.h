@@ -51,6 +51,7 @@ typedef struct _rubikview {
   bool isMoving;              /**< Indicates if the cube is moving */
   animation cubeAnimation;    /**< Holds the current animation */
   bool animationsEnabled;     /**< Enables or disables animations */
+  rubikcube * rubikCube;
 } rubikview;
 
 
@@ -152,6 +153,10 @@ void rotateDataLeft(rubikview * mainView);
 void rotateDataRight(rubikview * mainView);
 void rotateDataFront(rubikview * mainView);
 void rotateDataBack(rubikview * mainView);
+
+void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw);
+void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw);
+void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw);
 
 /**
  * Close the window

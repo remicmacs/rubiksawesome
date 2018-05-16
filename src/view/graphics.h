@@ -10,6 +10,7 @@
 
 
 #include <stdbool.h>
+#include <stdio.h>
 
 
 #define PI 3.141592653589793
@@ -68,6 +69,14 @@ typedef struct _cube {
 
 
 /**
+ * A structure for a rubik's cube
+ */
+typedef struct _rubikcube {
+  cube **** cubes;
+} rubikcube;
+
+
+/**
  * Not used yet.
  */
 enum FaceType {
@@ -79,6 +88,9 @@ enum FaceType {
   LEFT,
   MIDDLE
 };
+
+
+rubikcube * generateRubikCube();
 
 
 /**

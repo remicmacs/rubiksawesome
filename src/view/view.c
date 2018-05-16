@@ -46,6 +46,8 @@ rubikview generateView() {
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.isMoving = false;
 
+  mainView.rubikCube = generateRubikCube();
+
   /**
    * We can enable animations with the -DANIMATIONS_ENABLED set
    */
@@ -259,7 +261,15 @@ void update(rubikview * mainView) {
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
   for (int cubeIndex = 0; cubeIndex < 27; cubeIndex++) {
-    drawCube(cubes[cubeIndex], false);
+    //drawCube(cubes[cubeIndex], false);
+  }
+
+  for (int zIndex = 0; zIndex < 3; zIndex++) {
+    for (int yIndex = 0; yIndex < 3; yIndex++) {
+      for (int xIndex = 0; xIndex < 3; xIndex++) {
+        drawCube(*mainView->rubikCube->cubes[xIndex][yIndex][zIndex], false);
+      }
+    }
   }
 
   glFlush();
@@ -269,12 +279,21 @@ void update(rubikview * mainView) {
 
 void rotateUp(rubikview * mainView) {
   if (!mainView->animationsEnabled) {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    /*for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
       for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
         rotateFaceZ(&(mainView->topFace[cubeIndex]->faces[faceIndex]), PI / 2, true);
       }
     }
-    rotateDataUp(mainView);
+    rotateDataUp(mainView);*/
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceZ(&mainView->rubikCube->cubes[xIndex][yIndex][2]->faces[faceIndex], PI / 2, true);
+        }
+      }
+    }
+    rotateDataZ(mainView->rubikCube, 2, true);
   } else {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
@@ -325,12 +344,21 @@ void rotateLeft(rubikview * mainView) {
 
 void rotateRight(rubikview * mainView) {
   if (!mainView->animationsEnabled) {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceX(&(mainView->rightFace[cubeIndex]->faces[faceIndex]), PI / 2, true);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceX(&(mainView->rightFace[cubeIndex]->faces[faceIndex]), PI / 2, true);
+    //   }
+    // }
+    // rotateDataRight(mainView);
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceX(&mainView->rubikCube->cubes[2][xIndex][yIndex]->faces[faceIndex], PI / 2, true);
+        }
       }
     }
-    rotateDataRight(mainView);
+    rotateDataX(mainView->rubikCube, 2, true);
   } else {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
@@ -416,10 +444,19 @@ void animateUp(rubikview * mainView) {
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
     rotateDataUp(mainView);
+    rotateDataZ(mainView->rubikCube, 2, true);
   } else {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceZ(&(mainView->topFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, true);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceZ(&(mainView->topFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, true);
+    //   }
+    // }
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceZ(&mainView->rubikCube->cubes[xIndex][yIndex][2]->faces[faceIndex], ROTATION_ANGLE, true);
+        }
       }
     }
     mainView->cubeAnimation.currentStep++;
@@ -436,10 +473,19 @@ void animateDown(rubikview * mainView) {
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
     rotateDataDown(mainView);
+    rotateDataZ(mainView->rubikCube, 0, false);
   } else {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceZ(&(mainView->bottomFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceZ(&(mainView->bottomFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    //   }
+    // }
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceZ(&mainView->rubikCube->cubes[xIndex][yIndex][0]->faces[faceIndex], ROTATION_ANGLE, false);
+        }
       }
     }
     mainView->cubeAnimation.currentStep++;
@@ -456,10 +502,19 @@ void animateLeft(rubikview * mainView) {
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
     rotateDataLeft(mainView);
+    rotateDataX(mainView->rubikCube, 0, false);
   } else {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceX(&(mainView->leftFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceX(&(mainView->leftFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    //   }
+    // }
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceX(&mainView->rubikCube->cubes[0][xIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, false);
+        }
       }
     }
     mainView->cubeAnimation.currentStep++;
@@ -476,10 +531,19 @@ void animateRight(rubikview * mainView) {
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
     rotateDataRight(mainView);
+    rotateDataX(mainView->rubikCube, 2, true);
   } else {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceX(&(mainView->rightFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, true);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceX(&(mainView->rightFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, true);
+    //   }
+    // }
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceX(&mainView->rubikCube->cubes[2][xIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, true);
+        }
       }
     }
     mainView->cubeAnimation.currentStep++;
@@ -495,10 +559,19 @@ void animateMiddle(rubikview * mainView) {
     mainView->cubeAnimation.currentStep = 0;
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
+    rotateDataX(mainView->rubikCube, 1, false);
   } else {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceX(&(mainView->xSlice[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceX(&(mainView->xSlice[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    //   }
+    // }
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceX(&mainView->rubikCube->cubes[1][xIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, false);
+        }
       }
     }
     mainView->cubeAnimation.currentStep++;
@@ -515,10 +588,19 @@ void animateFront(rubikview * mainView) {
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
     rotateDataFront(mainView);
+    rotateDataY(mainView->rubikCube, 0, false);
   } else {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceY(&(mainView->frontFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceY(&(mainView->frontFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, false);
+    //   }
+    // }
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceY(&mainView->rubikCube->cubes[xIndex][0][yIndex]->faces[faceIndex], ROTATION_ANGLE, false);
+        }
       }
     }
     mainView->cubeAnimation.currentStep++;
@@ -535,10 +617,19 @@ void animateBack(rubikview * mainView) {
     mainView->cubeAnimation.isActive = false;
     mainView->isMoving = false;
     rotateDataBack(mainView);
+    rotateDataY(mainView->rubikCube, 2, true);
   } else {
-    for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
-      for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-        rotateFaceY(&(mainView->backFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, true);
+    // for (int cubeIndex = 0; cubeIndex < 9; cubeIndex++) {
+    //   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+    //     rotateFaceY(&(mainView->backFace[cubeIndex]->faces[faceIndex]), ROTATION_ANGLE, true);
+    //   }
+    // }
+
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      for (int yIndex = 0; yIndex < 3; yIndex++) {
+        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
+          rotateFaceY(&mainView->rubikCube->cubes[xIndex][2][yIndex]->faces[faceIndex], ROTATION_ANGLE, true);
+        }
       }
     }
     mainView->cubeAnimation.currentStep++;
@@ -722,6 +813,123 @@ void rotateDataBack(rubikview * mainView) {
   mainView->bottomFace[8] = tempCubes[0];
   mainView->bottomFace[7] = tempCubes[1];
   mainView->bottomFace[6] = tempCubes[2];
+}
+
+
+/*******************************************************************************
+ * ROTATING FACES DATA
+ *
+ * Here we rotate the matrices 90° or -90°. The techniques as are follow:
+ *
+ * Rotating 90°:
+ * 1. Transpose
+ * 2. Reverse each row
+ *
+ * Rotating -90°:
+ * 1. Transpose
+ * 2. Reverse each column
+ ******************************************************************************/
+
+
+void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw) {
+  /**
+   * Transposing the matrix
+   */
+  for (int yIndex = 1; yIndex < 3; yIndex++) {
+    for (int zIndex = 0; zIndex < yIndex; zIndex++) {
+      cube * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
+      rubikCube->cubes[xIndex][yIndex][zIndex] = rubikCube->cubes[xIndex][zIndex][yIndex];
+      rubikCube->cubes[xIndex][zIndex][yIndex] = tempCube;
+    }
+  }
+
+  if (ccw) {
+    /*
+     * Exchanging the columns
+     */
+    for (int yIndex = 0; yIndex < 3; yIndex++) {
+      cube * tempCube = rubikCube->cubes[xIndex][yIndex][0];
+      rubikCube->cubes[xIndex][yIndex][0] = rubikCube->cubes[xIndex][yIndex][2];
+      rubikCube->cubes[xIndex][yIndex][2] = tempCube;
+    }
+  } else {
+    /*
+     * Exchanging the rows
+     */
+    for (int zIndex = 0; zIndex < 3; zIndex++) {
+      cube * tempCube = rubikCube->cubes[xIndex][0][zIndex];
+      rubikCube->cubes[xIndex][0][zIndex] = rubikCube->cubes[xIndex][2][zIndex];
+      rubikCube->cubes[xIndex][2][zIndex] = tempCube;
+    }
+  }
+}
+
+
+void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw) {
+  /**
+   * Transposing the matrix
+   */
+  for (int xIndex = 1; xIndex < 3; xIndex++) {
+    for (int zIndex = 0; zIndex < xIndex; zIndex++) {
+      cube * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
+      rubikCube->cubes[xIndex][yIndex][zIndex] = rubikCube->cubes[zIndex][yIndex][xIndex];
+      rubikCube->cubes[zIndex][yIndex][xIndex] = tempCube;
+    }
+  }
+
+  if (ccw) {
+    /*
+     * Exchanging the columns
+     */
+    for (int zIndex = 0; zIndex < 3; zIndex++) {
+      cube * tempCube = rubikCube->cubes[0][yIndex][zIndex];
+      rubikCube->cubes[0][yIndex][zIndex] = rubikCube->cubes[2][yIndex][zIndex];
+      rubikCube->cubes[2][yIndex][zIndex] = tempCube;
+    }
+  } else {
+    /*
+     * Exchanging the rows
+     */
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      cube * tempCube = rubikCube->cubes[xIndex][yIndex][0];
+      rubikCube->cubes[xIndex][yIndex][0] = rubikCube->cubes[xIndex][yIndex][2];
+      rubikCube->cubes[xIndex][yIndex][2] = tempCube;
+    }
+  }
+}
+
+
+void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
+  /**
+   * Transposing the matrix
+   */
+  for (int xIndex = 1; xIndex < 3; xIndex++) {
+    for (int yIndex = 0; yIndex < xIndex; yIndex++) {
+      cube * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
+      rubikCube->cubes[xIndex][yIndex][zIndex] = rubikCube->cubes[yIndex][xIndex][zIndex];
+      rubikCube->cubes[yIndex][xIndex][zIndex] = tempCube;
+    }
+  }
+
+  if (!ccw) {
+    /*
+     * Exchanging the rows
+     */
+    for (int yIndex = 0; yIndex < 3; yIndex++) {
+      cube * tempCube = rubikCube->cubes[0][yIndex][zIndex];
+      rubikCube->cubes[0][yIndex][zIndex] = rubikCube->cubes[2][yIndex][zIndex];
+      rubikCube->cubes[2][yIndex][zIndex] = tempCube;
+    }
+  } else {
+    /*
+     * Exchanging the columns
+     */
+    for (int xIndex = 0; xIndex < 3; xIndex++) {
+      cube * tempCube = rubikCube->cubes[xIndex][0][zIndex];
+      rubikCube->cubes[xIndex][0][zIndex] = rubikCube->cubes[xIndex][2][zIndex];
+      rubikCube->cubes[xIndex][2][zIndex] = tempCube;
+    }
+  }
 }
 
 

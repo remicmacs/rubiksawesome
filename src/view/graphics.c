@@ -31,7 +31,38 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "graphics.h"
+
+
+rubikcube * generateRubikCube() {
+  rubikcube * rubikCube;
+  rubikCube = (rubikcube *) malloc(sizeof(rubikcube));
+
+  cube **** cubes = (cube ****) malloc(3 * sizeof(cube ***));
+  for (int zIndex = -1; zIndex < 2; zIndex++) {
+    cube *** yCubes = (cube ***) malloc(3 * sizeof(cube **));
+    for (int yIndex = -1; yIndex <2; yIndex++) {
+      cube ** xCubes = (cube **) malloc(3 * sizeof(cube *));
+      for (int xIndex = -1; xIndex < 2; xIndex++) {
+        transform cubeTransform = {
+          (vector3) {(float)zIndex, (float)yIndex, (float)xIndex},
+          (vector3) {0, 0, 0},
+          (vector3) {0, 0, 0},
+          (vector3) {0.45, 0.45, 0.45}
+        };
+
+        xCubes[xIndex + 1] = (cube *) malloc(sizeof(cube));
+        *xCubes[xIndex + 1] = generateCube(cubeTransform);
+      }
+      yCubes[yIndex + 1] = xCubes;
+    }
+    cubes[zIndex + 1] = yCubes;
+  }
+
+  rubikCube->cubes = cubes;
+  return rubikCube;
+}
 
 
 cube generateCube(transform cubeTransform) {
