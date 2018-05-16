@@ -6,23 +6,21 @@
  * ### Unable to correctly apply more than 1 rotation
  *
  * The issue lies in the way we apply the rotations on the cubes. Rotation means
- * a change in orientation and rotations are not commutative (quaternions and
- * rotation matrices).
+ * a change in orientation and when using rotation matrices they are not
+ * commutative.
  *
- * We started by using matrice rotations with two methods: calculated and Using
+ * We started by using matrice rotations with two methods: calculated and using
  * glRotatef. By the time we implemented every rotations, we noticed wrong
  * positioning of some cubes while testing. A proposed workaround would be to
  * keep track of every rotation and apply them in order at every frame.
- * This is power consuming and not ideal from our perspective
+ * This is power consuming and not ideal from our perspective. Another solution
+ * is to use quaternions, which are complex objects to manipulate. We'll settle
+ * on a simple solution.
  *
- * Another solution would be to use a spherical coordinates system to
- * place the cubes. To make this happens, we will need to register the angles
- * on the cube's generation routine and project the cubes coordinates from the
- * spherical coordinates to the cartesian on every frame.
- *
- * This text above is just some reflexions at the time of this writing.
- * We will commit to keep a track of the code before starting to implement
- * the new method.
+ * The adopted solution is to save the vertices positions on generation and,
+ * each time a rotation is called, rotate them around the desire axis and
+ * save the new position. Since our moves are all simple rotations around an
+ * axis, we'll keep committing to the KISS principle.
  */
 
 
@@ -276,43 +274,5 @@ void rotateFaceX(face * currentFace, float angle, bool ccw) {
 
     currentFace->corners[cornerIndex].z = zPrime;
     currentFace->corners[cornerIndex].y = yPrime;
-  }
-}
-
-
-void rotateFaceData(cube ** rotatedFace, bool ccw) {
-  if (ccw) {
-    // Here is counterclockwise
-    cube * tempCube;
-
-    // Rotate corners
-    tempCube = rotatedFace[0];
-    rotatedFace[0] = rotatedFace[6];
-    rotatedFace[6] = rotatedFace[8];
-    rotatedFace[8] = rotatedFace[2];
-    rotatedFace[2] = tempCube;
-
-    // Rotate edges
-    tempCube = rotatedFace[1];
-    rotatedFace[1] = rotatedFace[3];
-    rotatedFace[3] = rotatedFace[7];
-    rotatedFace[7] = rotatedFace[5];
-    rotatedFace[5] = tempCube;
-  } else {
-    cube * tempCube;
-
-    // Rotate corners
-    tempCube = rotatedFace[0];
-    rotatedFace[0] = rotatedFace[2];
-    rotatedFace[2] = rotatedFace[8];
-    rotatedFace[8] = rotatedFace[6];
-    rotatedFace[6] = tempCube;
-
-    // Rotate edges
-    tempCube = rotatedFace[1];
-    rotatedFace[1] = rotatedFace[5];
-    rotatedFace[5] = rotatedFace[7];
-    rotatedFace[7] = rotatedFace[3];
-    rotatedFace[3] = tempCube;
   }
 }

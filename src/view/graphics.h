@@ -136,6 +136,5 @@ void drawFace(face drawnFace, bool debug);
 void rotateFaceY(face * currentFace, float angle, bool ccw);
 void rotateFaceZ(face * currentFace, float angle, bool ccw);
 void rotateFaceX(face * currentFace, float angle, bool ccw);
-void rotateFaceData(cube ** rotatedFace, bool ccw);
 
 #endif

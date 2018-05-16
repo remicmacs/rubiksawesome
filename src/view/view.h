@@ -20,11 +20,15 @@
  * A structure holding the camera position and rotation
  */
 typedef struct _camera {
-  vector3 position;           /**< Position in the cartesian coordinates **/
-  vector3 angles;             /**< Position in the spherical coordinates **/
+  vector3 position;           /**< Position in the cartesian coordinates */
+  vector3 angles;             /**< Position in the spherical coordinates */
 } camera;
 
 
+/**
+ * A structure for the animations. Must be implemented in a separate
+ * animation.h file later
+ */
 typedef struct _animation {
   bool isActive;
   int targetStep;
@@ -38,20 +42,10 @@ typedef struct _animation {
  */
 typedef struct _rubikview {
   camera mainCamera;          /**< The camera in the view */
-  cube * cubes;               /**< All the cubes composing the Rubik's cube */
-  cube * backFace[9];         /**< The cubes composing the back face */
-  cube * frontFace[9];        /**< The cubes composing the front face */
-  cube * rightFace[9];        /**< The cubes composing the right face */
-  cube * leftFace[9];         /**< The cubes composing the left face */
-  cube * bottomFace[9];       /**< The cubes composing the down face */
-  cube * topFace[9];          /**< The cubes composing the top face */
-  cube * xSlice[9];           /**< The cubes composing the x slice */
-  cube * ySlice[9];           /**< The cubes composing the y slice */
-  cube * zSlice[9];           /**< The cubes composing the z slice */
   bool isMoving;              /**< Indicates if the cube is moving */
   animation cubeAnimation;    /**< Holds the current animation */
   bool animationsEnabled;     /**< Enables or disables animations */
-  rubikcube * rubikCube;
+  rubikcube * rubikCube;      /**< The Rubik's cube */
 } rubikview;
 
 
@@ -67,20 +61,6 @@ void setWindow();
  * @return A view structure
  */
 rubikview generateView();
-
-
-/**
- * Generates a list of 27 cubes representing all the cubes in a Rubik's cube
- * @return A pointer to the list of 3D cubes
- */
-cube * generateCubes();
-
-
-/**
- * Set the pointers in the faces to the corresponding cubes
- * @param mainView The structure holding the view
- */
-void attachCubesToFaces(rubikview * mainView);
 
 
 /**
@@ -146,13 +126,6 @@ void animateRight(rubikview * mainView);
 void animateMiddle(rubikview * mainView);
 void animateFront(rubikview * mainView);
 void animateBack(rubikview * mainView);
-
-void rotateDataUp(rubikview * mainView);
-void rotateDataDown(rubikview * mainView);
-void rotateDataLeft(rubikview * mainView);
-void rotateDataRight(rubikview * mainView);
-void rotateDataFront(rubikview * mainView);
-void rotateDataBack(rubikview * mainView);
 
 void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw);
 void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw);
