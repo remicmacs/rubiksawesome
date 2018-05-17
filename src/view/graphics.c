@@ -37,6 +37,7 @@ rubikcube * generateRubikCube() {
   rubikcube * rubikCube;
   rubikCube = (rubikcube *) malloc(sizeof(rubikcube));
 
+  /** AATMYNTA (Always Allocate The Memory You Need To Allocate) */
   cube **** cubes = (cube ****) malloc(3 * sizeof(cube ***));
   for (int zIndex = -1; zIndex < 2; zIndex++) {
     cube *** yCubes = (cube ***) malloc(3 * sizeof(cube **));
@@ -264,13 +265,15 @@ void rotateFaceZ(face * currentFace, float angle, bool ccw) {
 
 
 void rotateFaceX(face * currentFace, float angle, bool ccw) {
+  float xRotation = ccw == true ? - angle : angle;
+  float sinRotation = sinf(xRotation);
+  float cosRotation = cosf(xRotation);
   for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++) {
     float z = currentFace->corners[cornerIndex].z;
     float y = currentFace->corners[cornerIndex].y;
-    float xRotation = ccw == true ? - angle : angle;
 
-    float zPrime = y * sinf(xRotation) + z * cosf(xRotation);
-    float yPrime = y * cosf(xRotation) - z * sinf(xRotation);
+    float zPrime = y * sinRotation + z * cosRotation;
+    float yPrime = y * cosRotation - z * sinRotation;
 
     currentFace->corners[cornerIndex].z = zPrime;
     currentFace->corners[cornerIndex].y = yPrime;

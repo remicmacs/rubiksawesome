@@ -9,7 +9,6 @@
 #include <SDL/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 #include <stdbool.h>
 
 
@@ -19,7 +18,7 @@
 
 
 void setWindow() {
-  // Window configuration
+    // Window configuration
   SDL_Init(SDL_INIT_VIDEO);
   atexit(SDL_Quit);
 
@@ -32,6 +31,12 @@ void setWindow() {
   glLoadIdentity();
   gluPerspective(70, (double)640 / 480, 1, 1000);
   glEnable(GL_DEPTH_TEST);
+
+  SDL_version sdlVersion;
+  SDL_VERSION(&sdlVersion);
+  printf("SDL version: %d.%d.%d\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
+  printf("OpenGL version: %s\n", glGetString(GL_VERSION));
+  fflush(stdout);
 }
 
 
@@ -64,21 +69,22 @@ void update(rubikview * mainView) {
 
   SDL_Event event;
 
-  while (SDL_PollEvent(&event)) {
-    if (event.key.keysym.sym == SDLK_DOWN && event.key.type == SDL_KEYDOWN) {
-      if (mainCamera->angles.z > 0.000001) {
-        mainCamera->angles.z -= PI / 36;
-      }
-    } else if (event.key.keysym.sym == SDLK_UP && event.key.type == SDL_KEYDOWN) {
-      if (mainCamera->angles.z < PI - 0.000001) {
-        mainCamera->angles.z += PI / 36;
-      }
-    } else if (event.key.keysym.sym == SDLK_RIGHT && event.key.type == SDL_KEYDOWN) {
-      mainCamera->angles.y += PI / 36;
-    } else if (event.key.keysym.sym == SDLK_LEFT && event.key.type == SDL_KEYDOWN) {
-      mainCamera->angles.y -= PI / 36;
+  Uint8 *keystate = SDL_GetKeyState(NULL);
+  if (keystate[SDLK_DOWN]) {
+    if (mainCamera->angles.z > 0.000001) {
+      mainCamera->angles.z -= PI / 72;
     }
+  } else if (keystate[SDLK_UP]) {
+    if (mainCamera->angles.z < PI - 0.000001) {
+      mainCamera->angles.z += PI / 72;
+    }
+  } else if (keystate[SDLK_RIGHT]) {
+    mainCamera->angles.y += PI / 72;
+  } else if (keystate[SDLK_LEFT]) {
+    mainCamera->angles.y -= PI / 72;
+  }
 
+  while (SDL_PollEvent(&event)) {
     switch(event.type)
     {
       case SDL_QUIT:

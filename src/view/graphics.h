@@ -31,9 +31,9 @@ typedef struct _colour {
  * and much more
  */
 typedef struct _vector3 {
-  float x;
-  float y;
-  float z;
+  float x;  /**< Actually x or r (if using spherical coordinates) */
+  float y;  /**< Actually y or theta (if using spherical coordinates) */
+  float z;  /**< Actually z or phi (if using spherical coordinates) */
 } vector3;
 
 
@@ -42,7 +42,7 @@ typedef struct _vector3 {
  */
 typedef struct _face {
   vector3 corners[4]; /**< The list of corners. Each corner is a vector
-                           representing the position of the corner */
+                           representing the position of a vertex */
   colour faceColour;  /**< The colour of the face */
 } face;
 
@@ -72,12 +72,12 @@ typedef struct _cube {
  * A structure for a rubik's cube
  */
 typedef struct _rubikcube {
-  cube **** cubes;
+  cube **** cubes;        /**< A 3x3x3 matrix of pointers to cubes */
 } rubikcube;
 
 
 /**
- * Not used yet.
+ * This enum is used to designate the face being built or animated
  */
 enum FaceType {
   TOP,
@@ -90,6 +90,10 @@ enum FaceType {
 };
 
 
+/**
+ * Generate a rubikcube structure with everything (cubes and such)
+ * @return A pointer to the newly created rubikcube
+ */
 rubikcube * generateRubikCube();
 
 
@@ -133,8 +137,31 @@ void drawCube(cube drawnCube, bool debug);
  */
 void drawFace(face drawnFace, bool debug);
 
+
+/**
+ * Apply a rotation on a face around the Y axis
+ * @param currentFace The face to rotate
+ * @param angle       The angle for the rotation
+ * @param ccw         True to set the rotation to counterclockwise;
+ */
 void rotateFaceY(face * currentFace, float angle, bool ccw);
+
+
+/**
+ * Apply a rotation on a face around the Z axis
+ * @param currentFace The face to rotate
+ * @param angle       The angle for the rotation
+ * @param ccw         True to set the rotation to counterclockwise;
+ */
 void rotateFaceZ(face * currentFace, float angle, bool ccw);
+
+
+/**
+ * Apply a rotation on a face around the X axis
+ * @param currentFace The face to rotate
+ * @param angle       The angle for the rotation
+ * @param ccw         True to set the rotation to counterclockwise;
+ */
 void rotateFaceX(face * currentFace, float angle, bool ccw);
 
 #endif

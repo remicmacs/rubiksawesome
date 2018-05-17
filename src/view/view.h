@@ -8,10 +8,6 @@
 #define VIEW_H
 
 
-#include <SDL/SDL.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
 #include <stdbool.h>
 #include "graphics.h"
 
