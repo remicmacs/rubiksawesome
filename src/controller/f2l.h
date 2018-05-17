@@ -13,6 +13,7 @@
  */
 cube * doWhiteCross(cube *rubikscube);
 
+
 /*
  * To assemble the white cross, we need to find all white/another color element.
  */

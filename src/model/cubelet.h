@@ -29,7 +29,6 @@ void printTile(cube *self, tile elt);
  * Get adjacent(s) tile(s)
  */
 adjacentTiles getAdjacentTiles(cube *self, tile elt);
-
 /**
  * Return the color of the given tile
  */

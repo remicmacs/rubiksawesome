@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
 	tcube->rotate(tcube,"R");
 	tcube->rotate(tcube,"L");
 
-
 	printCube(tcube);
 	doWhiteCross(tcube);
 	printCube(tcube);

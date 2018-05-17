@@ -1,5 +1,21 @@
 #ifndef CUBE
 #define CUBE
+<<<<<<< HEAD
+=======
+
+#define F 0
+#define B 1
+#define R 2
+#define L 3
+#define U 4
+#define D 5
+#define FP 6
+#define BP 7
+#define RP 8
+#define LP 9
+#define UP 10
+#define DP 11
+>>>>>>> 1018a2680fde20ad69cbf063911a1b11aa4fe1ec
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,6 +34,14 @@ typedef struct cubeStruct{
     void (*print)(struct cubeStruct *);
 } cube ;
 
+_Bool isEqual(cube aCube, cube bCube);
+
+/**
+ * Init a void cube
+ */
+cube voidCube(cube self);
+
+cube rotate(cube rubikscube, unsigned int id, _Bool cclw);
 
 /**
  * Enumeration of all moves implemented by the public method rotate.
@@ -169,4 +193,5 @@ void destroyCube(cube * self);
 
 
 #endif
+
 

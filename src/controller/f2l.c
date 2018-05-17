@@ -28,6 +28,7 @@ cube *doWhiteCross(cube* self){
 				break;
 			}
 
+
 			sleep(1);
 
 
@@ -35,18 +36,20 @@ cube *doWhiteCross(cube* self){
 		}
 		printf("on sort de la boucle");
 		printf("\ni = %d\n", i);
+
 	}
 	return self;
 }
 
 edge searchWhiteEdge(cube* self, char color){
-	edge whiteEdge;
+
 	for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
 		for (int row = 0 ; row < 3 ; row++){
 			for (int col = 0 ; col < 3 ; col++){
 				tile elt = {faceIndex,row,col};
 				if(isEdge(elt)){
 					if(self->cube[faceIndex][row][col] == 'w'){
+
 						adjacentTiles adj = getAdjacentTiles(self,elt);
 						printf("\n Adjacent tiles %d - %d\n", adj.tiles[0], adj.tiles[1]);
 						if(color == getColorTile(self,adj.tiles[0])){
