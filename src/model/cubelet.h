@@ -23,17 +23,17 @@ int nb;
 /**
  * Draw a cube pattern with the selected tile
  */
-void printTile(cube self, tile elt);
+void printTile(cube *self, tile elt);
 
 /**
  * Get adjacent(s) tile(s)
  */
-adjacentTiles getAdjacentTiles(cube self, tile elt);
+adjacentTiles getAdjacentTiles(cube *self, tile elt);
 
 /**
  * Return the color of the given tile
  */
-char getColorTile(cube self, tile elt);
+char getColorTile(cube *self, tile elt);
  
 
 
@@ -55,9 +55,9 @@ typedef struct adjacentFaces{
  */
 bool isEdge(tile elt);
 
-edge defineEdge(cube self, tile elt);
+edge defineEdge(cube *self, tile elt);
 
-void printEdge(cube self, edge elt);
+void printEdge(cube *self, edge elt);
 
 /**
  * Test if one of the edge’s tiles is on the selected face
@@ -78,6 +78,6 @@ adjacentFaces getAdjacentFaces(tile elt);
  */
 bool isCenter(tile elt);
 
-char getFaceColor(cube self, tile elt);
+char getFaceColor(cube *self, tile elt);
 
 #endif

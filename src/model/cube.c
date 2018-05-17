@@ -41,16 +41,17 @@ move mapCodeToMove(char * moveCode){
 }
 
 
-cube voidCube(cube self){
+cube* voidCube(){
+	cube * self= initCube();
     unsigned char color[6] = {'g','b','r','o','w','y'};
     for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
         for (int index = 0 ; index < 3 ; index++){
             for (int jindex = 0 ; jindex < 3 ; jindex++){
 					if(jindex == 1 && index == 1){
-                self.cube[faceIndex][index][jindex] = color[faceIndex];
+                self->cube[faceIndex][index][jindex] = color[faceIndex];
 					}
 					else{
-self.cube[faceIndex][index][jindex] = ' '; 
+self->cube[faceIndex][index][jindex] = ' '; 
 					}
             }
         }

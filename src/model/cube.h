@@ -40,7 +40,7 @@ typedef enum {
 /**
  * Init a void cube
  */
-cube voidCube(cube self);
+cube *voidCube();
 
 
 

@@ -8,42 +8,18 @@ int randBorne(int a,int b);
 int main(int argc, char *argv[])
 {
 
-	cube tcube;
+	cube *tcube;
 	tcube = initCube(tcube);
 	printCube(tcube);
 
-	tcube = rotateDi(tcube);
-	tcube = rotateBi(tcube);
-	tcube = rotateD(tcube);
-	tcube = rotateD(tcube);
-	tcube = rotateF(tcube);
-	tcube = rotateF(tcube);
-	tcube = rotateR(tcube);
-	tcube = rotateR(tcube);
-	tcube = rotateL(tcube);
-	tcube = rotateD(tcube);
-	tcube = rotateB(tcube);
-	tcube = rotateR(tcube);
-	tcube = rotateR(tcube);
-	tcube = rotateL(tcube);
-	tcube = rotateL(tcube);
-	tcube = rotateD(tcube);
-	tcube = rotateBi(tcube);
-	tcube = rotateL(tcube);
-	tcube = rotateL(tcube);
-	tcube = rotateBi(tcube);
-	tcube = rotateD(tcube);
-	tcube = rotateD(tcube);
-	tcube = rotateL(tcube);
-	tcube = rotateL(tcube);
-	tcube = rotateF(tcube);
-	tcube = rotateF(tcube);
-
+	tcube->rotate(tcube,"Di");
+	tcube->rotate(tcube,"R");
+	tcube->rotate(tcube,"L");
 
 
 	printCube(tcube);
 	doWhiteCross(tcube);
-	//printCube(tcube);
+	printCube(tcube);
 
 }
 

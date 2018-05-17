@@ -33,7 +33,6 @@ adjacentFaces getAdjacentFaces(tile elt){
 			if(elt.row == 0){adj.faces[i] = U; i++;}
 			if(elt.row == 2){adj.faces[i] = D; i++;}
 			if(elt.col == 0){adj.faces[i] = L; i++;}
-
 			if(elt.col == 2){adj.faces[i] = R; i++;}
 
 			break;
@@ -74,7 +73,7 @@ adjacentFaces getAdjacentFaces(tile elt){
 	return adj;
 }
 
-adjacentTiles getAdjacentTiles(cube self, tile elt)
+adjacentTiles getAdjacentTiles(cube *self, tile elt)
 {		
 	int i =0;
 	adjacentTiles adjtiles;
@@ -83,85 +82,95 @@ adjacentTiles getAdjacentTiles(cube self, tile elt)
 		printf("%d", elt.face);		
 		switch(adjfaces.faces[f]){
 			case(F):
-				printf("Adj Front");	
+				printf("Adj Front\n");	
 				switch(elt.face){
 					case(R):
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.row;
-						break;
-					case(L):
+						printf("elt R");
 						adjtiles.tiles[i].col = 0;
 						adjtiles.tiles[i].row = elt.row;
 						break;
+					case(L):
+						printf("elt L");
+						adjtiles.tiles[i].col = 2;
+						adjtiles.tiles[i].row = elt.row;
+						break;
 					case(U):
+						printf("elt U");
 						adjtiles.tiles[i].col = elt.col;
 						adjtiles.tiles[i].row = 0;
 
 						break;
 					case(D):
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.row;
+						printf("elt D");
+						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].row = 0;
 						break;
 				}
 				adjtiles.tiles[i].face = F;
 				i++;
 				break;
+				//DONE
 
 			case(B):
-				printf("Adj Back");
+				printf("Adj Back\n");
 				switch(elt.face){
 					case(R):
-						adjtiles.tiles[i].col = 0;
+						printf("elt R");
+						adjtiles.tiles[i].col = 2;
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(L):
-						adjtiles.tiles[i].col = 2;
+						printf("elt L");
+						adjtiles.tiles[i].col = 0;
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(U):
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row =1;
+						printf("elt U");
+						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].row =0;
 						break;
 					case(D):
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.row;
+						printf("elt D");
+						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].row = 2;
 						break;
 				}
 				adjtiles.tiles[i].face = B;
 				i++;
-				break;
+				break;//DONE
 			case(R):
-				printf("Adj Right");
+				printf("Adj Right\n");
 				adjtiles.tiles[i].face = R;
 				switch(elt.face){
 					case(F):
-						printf("FFFFFFFFFF");
+						printf("Elt F");
 						adjtiles.tiles[i].col = 0;
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(B):
-						printf("BBBBB");
+						printf("Elt back");
 						adjtiles.tiles[i].col = 2;
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(U):
-						printf("Pololu");
-						adjtiles.tiles[i].col = elt.col;
-						adjtiles.tiles[i].row = 2;
+						printf("Elt up");
+						adjtiles.tiles[i].col = elt.row;
+						adjtiles.tiles[i].row = 0;
 						break;
 					case(D):
-						printf("debug");
+						printf("Elt D");
 						adjtiles.tiles[i].col = elt.row;
-						adjtiles.tiles[i].row = 2;
+						adjtiles.tiles[i].row = 0;
 						break;
 				}
 				adjtiles.tiles[i].face = R;
 				i++;
 				break;
 			case(L):
-				printf("Adj Left");
+				printf("Adj Left\n");
 				switch(elt.face){
 					case(F):
+						printf("elt F");
 						adjtiles.tiles[i].col = 2;
 						adjtiles.tiles[i].row = elt.row;
 						break;
@@ -171,13 +180,14 @@ adjacentTiles getAdjacentTiles(cube self, tile elt)
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(D):
-						printf("hooooo un L");
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.col;
+						printf("elt D");
+						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].row = 2;
 						break;
 					case(U):
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.col;
+						printf("elt U");
+						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].row = 0;
 						break;
 				}
 				adjtiles.tiles[i].face = L;
@@ -188,25 +198,25 @@ adjacentTiles getAdjacentTiles(cube self, tile elt)
 				printf("UP\n");
 				switch(elt.face){
 					case(F):
-						printf("hooooo un F");
+						printf("elt F");
 						adjtiles.tiles[i].col = elt.col;
 						adjtiles.tiles[i].row = 2;
 						break;
 					case(B):
-						printf("hooooo un B");
+						printf("elt B");
 						adjtiles.tiles[i].col = elt.col;
 						adjtiles.tiles[i].row = 0;
 						break;
 					case(L):
-						printf("hooooo un L");
-						adjtiles.tiles[i].col = 0;
-						adjtiles.tiles[i].row = elt.row;
+						printf("elt L");
+						adjtiles.tiles[i].col = elt.row;
+						adjtiles.tiles[i].row = 1;
 
 						break;
 					case(R):
-						printf("hooooo un R");
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.row;
+						printf("elt R");
+						adjtiles.tiles[i].col = elt.row;
+						adjtiles.tiles[i].row = 0;
 
 						break;
 				}
@@ -214,22 +224,25 @@ adjacentTiles getAdjacentTiles(cube self, tile elt)
 				i++;
 				break;
 			case(D):
-				printf("down");
+				printf("down\n");
 				switch(elt.face){
 					case(R):
+						printf("elt R");
 						adjtiles.tiles[i].row = 0;
 						adjtiles.tiles[i].col = elt.col;
 						break;
 					case(L):
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.row;
+						printf("elt L");
+						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].row = 0;
 						break;
 					case(F):
+						printf("elt F");
 						adjtiles.tiles[i].col = elt.col;
 						adjtiles.tiles[i].row = 0;
 						break;
 					case(B):
-						printf("elt down back");
+						printf("elt back");
 						adjtiles.tiles[i].col = elt.col;
 						adjtiles.tiles[i].row = 2;
 						break;
@@ -237,6 +250,8 @@ adjacentTiles getAdjacentTiles(cube self, tile elt)
 				adjtiles.tiles[i].face =D; 
 				i++;
 				break;
+			default:
+				printf("error");
 		}
 	}
 	adjtiles.nb = i;
@@ -246,7 +261,7 @@ adjacentTiles getAdjacentTiles(cube self, tile elt)
 }
 
 
-edge defineEdge(cube self, tile elt){
+edge defineEdge(cube *self, tile elt){
 	adjacentTiles adjtile = getAdjacentTiles(self, elt);
 	edge newedge = {{elt, adjtile.tiles[0]}};
 
@@ -254,38 +269,37 @@ edge defineEdge(cube self, tile elt){
 }
 
 
-void printTile(cube self, tile elt)
+void printTile(cube *self, tile elt)
 {
-	cube pattern;
-	pattern = voidCube(pattern);
-	pattern.cube[elt.face][elt.row][elt.col] = self.cube[elt.face][elt.row][elt.col];
-	printCube(pattern);
+	cube * pattern = voidCube();
+	pattern->cube[elt.face][elt.row][elt.col] = self->cube[elt.face][elt.row][elt.col];
+	pattern->print(pattern);
 	printf("{f:%d,r:%d,c:%d}\n",elt.face,elt.row,elt.col);
 
 }
 
-void printEdge(cube self, edge elt)
+void printEdge(cube *self, edge elt)
 {
-	cube pattern;
-	pattern = voidCube(pattern);
+	
+	cube * pattern = voidCube();
 	for(int i=0; i< 2;i++){
-		pattern.cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col] = self.cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col];
+		pattern->cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col] = self->cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col];
 
 	}
-	printCube(pattern);
+	pattern->print(pattern);
 	for(int i=0; i< 2;i++){
 
 		printf("{f:%d,r:%d,c:%d}",elt.tiles[i].face,elt.tiles[i].row,elt.tiles[i].col);
 	}
 	printf("\n");
 }
-char getColorTile(cube self, tile elt)
+char getColorTile(cube *self, tile elt)
 {
-	return self.cube[elt.face][elt.row][elt.col];
+	return self->cube[elt.face][elt.row][elt.col];
 }
 
-char getFaceColor(cube self, tile elt){
-	return self.cube[elt.face][1][1];
+char getFaceColor(cube *self, tile elt){
+	return self->cube[elt.face][1][1];
 }
 
 bool isEdgeOnFace(edge elt, int face)
