@@ -586,28 +586,12 @@ cube * rotatedi(cube * self){
             );
 }
 
-/**
- * Function to bring center cublets in standard position.
- * Standard position of center cublets are :
- *  * green on front
- *  * blue on back
- *  * red on right
- *  * orange on left
- *  * white on top
- *  * yellow on down
- *
- *  This function is a helper to the cubeIsEqual function.
- *
- *  @param self Reference to cube to be redressed
- *  @returns Reference to redressed cube
- */
-cube * redressCube(cube * self) {
-
-    // Fixing green center position : two axes are solved
+cube * positionCube(cube * self, char frontFace, char upFace) {
+    // Fixing front center position : two axes are solved
     // 6 positions are possible, with only one valid
-    int greenPos = F - 1;
-    while(self->cube[++greenPos][1][1] != 'g');
-    switch(greenPos) {
+    int frontPos = F - 1;
+    while(self->cube[++frontPos][1][1] != frontFace);
+    switch(frontPos) {
         case(R):
             self->rotate(self, "y");
             break;
@@ -625,23 +609,43 @@ cube * redressCube(cube * self) {
             break;
     }
 
-    // Fixing red center position : only one axis has to be solved
+    // Fixing up center position : only one axis has to be solved
     // 4 positions are possible, with only one valid
-    int redPos = R - 1;
-    while(self->cube[++redPos][1][1] != 'r');
+    int upPos = R - 1;
+    while(self->cube[++upPos][1][1] != upFace);
 
-    switch(redPos) {
-        case(U):
+    switch(upPos) {
+        case(L):
             self->rotate(self, "z");
             break;
-        case(L):
+        case(D):
             self->rotate(self, "z2");
             break;
-        case(D):
+        case(R):
             self->rotate(self, "zi");
             break;
     }
 
+    return self;
+}
+
+/**
+ * Function to bring center cublets in standard position.
+ * Standard position of center cublets are :
+ *  * green on front
+ *  * blue on back
+ *  * red on right
+ *  * orange on left
+ *  * white on top
+ *  * yellow on down
+ *
+ *  This function is a helper to the cubeIsEqual function.
+ *
+ *  @param self Reference to cube to be redressed
+ *  @returns Reference to redressed cube
+ */
+cube * redressCube(cube * self) {
+    self = positionCube(self, 'g', 'w');
     return self;
 }
 ///////////////////////////////////////////////////////////////////////////////

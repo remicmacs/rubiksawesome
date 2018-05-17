@@ -61,6 +61,7 @@ typedef enum {
     xi2,yi2,zi2
 } move;
 
+
 /**
  * Init a void cube
  */
@@ -86,6 +87,19 @@ cube *voidCube();
  * @see enum move
  */
 move mapCodeToMove(char * moveCode);
+
+/**
+ * Positions the cube according to two reference faces
+ *
+ * Calls to this function will use x, y, z rotations to positions cube without
+ * modifying it with center of frontFace color on F, center of upFace color on U
+ *
+ * @param self pointer to the cube to position
+ * @param frontFace char id for the color of the center to put on front
+ * @param upFace char id for the color of the center to put on up
+ * @returns pointer to repositioned cube
+ */
+cube * positionCube(cube * self, char frontFace, char upFace);
 
 /**
  * Cube initialization to unscrambled Rubik's Cube.
