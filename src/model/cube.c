@@ -541,47 +541,85 @@ cube * rotatedi(cube * self){
             );
 }
 
-cube * positionCube(cube * self, char frontFace, char upFace) {
+char * positionCommand(cube * self, char frontFace, char upFace) {
+    char * command = NULL;
+    cube * copy = self->copy(self);
+    int commandSize = 0;
+
     // Fixing front center position : two axes are solved
     // 6 positions are possible, with only one valid
     int frontPos = F - 1;
-    while(self->cube[++frontPos][1][1] != frontFace);
-    switch(frontPos) {
-        case(R):
-            self->rotate(self, "y");
-            break;
-        case(L):
-            self->rotate(self, "yi");
-            break;
-        case(U):
-            self->rotate(self, "xi");
-            break;
-        case(D):
-            self->rotate(self, "x");
-            break;
-        case(B):
-            self->rotate(self, "x2");
-            break;
+    while(copy->cube[++frontPos][1][1] != frontFace);
+    if (frontPos != F) {
+        commandSize = 4;
+        command = (char *) malloc(sizeof(char)*commandSize);
+        switch(frontPos) {
+            case(R):
+                strncpy(command, "y ", 2);
+                copy->rotate(self, y);
+                break;
+            case(L):
+                strncpy(command, "yi ", 3);
+                copy->rotate(self, yi);
+                break;
+            case(U):
+                strncpy(command, "xi ", 3);
+                copy->rotate(self, xi);
+                break;
+            case(D):
+                strncpy(command, "x ", 2);
+                copy->rotate(self, x);
+                break;
+            case(B):
+                strncpy(command, "x2 ", 3);
+                copy->rotate(self, x2);
+                break;
+        }
     }
 
     // Fixing up center position : only one axis has to be solved
     // 4 positions are possible, with only one valid
     int upPos = R - 1;
-    while(self->cube[++upPos][1][1] != upFace);
-
-    switch(upPos) {
-        case(L):
-            self->rotate(self, "z");
-            break;
-        case(D):
-            self->rotate(self, "z2");
-            break;
-        case(R):
-            self->rotate(self, "zi");
-            break;
+    while(copy->cube[++upPos][1][1] != upFace);
+    if (upFace != U) {
+        commandSize += 3;
+        command = (char *) realloc(command, sizeof(char) * commandSize);
+        switch(upPos) {
+            case(L):
+                strncat(command, "z", 1);
+                copy->rotate(self, z);
+                break;
+            case(D):
+                strncat(command, "z2", 2);
+                copy->rotate(self, z2);
+                break;
+            case(R):
+                strncat(command, "zi ", 2);
+                copy->rotate(self, zi);
+                break;
+        }
     }
 
-    return self;
+    destroyCube(copy);
+    return command;
+}
+
+cube * positionCube(cube * self, char frontFace, char upFace) {
+    char * commands = positionCommand(self, frontFace, upFace);
+    char * token = strtok(commands, " ");
+    int i = 0;
+    move moves[2] = {-1, -1};
+    while (i < 2 && token) {
+        moves[i] = mapCodeToMove(token);
+        token = strtok(NULL, " ");
+    }
+
+    i = -1;
+
+    while(++i < 2 && moves[i] != -1) {
+        self->rotate(self, moves[i]);
+    }
+        return self;
 }
 
 /**
@@ -606,21 +644,19 @@ cube * redressCube(cube * self) {
 ///////////////////////////////////////////////////////////////////////////////
 
 ////////////////////  PUBLIC API OF CUBE DATA STRUCT /////////////////////////
-cube * rotate(cube * self, char * moveCode) {
+cube * rotate(cube * self, move moveCode) {
     _Bool doubleMove = false;
 
     // Retrieving code of move
-    move chosenMove = mapCodeToMove(moveCode);
-
-    if (chosenMove >= 30) {
+    if (moveCode >= 30) {
         doubleMove = true;
-        chosenMove -= 30;
+        moveCode -= 30;
     } // If move is a double move, switch boolean and remove offset
 
     cube * (* chosenMoveFn)(cube *);
 
     // Scary big ass switch statement : chooses correct private function
-    switch(chosenMove){
+    switch(moveCode){
         case(F):
             chosenMoveFn = &rotateF;
             break;

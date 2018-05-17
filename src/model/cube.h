@@ -5,17 +5,6 @@
 #include "../controller/errorController.h"
 
 /**
- * Data structure to hold cube state function handle to manipulate cube.
- */
-typedef struct cubeStruct{
-    unsigned char ** cube[6];
-    struct cubeStruct * (*rotate)(struct cubeStruct *, char *);
-    struct cubeStruct * (*copy)(struct cubeStruct *);
-    _Bool (*equals)(struct cubeStruct *, struct cubeStruct *);
-    void (*print)(struct cubeStruct *);
-} cube ;
-
-/**
  * Enumeration of all moves implemented by the public method rotate.
  */
 typedef enum {
@@ -35,6 +24,17 @@ typedef enum {
 
 
 /**
+ * Data structure to hold cube state function handle to manipulate cube.
+ */
+typedef struct cubeStruct{
+    unsigned char ** cube[6];
+    struct cubeStruct * (*rotate)(struct cubeStruct *, move);
+    struct cubeStruct * (*copy)(struct cubeStruct *);
+    _Bool (*equals)(struct cubeStruct *, struct cubeStruct *);
+    void (*print)(struct cubeStruct *);
+} cube ;
+
+/**
  * Function to map a char * token to a given move.
  *
  * The function maps a valid string token to all the 60 moves implemented.
@@ -52,6 +52,17 @@ typedef enum {
  * @see enum move
  */
 move mapCodeToMove(char * moveCode);
+
+/**
+ * Returns the string of commands to perform to reach a specific orientation
+ *
+ * @param self the cube to position
+ * @param frontFace the color of the face to be on front
+ * @param upFace the color of the face to be up
+ *
+ * @returns a string of max two space separated commands
+ */
+char * positionCommand(cube * self, char frontFace, char upFace);
 
 /**
  * Positions the cube according to two reference faces
@@ -120,7 +131,7 @@ cube * initCube();
  *
  *  @see mapCodeToMove()
  */
-cube * rotate(cube * self, char * moveCode);
+cube * rotate(cube * self, move moveCode);
 
 /**
  * Deep copy function to copy a cube.
