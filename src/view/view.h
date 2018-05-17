@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 #include "graphics.h"
+#include "animations.h"
 
 
 /**
@@ -19,18 +20,6 @@ typedef struct _camera {
   vector3 position;           /**< Position in the cartesian coordinates */
   vector3 angles;             /**< Position in the spherical coordinates */
 } camera;
-
-
-/**
- * A structure for the animations. Must be implemented in a separate
- * animation.h file later
- */
-typedef struct _animation {
-  bool isActive;
-  int targetStep;
-  int currentStep;
-  enum FaceType animatedFace;
-} animation;
 
 
 /**

@@ -3,13 +3,14 @@
  */
 
 
-#include "view.h"
-#include "graphics.h"
-#include "math.h"
 #include <SDL/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <math.h>
 #include <stdbool.h>
+#include "view.h"
+#include "graphics.h"
+#include "animations.h"
 
 
 #define PI_DENOMINATOR 90
@@ -18,18 +19,20 @@
 
 
 void setWindow() {
-    // Window configuration
+  // Initialize everything
   SDL_Init(SDL_INIT_VIDEO);
+
   atexit(SDL_Quit);
 
   // Set the window title
   SDL_WM_SetCaption("Rubiksawesome", NULL);
-  // Set window size and colour depth
-  SDL_SetVideoMode(640, 480, 32, SDL_OPENGL);
+  // Set window size and colour depth and initialize an OpenGL context
+  SDL_SetVideoMode(800, 600, 32, SDL_OPENGL);
 
+  // Set up of the projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(70, (double)640 / 480, 1, 1000);
+  gluPerspective(70, (double)800 / 600, 1, 1000);
   glEnable(GL_DEPTH_TEST);
 
   SDL_version sdlVersion;
@@ -43,7 +46,7 @@ void setWindow() {
 rubikview generateView() {
   camera mainCamera = {
     (vector3) {0, 0, 0},
-    (vector3) {5, 0, PI/2}
+    (vector3) {5, - 3 * PI / 4, PI / 3}
   };
 
   rubikview mainView;
@@ -68,25 +71,33 @@ void update(rubikview * mainView) {
   camera * mainCamera = &(mainView->mainCamera);
 
   SDL_Event event;
-
   Uint8 *keystate = SDL_GetKeyState(NULL);
-  if (keystate[SDLK_DOWN]) {
-    if (mainCamera->angles.z > 0.000001) {
-      mainCamera->angles.z -= PI / 72;
-    }
-  } else if (keystate[SDLK_UP]) {
-    if (mainCamera->angles.z < PI - 0.000001) {
-      mainCamera->angles.z += PI / 72;
-    }
-  } else if (keystate[SDLK_RIGHT]) {
-    mainCamera->angles.y += PI / 72;
-  } else if (keystate[SDLK_LEFT]) {
-    mainCamera->angles.y -= PI / 72;
+
+  /**
+   * Zoom in / zoom out when pressing on PageUp / PageDown is held
+   */
+  if (keystate[SDLK_PAGEUP]) {
+    mainCamera->angles.x -= 0.1;
+  }
+  if (keystate[SDLK_PAGEDOWN]) {
+    mainCamera->angles.x += 0.1;
   }
 
   while (SDL_PollEvent(&event)) {
     switch(event.type)
     {
+      case SDL_MOUSEMOTION:
+        if (event.type == SDL_MOUSEMOTION && event.motion.state == SDL_BUTTON_LMASK) {
+          mainCamera->angles.y -= event.motion.xrel * 0.01;
+          mainCamera->angles.z -= event.motion.yrel * 0.01;
+
+          if (mainCamera->angles.z < 0) {
+            mainCamera->angles.z = 0.000001;
+          } else if (mainCamera->angles.z > PI) {
+            mainCamera->angles.z = PI - 0.000001;
+          }
+        }
+        break;
       case SDL_QUIT:
         exit(0);
         break;
