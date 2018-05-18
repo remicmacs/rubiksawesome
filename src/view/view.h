@@ -32,9 +32,6 @@ typedef struct _camera {
  */
 typedef struct _rubikview {
   camera mainCamera;          /**< The camera in the view */
-  bool isMoving;              /**< Indicates if the cube is moving */
-  animation cubeAnimation;    /**< Holds the current animation */
-  bool animationsEnabled;     /**< Enables or disables animations */
   rubikcube * rubikCube;      /**< The Rubik's cube */
   animation * animations;
 } rubikview;
@@ -60,63 +57,6 @@ rubikview generateView();
  * @param mainView The structure holding the view
  */
 void update(rubikview * mainView);
-
-
-/**
- * Rotate the Up face
- * @param mainView The structure holding the view
- */
-void rotateUp(rubikview * mainView);
-
-
-/**
- * Rotate the Down face
- * @param mainView The structure holding the view
- */
-void rotateDown(rubikview * mainView);
-
-
-/**
- * Rotate the Left face
- * @param mainView The structure holding the view
- */
-void rotateLeft(rubikview * mainView);
-
-
-/**
- * Rotate the Right face
- * @param mainView The structure holding the view
- */
-void rotateRight(rubikview * mainView);
-
-
-/**
- * Rotate the y slice
- * @param mainView The structure holding the view
- */
-void rotateMiddle(rubikview * mainView);
-
-
-/**
- * Rotate the Front face
- * @param mainView The structure holding the view
- */
-void rotateFront(rubikview * mainView);
-
-
-/**
- * Rotate the Back face
- * @param mainView The structure holding the view
- */
-void rotateBack(rubikview * mainView);
-
-void animateUp(rubikview * mainView);
-void animateDown(rubikview * mainView);
-void animateLeft(rubikview * mainView);
-void animateRight(rubikview * mainView);
-void animateMiddle(rubikview * mainView);
-void animateFront(rubikview * mainView);
-void animateBack(rubikview * mainView);
 
 void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw);
 void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw);

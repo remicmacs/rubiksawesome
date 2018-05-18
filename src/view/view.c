@@ -46,18 +46,8 @@ rubikview generateView() {
 
   rubikview mainView;
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
-  mainView.isMoving = false;
   mainView.rubikCube = generateRubikCube();
   mainView.animations = NULL;
-
-  /**
-   * We can enable animations with the -DANIMATIONS_ENABLED set
-   */
-  #ifdef ANIMATIONS_ENABLED
-  mainView.animationsEnabled = true;
-  #else
-  mainView.animationsEnabled = false;
-  #endif
 
   return mainView;
 }
@@ -67,7 +57,7 @@ void update(rubikview * mainView) {
   camera * mainCamera = &(mainView->mainCamera);
 
   SDL_Event event;
-  //Uint8 *keystate = SDL_GetKeyState(NULL);
+  Uint8 *keystate = SDL_GetKeyState(NULL);
 
   while (SDL_PollEvent(&event)) {
     switch(event.type)
@@ -97,78 +87,50 @@ void update(rubikview * mainView) {
       mainCamera->angles.x += 0.1;
     }
 
-    if (mainView->isMoving || mainView->animations != NULL) {
+    if (mainView->animations != NULL) {
       continue;
     }
 
     // DOWN ROTATION
     if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
-      //rotateDown(mainView);
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, DOWN, 0, false);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, DOWN, 0, keystate[SDLK_LSHIFT]);
       addAnimation(&mainView->animations, newAnimation);
     }
 
     // UP ROTATION
     if (event.key.keysym.sym == SDLK_u && event.key.type == SDL_KEYDOWN) {
-      //rotateUp(mainView);
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, TOP, 2, true);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, TOP, 2, !keystate[SDLK_LSHIFT]);
       addAnimation(&mainView->animations, newAnimation);
     }
 
+    // RIGHT ROTATION
     if (event.key.keysym.sym == SDLK_r && event.key.type == SDL_KEYDOWN) {
-      //rotateRight(mainView);
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, RIGHT, 2, true);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, RIGHT, 2, !keystate[SDLK_LSHIFT]);
       addAnimation(&mainView->animations, newAnimation);
     }
 
+    // LEFT ROTATION
     if (event.key.keysym.sym == SDLK_l && event.key.type == SDL_KEYDOWN) {
-      //rotateLeft(mainView);
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, LEFT, 0, false);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, LEFT, 0, keystate[SDLK_LSHIFT]);
       addAnimation(&mainView->animations, newAnimation);
     }
 
+    // FRONT ROTATION
     if (event.key.keysym.sym == SDLK_f && event.key.type == SDL_KEYDOWN) {
-      //rotateFront(mainView);
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, FRONT, 0, false);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, FRONT, 0, keystate[SDLK_LSHIFT]);
       addAnimation(&mainView->animations, newAnimation);
     }
 
+    // BACK ROTATION
     if (event.key.keysym.sym == SDLK_b && event.key.type == SDL_KEYDOWN) {
-      //rotateBack(mainView);
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, BACK, 2, true);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, BACK, 2, !keystate[SDLK_LSHIFT]);
       addAnimation(&mainView->animations, newAnimation);
     }
 
+    // MIDDLE ROTATION
     if (event.key.keysym.sym == SDLK_m && event.key.type == SDL_KEYDOWN) {
-      //rotateMiddle(mainView);
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, MIDDLE, 1, false);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, MIDDLE, 1, keystate[SDLK_LSHIFT]);
       addAnimation(&mainView->animations, newAnimation);
-    }
-  }
-
-  if (mainView->isMoving) {
-    switch(mainView->cubeAnimation.animatedFace) {
-      case TOP:
-        animateUp(mainView);
-        break;
-      case DOWN:
-        animateDown(mainView);
-        break;
-      case LEFT:
-        animateLeft(mainView);
-        break;
-      case RIGHT:
-        animateRight(mainView);
-        break;
-      case FRONT:
-        animateFront(mainView);
-        break;
-      case BACK:
-        animateBack(mainView);
-        break;
-      case MIDDLE:
-        animateMiddle(mainView);
-        break;
     }
   }
 
@@ -200,230 +162,6 @@ void update(rubikview * mainView) {
 
   glFlush();
   SDL_GL_SwapBuffers();
-}
-
-
-void rotateUp(rubikview * mainView) {
-  mainView->cubeAnimation.currentStep = 0;
-  mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
-  mainView->cubeAnimation.isActive = true;
-  mainView->isMoving = true;
-  mainView->cubeAnimation.animatedFace = TOP;
-}
-
-
-void rotateDown(rubikview * mainView) {
-  mainView->cubeAnimation.currentStep = 0;
-  mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
-  mainView->cubeAnimation.isActive = true;
-  mainView->isMoving = true;
-  mainView->cubeAnimation.animatedFace = DOWN;
-}
-
-
-void rotateLeft(rubikview * mainView) {
-  mainView->cubeAnimation.currentStep = 0;
-  mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
-  mainView->cubeAnimation.isActive = true;
-  mainView->isMoving = true;
-  mainView->cubeAnimation.animatedFace = LEFT;
-}
-
-
-void rotateRight(rubikview * mainView) {
-  mainView->cubeAnimation.currentStep = 0;
-  mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
-  mainView->cubeAnimation.isActive = true;
-  mainView->isMoving = true;
-  mainView->cubeAnimation.animatedFace = RIGHT;
-}
-
-
-void rotateMiddle(rubikview * mainView) {
-  mainView->cubeAnimation.currentStep = 0;
-  mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
-  mainView->cubeAnimation.isActive = true;
-  mainView->isMoving = true;
-  mainView->cubeAnimation.animatedFace = MIDDLE;
-}
-
-
-void rotateFront(rubikview * mainView) {
-  mainView->cubeAnimation.currentStep = 0;
-  mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
-  mainView->cubeAnimation.isActive = true;
-  mainView->isMoving = true;
-  mainView->cubeAnimation.animatedFace = FRONT;
-}
-
-
-void rotateBack(rubikview * mainView) {
-  mainView->cubeAnimation.currentStep = 0;
-  mainView->cubeAnimation.targetStep = ANIMATIONS_STEP;
-  mainView->cubeAnimation.isActive = true;
-  mainView->isMoving = true;
-  mainView->cubeAnimation.animatedFace = BACK;
-}
-
-
-/*******************************************************************************
- * ANIMATIONS
- * Define animations functions. They are called everytime we need to update the
- * animations
- ******************************************************************************/
-
-
-void animateUp(rubikview * mainView) {
-  int currentStep = mainView->cubeAnimation.currentStep;
-  int targetStep = mainView->cubeAnimation.targetStep;
-
-  if (currentStep == targetStep) {
-    mainView->cubeAnimation.currentStep = 0;
-    mainView->cubeAnimation.isActive = false;
-    mainView->isMoving = false;
-    rotateDataZ(mainView->rubikCube, 2, true);
-  } else {
-    for (int xIndex = 0; xIndex < 3; xIndex++) {
-      for (int yIndex = 0; yIndex < 3; yIndex++) {
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceZ(&mainView->rubikCube->cubes[xIndex][yIndex][2]->faces[faceIndex], ROTATION_ANGLE, true);
-        }
-      }
-    }
-    mainView->cubeAnimation.currentStep++;
-  }
-}
-
-
-void animateDown(rubikview * mainView) {
-  int currentStep = mainView->cubeAnimation.currentStep;
-  int targetStep = mainView->cubeAnimation.targetStep;
-
-  if (currentStep == targetStep) {
-    mainView->cubeAnimation.currentStep = 0;
-    mainView->cubeAnimation.isActive = false;
-    mainView->isMoving = false;
-    rotateDataZ(mainView->rubikCube, 0, false);
-  } else {
-    for (int xIndex = 0; xIndex < 3; xIndex++) {
-      for (int yIndex = 0; yIndex < 3; yIndex++) {
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceZ(&mainView->rubikCube->cubes[xIndex][yIndex][0]->faces[faceIndex], ROTATION_ANGLE, false);
-        }
-      }
-    }
-    mainView->cubeAnimation.currentStep++;
-  }
-}
-
-
-void animateLeft(rubikview * mainView) {
-  int currentStep = mainView->cubeAnimation.currentStep;
-  int targetStep = mainView->cubeAnimation.targetStep;
-
-  if (currentStep == targetStep) {
-    mainView->cubeAnimation.currentStep = 0;
-    mainView->cubeAnimation.isActive = false;
-    mainView->isMoving = false;
-    rotateDataX(mainView->rubikCube, 0, false);
-  } else {
-    for (int xIndex = 0; xIndex < 3; xIndex++) {
-      for (int yIndex = 0; yIndex < 3; yIndex++) {
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceX(&mainView->rubikCube->cubes[0][xIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, false);
-        }
-      }
-    }
-    mainView->cubeAnimation.currentStep++;
-  }
-}
-
-
-void animateRight(rubikview * mainView) {
-  int currentStep = mainView->cubeAnimation.currentStep;
-  int targetStep = mainView->cubeAnimation.targetStep;
-
-  if (currentStep == targetStep) {
-    mainView->cubeAnimation.currentStep = 0;
-    mainView->cubeAnimation.isActive = false;
-    mainView->isMoving = false;
-    rotateDataX(mainView->rubikCube, 2, true);
-  } else {
-    for (int xIndex = 0; xIndex < 3; xIndex++) {
-      for (int yIndex = 0; yIndex < 3; yIndex++) {
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceX(&mainView->rubikCube->cubes[2][xIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, true);
-        }
-      }
-    }
-    mainView->cubeAnimation.currentStep++;
-  }
-}
-
-
-void animateMiddle(rubikview * mainView) {
-  int currentStep = mainView->cubeAnimation.currentStep;
-  int targetStep = mainView->cubeAnimation.targetStep;
-
-  if (currentStep == targetStep) {
-    mainView->cubeAnimation.currentStep = 0;
-    mainView->cubeAnimation.isActive = false;
-    mainView->isMoving = false;
-    rotateDataX(mainView->rubikCube, 1, false);
-  } else {
-    for (int xIndex = 0; xIndex < 3; xIndex++) {
-      for (int yIndex = 0; yIndex < 3; yIndex++) {
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceX(&mainView->rubikCube->cubes[1][xIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, false);
-        }
-      }
-    }
-    mainView->cubeAnimation.currentStep++;
-  }
-}
-
-
-void animateFront(rubikview * mainView) {
-  int currentStep = mainView->cubeAnimation.currentStep;
-  int targetStep = mainView->cubeAnimation.targetStep;
-
-  if (currentStep == targetStep) {
-    mainView->cubeAnimation.currentStep = 0;
-    mainView->cubeAnimation.isActive = false;
-    mainView->isMoving = false;
-    rotateDataY(mainView->rubikCube, 0, false);
-  } else {
-    for (int xIndex = 0; xIndex < 3; xIndex++) {
-      for (int yIndex = 0; yIndex < 3; yIndex++) {
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceY(&mainView->rubikCube->cubes[xIndex][0][yIndex]->faces[faceIndex], ROTATION_ANGLE, false);
-        }
-      }
-    }
-    mainView->cubeAnimation.currentStep++;
-  }
-}
-
-
-void animateBack(rubikview * mainView) {
-  int currentStep = mainView->cubeAnimation.currentStep;
-  int targetStep = mainView->cubeAnimation.targetStep;
-
-  if (currentStep == targetStep) {
-    mainView->cubeAnimation.currentStep = 0;
-    mainView->cubeAnimation.isActive = false;
-    mainView->isMoving = false;
-    rotateDataY(mainView->rubikCube, 2, true);
-  } else {
-    for (int xIndex = 0; xIndex < 3; xIndex++) {
-      for (int yIndex = 0; yIndex < 3; yIndex++) {
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceY(&mainView->rubikCube->cubes[xIndex][2][yIndex]->faces[faceIndex], ROTATION_ANGLE, true);
-        }
-      }
-    }
-    mainView->cubeAnimation.currentStep++;
-  }
 }
 
 /*******************************************************************************
