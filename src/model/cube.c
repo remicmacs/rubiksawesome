@@ -1,5 +1,5 @@
 #include "cube.h"
-#include "../controller/debugController.h"
+
 move mapCodeToMove(char * moveCode){
     // 15 base moves for 60 rotations implemented 
     //  (double and counter-clockwise)
@@ -38,23 +38,6 @@ move mapCodeToMove(char * moveCode){
 
     return (move) code;
 }
-cube* voidCube(){
-	cube * self= initCube();
-    unsigned char color[6] = {'g','b','r','o','w','y'};
-    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
-        for (int index = 0 ; index < 3 ; index++){
-            for (int jindex = 0 ; jindex < 3 ; jindex++){
-					if(jindex == 1 && index == 1){
-                self->cube[faceIndex][index][jindex] = color[faceIndex];
-					}
-					else{
-self->cube[faceIndex][index][jindex] = ' '; 
-					}
-            }
-        }
-    }
-    return self;
-}
 
 cube * initCube() {
     // Initialization of cube
@@ -63,27 +46,6 @@ cube * initCube() {
     self->copy = &copyCube;
     self->equals = &cubeIsEqual;
     self->print = &printCube;                    // Public method attachment
-cube voidCube(cube self){
-    unsigned char color[6] = {'g','b','r','o','w','y'};
-    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
-        for (int index = 0 ; index < 3 ; index++){
-            for (int jindex = 0 ; jindex < 3 ; jindex++){
-					if(jindex == 1 && index == 1){
-                self.cube[faceIndex][index][jindex] = color[faceIndex];
-					}
-					else{
-self.cube[faceIndex][index][jindex] = ' '; 
-					}
-            }
-        }
-    }
-    return self;
-}
-
-cube rotate(cube self, unsigned int id, _Bool cclw) {
-    if (cclw) {
-        id += 6 ;
-    }
 
     // Cube colorization
     unsigned char color[6] = {'g','b','r','o','w','y'};
@@ -100,11 +62,10 @@ cube rotate(cube self, unsigned int id, _Bool cclw) {
             for (int jindex = 0 ; jindex < 3 ; jindex++){
                 self->cube[faceIndex][index][jindex] = color[faceIndex];
             }
-        } 
+        }
     }
     return self;
 }
-
 
 /////////////////////////////// PRIVATE FUNCTIONS ////////////////////////////
 
@@ -362,12 +323,7 @@ cube * rotateD(cube * self){
     return self;
 }
 
-
-<<<<<<< HEAD
 cube * rotateFi(cube * self){
-=======
-cube rotateFi(cube self){
->>>>>>> 1018a2680fde20ad69cbf063911a1b11aa4fe1ec
     for(int i=0; i < 3; i++)
     {
         rotateF(self);
@@ -411,7 +367,6 @@ cube * rotateUi(cube * self){
     }
 
     return self;
-
 }
 
 cube * rotateDi(cube * self){
@@ -851,3 +806,20 @@ void destroyCube(cube * self) {
     free(self);
     return;
 }
+
+cube* voidCube(cube *self){
+    unsigned char color[6] = {'g','b','r','o','w','y'};
+    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
+        for (int index = 0 ; index < 3 ; index++){
+            for (int jindex = 0 ; jindex < 3 ; jindex++){
+					if(jindex == 1 && index == 1){
+					}
+					else{
+		self->cube[faceIndex][index][jindex] = ' '; 
+					}
+            }
+        }
+    }
+      return self;
+}
+
