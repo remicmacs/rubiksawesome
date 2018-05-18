@@ -23,6 +23,7 @@
  * Command dispatch to models
  * Command dispatch to view
  * Store command to history
+ * Move positionCube from model to controller
 
 ## Data manipulation
 * Rotations
@@ -51,6 +52,11 @@
 * Use Cases and Data flow
 * Diagrams
 * Design choices : double model, MVC structure
+* Main functions
+ * Why a pattern comparator
+ * Why a function to orientate the cube
+ * Function to find a command to orientate the cube. (Justification of single
+   responsability principle.
 
 ## Tests
 * 4 times the same move is like nothing happened

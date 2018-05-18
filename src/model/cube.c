@@ -1,4 +1,6 @@
 #include "cube.h"
+#include "../controller/patternComparator.h"
+#include "../controller/debugController.h"
 
 move mapCodeToMove(char * moveCode){
     // 15 base moves for 60 rotations implemented 
@@ -539,106 +541,6 @@ cube * rotatedi(cube * self){
             );
 }
 
-char * positionCommand(cube * self, char frontFace, char upFace) {
-    char * command = NULL;
-    cube * copy = self->copy(self);
-    int commandSize = 0;
-
-    // Fixing front center position : two axes are solved
-    // 6 positions are possible, with only one valid
-    int frontPos = F - 1;
-    while(copy->cube[++frontPos][1][1] != frontFace);
-    if (frontPos != F) {
-        commandSize = 4;
-        command = (char *) malloc(sizeof(char)*commandSize);
-        switch(frontPos) {
-            case(R):
-                strncpy(command, "y ", 2);
-                copy->rotate(self, y);
-                break;
-            case(L):
-                strncpy(command, "yi ", 3);
-                copy->rotate(self, yi);
-                break;
-            case(U):
-                strncpy(command, "xi ", 3);
-                copy->rotate(self, xi);
-                break;
-            case(D):
-                strncpy(command, "x ", 2);
-                copy->rotate(self, x);
-                break;
-            case(B):
-                strncpy(command, "x2 ", 3);
-                copy->rotate(self, x2);
-                break;
-        }
-    }
-
-    // Fixing up center position : only one axis has to be solved
-    // 4 positions are possible, with only one valid
-    int upPos = R - 1;
-    while(copy->cube[++upPos][1][1] != upFace);
-    if (upFace != U) {
-        commandSize += 3;
-        command = (char *) realloc(command, sizeof(char) * commandSize);
-        switch(upPos) {
-            case(L):
-                strncat(command, "z", 1);
-                copy->rotate(self, z);
-                break;
-            case(D):
-                strncat(command, "z2", 2);
-                copy->rotate(self, z2);
-                break;
-            case(R):
-                strncat(command, "zi ", 2);
-                copy->rotate(self, zi);
-                break;
-        }
-    }
-
-    destroyCube(copy);
-    return command;
-}
-
-cube * positionCube(cube * self, char frontFace, char upFace) {
-    char * commands = positionCommand(self, frontFace, upFace);
-    char * token = strtok(commands, " ");
-    int i = 0;
-    move moves[2] = {-1, -1};
-    while (i < 2 && token) {
-        moves[i] = mapCodeToMove(token);
-        token = strtok(NULL, " ");
-    }
-
-    i = -1;
-
-    while(++i < 2 && (int) moves[i] != -1) {
-        self->rotate(self, moves[i]);
-    }
-        return self;
-}
-
-/**
- * Function to bring center cublets in standard position.
- * Standard position of center cublets are :
- *  * green on front
- *  * blue on back
- *  * red on right
- *  * orange on left
- *  * white on top
- *  * yellow on down
- *
- *  This function is a helper to the cubeIsEqual function.
- *
- *  @param self Reference to cube to be redressed
- *  @returns Reference to redressed cube
- */
-cube * redressCube(cube * self) {
-    self = positionCube(self, 'g', 'w');
-    return self;
-}
 ///////////////////////////////////////////////////////////////////////////////
 
 ////////////////////  PUBLIC API OF CUBE DATA STRUCT /////////////////////////

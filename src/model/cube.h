@@ -1,3 +1,5 @@
+#ifndef CUBE_H
+#define CUBE_H
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -179,6 +181,4 @@ void printCube(cube * self);
  * @param self pointer to cube to delete
  */
 void destroyCube(cube * self);
-
-
-
+#endif
