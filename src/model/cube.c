@@ -742,3 +742,20 @@ void destroyCube(cube * self) {
     free(self);
     return;
 }
+
+cube* voidCube(cube *self){
+    unsigned char color[6] = {'g','b','r','o','w','y'};
+    for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
+        for (int index = 0 ; index < 3 ; index++){
+            for (int jindex = 0 ; jindex < 3 ; jindex++){
+					if(jindex == 1 && index == 1){
+					}
+					else{
+		self->cube[faceIndex][index][jindex] = ' '; 
+					}
+            }
+        }
+    }
+      return self;
+}
+

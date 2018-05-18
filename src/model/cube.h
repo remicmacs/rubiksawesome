@@ -181,4 +181,7 @@ void printCube(cube * self);
  * @param self pointer to cube to delete
  */
 void destroyCube(cube * self);
-#endif
+
+cube* voidCube(cube *self);
+
+
