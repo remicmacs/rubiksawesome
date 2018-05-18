@@ -6,7 +6,7 @@ Alexandre T.
 
 > Our whole life is solving puzzles.
 >
-> _<div style="text-align: right"> Arno Rubik </div>_
+> _<div style="text-align: right"> Erno Rubik </div>_
 
 ## Intro
 Rubiksawesome is a Rubik's Cube 3x3x3 simulator with a 3D display and a solver
@@ -17,9 +17,8 @@ It is developped as a school project @ISEN-Lille.
 * Animated 3D model
 * Command-line argument for bulk command parsing
 * Solving algorithm implemented
- * Friedrich
- * ?
- * ?
+ * Jessica Fridrich
+
 
 ## Requirements
 As of today, Rubiksawesome is implemented for compilation with `gcc` on a
@@ -60,17 +59,17 @@ See [`topic.pdf`](topic.pdf).
 [`TODOs.md`](TODOs.md) : What is done and not yet accomplished.
 
 ### File structure
-> /
-> |
-> |-- src/
-> |     |
-> |     |-- model/
-> |     |-- view/
-> |     |-- controller/
-> |     |-- tests/
-> |     |-- main.c
-> |     |-- main.h
-> |
-> |-- build/
-> |-- docs/
+> /  
+> |  
+> |-- src/  
+> |     |  
+> |     |-- model/  
+> |     |-- view/  
+> |     |-- controller/  
+> |     |-- tests/  
+> |     |-- main.c  
+> |     |-- main.h  
+> |  
+> |-- build/  
+> |-- docs/  
 >
