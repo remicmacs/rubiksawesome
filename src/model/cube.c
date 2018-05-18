@@ -8,6 +8,10 @@ move mapCodeToMove(char * moveCode){
         'f', 'b', 'r', 'l', 'u', 'd',
         'x', 'y', 'z'
     };
+    
+    if (moveCode == NULL || moveCode[0] == '\0') {
+        return -1;
+    }
 
     char moveChar = moveCode[0]; // retrieving first letter
 
@@ -18,13 +22,7 @@ move mapCodeToMove(char * moveCode){
 
     // Exception handling of unknown move
     if (code == Fi) {
-        char errorMessage[83];
-        sprintf(
-                errorMessage,
-                "in mapCodeToMove(), \'%c\' is not a valid move",
-                moveChar
-                );
-        exitFatal(errorMessage);
+        return -1;
     }
 
     if (moveCode[1] == 'i' || moveCode[1] == '\'') {
@@ -616,7 +614,7 @@ cube * positionCube(cube * self, char frontFace, char upFace) {
 
     i = -1;
 
-    while(++i < 2 && moves[i] != -1) {
+    while(++i < 2 && (int) moves[i] != -1) {
         self->rotate(self, moves[i]);
     }
         return self;
