@@ -13,6 +13,11 @@
 #include "animations.h"
 
 
+#define PI_DENOMINATOR 90
+#define ROTATION_ANGLE (PI / PI_DENOMINATOR)
+#define ANIMATIONS_STEP (PI_DENOMINATOR / 2)
+
+
 /**
  * A structure holding the camera position and rotation
  */
@@ -31,6 +36,7 @@ typedef struct _rubikview {
   animation cubeAnimation;    /**< Holds the current animation */
   bool animationsEnabled;     /**< Enables or disables animations */
   rubikcube * rubikCube;      /**< The Rubik's cube */
+  animation * animations;
 } rubikview;
 
 

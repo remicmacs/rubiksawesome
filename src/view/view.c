@@ -8,14 +8,9 @@
 #include <GL/glu.h>
 #include <math.h>
 #include <stdbool.h>
+#include "animations.h"
 #include "view.h"
 #include "graphics.h"
-#include "animations.h"
-
-
-#define PI_DENOMINATOR 90
-#define ROTATION_ANGLE (PI / PI_DENOMINATOR)
-#define ANIMATIONS_STEP (PI_DENOMINATOR / 2)
 
 
 void setWindow() {
@@ -53,6 +48,7 @@ rubikview generateView() {
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.isMoving = false;
   mainView.rubikCube = generateRubikCube();
+  mainView.animations = NULL;
 
   /**
    * We can enable animations with the -DANIMATIONS_ENABLED set
@@ -71,17 +67,7 @@ void update(rubikview * mainView) {
   camera * mainCamera = &(mainView->mainCamera);
 
   SDL_Event event;
-  Uint8 *keystate = SDL_GetKeyState(NULL);
-
-  /**
-   * Zoom in / zoom out when pressing on PageUp / PageDown is held
-   */
-  if (keystate[SDLK_PAGEUP]) {
-    mainCamera->angles.x -= 0.1;
-  }
-  if (keystate[SDLK_PAGEDOWN]) {
-    mainCamera->angles.x += 0.1;
-  }
+  //Uint8 *keystate = SDL_GetKeyState(NULL);
 
   while (SDL_PollEvent(&event)) {
     switch(event.type)
@@ -103,36 +89,60 @@ void update(rubikview * mainView) {
         break;
     }
 
-    if (mainView->isMoving) {
+    if (event.button.button == SDL_BUTTON_WHEELUP) {
+      mainCamera->angles.x -= 0.1;
+    }
+
+    if (event.button.button == SDL_BUTTON_WHEELDOWN) {
+      mainCamera->angles.x += 0.1;
+    }
+
+    if (mainView->isMoving || mainView->animations != NULL) {
       continue;
     }
 
+    // DOWN ROTATION
     if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
-      rotateDown(mainView);
+      //rotateDown(mainView);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, DOWN, 0, false);
+      addAnimation(&mainView->animations, newAnimation);
     }
 
+    // UP ROTATION
     if (event.key.keysym.sym == SDLK_u && event.key.type == SDL_KEYDOWN) {
-      rotateUp(mainView);
+      //rotateUp(mainView);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, TOP, 2, true);
+      addAnimation(&mainView->animations, newAnimation);
     }
 
     if (event.key.keysym.sym == SDLK_r && event.key.type == SDL_KEYDOWN) {
-      rotateRight(mainView);
+      //rotateRight(mainView);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, RIGHT, 2, true);
+      addAnimation(&mainView->animations, newAnimation);
     }
 
     if (event.key.keysym.sym == SDLK_l && event.key.type == SDL_KEYDOWN) {
-      rotateLeft(mainView);
+      //rotateLeft(mainView);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, LEFT, 0, false);
+      addAnimation(&mainView->animations, newAnimation);
     }
 
     if (event.key.keysym.sym == SDLK_f && event.key.type == SDL_KEYDOWN) {
-      rotateFront(mainView);
+      //rotateFront(mainView);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, FRONT, 0, false);
+      addAnimation(&mainView->animations, newAnimation);
     }
 
     if (event.key.keysym.sym == SDLK_b && event.key.type == SDL_KEYDOWN) {
-      rotateBack(mainView);
+      //rotateBack(mainView);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, BACK, 2, true);
+      addAnimation(&mainView->animations, newAnimation);
     }
 
     if (event.key.keysym.sym == SDLK_m && event.key.type == SDL_KEYDOWN) {
-      rotateMiddle(mainView);
+      //rotateMiddle(mainView);
+      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, MIDDLE, 1, false);
+      addAnimation(&mainView->animations, newAnimation);
     }
   }
 
@@ -160,6 +170,13 @@ void update(rubikview * mainView) {
         animateMiddle(mainView);
         break;
     }
+  }
+
+  animation * animationsPtr = mainView->animations;
+  while (animationsPtr != NULL) {
+    animationsPtr->update(animationsPtr, mainView->rubikCube);
+    animationsPtr = animationsPtr->next;
+    updateAnimationList(&mainView->animations);
   }
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
