@@ -185,3 +185,4 @@ void destroyCube(cube * self);
 cube* voidCube(cube *self);
 
 
+#endif

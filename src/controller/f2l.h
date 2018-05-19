@@ -32,5 +32,5 @@ bool edgePlaced(cube *self);
 
 bool isReversedEdge(cube *self, edge elt);
 
-
+char *orientEdges(cube *self);
 #endif

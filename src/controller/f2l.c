@@ -27,62 +27,84 @@ bool isReversedEdge(cube *self, edge elt)
 	return false;
 }
 
-cube *doWhiteCross(cube* self){
+
+
+char *orientEdges(cube *self){
+	cube *clone = copyCube(self);
+	char movements[200] = "";	
+	strcat(movements,positionCommand(clone, 'g','y'));
+	positionCube(clone,'g','y');
 	edge e;
 	char colors[4] ={'o','b','r','g'};
-	positionCube(self,'g','y');
-	while(whiteCrossOk(self) == false){
-		while(edgePlaced(self) == false){
-			for(int i=0; i <4; i++){
-				e= searchWhiteEdge(self,colors[i]);
-				if(isEdgeOnFace(e, U) == false && correctPositionCross(self,e) == false){
-					positionCube(self,getColorTile(self,e.tiles[1]), 'y');
-					if(ifPair(self,e, F) == true){
-					while(correctPositionCross(self,e) == false && isEdgeOnFace(e, U) == false ){
-						positionCube(self,getFaceColor(self,e.tiles[1]), 'y');
-						printEdge(self,e);
-						e= searchWhiteEdge(self,colors[i]);
-						self->rotate(self,"F");
-						e= searchWhiteEdge(self,colors[i]);
-						printf("keblo");
+	while(edgePlaced(clone) == false){
 
-					}
-					positionCube(self,getColorTile(self,e.tiles[1]), 'y');
+		for(int i=0; i <4; i++){
+			e = searchWhiteEdge(clone, colors[i]);
+			if(getFaceColor(clone,e.tiles[1]) != 'w'){
+				strcat(movements,positionCommand(clone, getFaceColor(clone,e.tiles[1]),'y'));
 
-					}
-				}
-				else{
-					if(e.tiles[0].col == 0 && e.tiles[1].col == 2){
-						printf("arete à gauche\n");
-						self->rotate(self,"F");
-						self->rotate(self,"U");
-						self->rotate(self,"Fi");
-					}
-					else if(e.tiles[0].col == 2 && e.tiles[1].col == 0){
-						printf("arete à droite \n");
-						self->rotate(self,"Fi");
-						self->rotate(self,"U");
-						self->rotate(self,"F");
-					}
-					else{
-						while(isEdgeOnFace(e,U) == false)
-						{
+				positionCube(clone,getFaceColor(clone,e.tiles[1]),'y');
 
-							self->rotate(self,"F");
-							e= searchWhiteEdge(self,colors[i]);
-
-						}
-						self->rotate(self,"U");
-					}
-				}
-			
-			sleep(1);	
 			}
-		}
-		positionCube(self,'g','y');
-		break;
+			else{
+				strcat(movements,positionCommand(clone, getFaceColor(clone,e.tiles[0]),'y'));
+
+				positionCube(clone,getFaceColor(clone,e.tiles[0]),'y');
+
+			}
+			e = searchWhiteEdge(clone, colors[i]);
+			if(ifPair(clone,e,e.tiles[1].face)){
+				while(correctPositionCross(clone,e)==false){
+					clone->rotate(clone,F);
+					e = searchWhiteEdge(clone, colors[i]);
+					strcat(movements, "F ");
+
+				}
+
+			}
+			else{
+				if(e.tiles[0].col == 2 && e.tiles[1].col == 0){
+					//printf("arete à gauche\n");
+					clone->rotate(clone,F);
+					clone->rotate(clone,U);
+					clone->rotate(clone,Fi);
+					strcat(movements, "F U Fi ");
+				}			
+				else if(e.tiles[0].col == 0 && e.tiles[1].col == 2){
+					//printf("arete à droite \n");
+					clone->rotate(clone,Fi);
+					clone->rotate(clone,U);
+					clone->rotate(clone,F);
+					strcat(movements, "Fi U F ");
+				}
+
+				else{
+					while(isEdgeOnFace(e,U)==false){
+						clone->rotate(clone,F);
+						e = searchWhiteEdge(clone, colors[i]);
+						strcat(movements, "F ");
+					}
+				}
+			}
+			e = searchWhiteEdge(clone, colors[i]);
+
+			//		printEdge(clone,e);
+			//		printf("L’arete est bien positionnée : %d\n",correctPositionCross(clone,e)); 
+			//		printf("L’arete est sur la bonne face : %d\n",isEdgeOnFace(e,U)); 
+			//		printf("Une paire est présente: %d\n",ifPair(clone,e,e.tiles[1].face));
+
+			//
+		}}
+	printCube(clone);
+	printf("%s",movements);
+	return movements;
 }
-return self;
+
+
+
+
+cube *doWhiteCross(cube* self){
+	return self;
 }
 
 
@@ -100,7 +122,6 @@ edge searchWhiteEdge(cube* self, char color){
 							whiteEdge= e;
 							//printEdge(self,whiteEdge);
 							return whiteEdge;
-
 						}
 
 					}
