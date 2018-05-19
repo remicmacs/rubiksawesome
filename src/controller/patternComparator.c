@@ -85,15 +85,15 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
         command = (char *) realloc(command, sizeof(char) * commandSize);
         switch(upPos) {
             case(L):
-                strncat(command, "z ", 1);
+                strncat(command, "z ", 3);
                 copy->rotate(copy, z);
                 break;
             case(D):
-                strncat(command, "z2 ", 2);
+                strncat(command, "z2 ", 4);
                 copy->rotate(copy, z2);
                 break;
             case(R):
-                strncat(command, "zi ", 2);
+                strncat(command, "zi ", 4);
                 copy->rotate(copy, zi);
                 break;
         }
