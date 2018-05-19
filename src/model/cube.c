@@ -744,7 +744,6 @@ void destroyCube(cube * self) {
 }
 
 cube* voidCube(cube *self){
-    unsigned char color[6] = {'g','b','r','o','w','y'};
     for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
         for (int index = 0 ; index < 3 ; index++){
             for (int jindex = 0 ; jindex < 3 ; jindex++){
