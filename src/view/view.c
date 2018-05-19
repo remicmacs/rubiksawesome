@@ -61,7 +61,7 @@ rubikview generateView() {
   for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
     mainView.instructions[instructionIndex] = generateInstructions(facesTypes[instructionIndex]);
   }
-
+  mainView.instructionsDisplayed = false;
   mainView.update = &update;
 
   return mainView;
@@ -100,6 +100,10 @@ void update(rubikview * mainView) {
 
     if (event.button.button == SDL_BUTTON_WHEELDOWN) {
       mainCamera->angles.x += 0.1;
+    }
+
+    if (event.key.keysym.sym == SDLK_i && event.key.type == SDL_KEYDOWN) {
+      mainView->instructionsDisplayed = !mainView->instructionsDisplayed;
     }
 
     if (mainView->animations != NULL) {
@@ -187,8 +191,10 @@ void update(rubikview * mainView) {
     }
   }
 
-  for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
-    drawInstruction(mainView->instructions[instructionIndex], keystate[SDLK_LSHIFT]);
+  if (mainView->instructionsDisplayed) {
+    for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
+      drawInstruction(mainView->instructions[instructionIndex], keystate[SDLK_LSHIFT]);
+    }
   }
 
   glFlush();

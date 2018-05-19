@@ -37,6 +37,7 @@ typedef struct _rubikview {
   animation * animations;
   GLuint texture;
   image instructions[6];
+  bool instructionsDisplayed;
   void (* update)(struct _rubikview * mainView);
 } rubikview;
 
