@@ -54,23 +54,23 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
         command = (char *) malloc(sizeof(char)*commandSize);
         switch(frontPos) {
             case(R):
-                strncpy(command, "y ", 2);
+                strncpy(command, "y ", 3);
                 copy->rotate(copy, y);
                 break;
             case(L):
-                strncpy(command, "yi ", 3);
+                strncpy(command, "yi ", 4);
                 copy->rotate(copy, yi);
                 break;
             case(U):
-                strncpy(command, "xi ", 3);
+                strncpy(command, "xi ", 4);
                 copy->rotate(copy, xi);
                 break;
             case(D):
-                strncpy(command, "x ", 2);
+                strncpy(command, "x ", 3);
                 copy->rotate(copy, x);
                 break;
             case(B):
-                strncpy(command, "x2 ", 3);
+                strncpy(command, "x2 ", 4);
                 copy->rotate(copy, x2);
                 break;
         }
@@ -81,15 +81,15 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
     int upPos = R - 1;
     while(copy->cube[++upPos][1][1] != upFace);
     if (upFace != U) {
-        commandSize += 3;
+        commandSize += 4;
         command = (char *) realloc(command, sizeof(char) * commandSize);
         switch(upPos) {
             case(L):
-                strncat(command, "z", 1);
+                strncat(command, "z ", 1);
                 copy->rotate(copy, z);
                 break;
             case(D):
-                strncat(command, "z2", 2);
+                strncat(command, "z2 ", 2);
                 copy->rotate(copy, z2);
                 break;
             case(R):
