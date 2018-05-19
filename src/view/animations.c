@@ -6,20 +6,22 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "graphics.h"
 #include "view.h"
 #include "animations.h"
 
 
-animation * generateAnimation(int nbStep, enum FaceType animatedFace, int sliceIndex, bool ccw) {
+animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw) {
   animation * returnedAnimation;
   returnedAnimation = (animation *)malloc(sizeof(animation));
 
   returnedAnimation->currentStep = 0;
-  returnedAnimation->targetStep = nbStep;
+  returnedAnimation->targetStep = roundf((PI / 2.0) / increment);
   returnedAnimation->animatedFace = animatedFace;
   returnedAnimation->isActive = false;
   returnedAnimation->sliceIndex = sliceIndex;
+  returnedAnimation->rotationAngle = increment;
   returnedAnimation->next = NULL;
   returnedAnimation->ccw = ccw;
 
@@ -92,7 +94,7 @@ void animateX(animation * self, rubikcube * rubikCube) {
     for (int xIndex = 0; xIndex < 3; xIndex++) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceX(&rubikCube->cubes[self->sliceIndex][xIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, self->ccw);
+          rotateFaceX(&rubikCube->cubes[self->sliceIndex][xIndex][yIndex]->faces[faceIndex], self->rotationAngle, self->ccw);
         }
       }
     }
@@ -109,7 +111,7 @@ void animateY(animation * self, rubikcube * rubikCube) {
     for (int xIndex = 0; xIndex < 3; xIndex++) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceY(&rubikCube->cubes[xIndex][self->sliceIndex][yIndex]->faces[faceIndex], ROTATION_ANGLE, self->ccw);
+          rotateFaceY(&rubikCube->cubes[xIndex][self->sliceIndex][yIndex]->faces[faceIndex], self->rotationAngle, self->ccw);
         }
       }
     }
@@ -126,7 +128,7 @@ void animateZ(animation * self, rubikcube * rubikCube) {
     for (int xIndex = 0; xIndex < 3; xIndex++) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
-          rotateFaceZ(&rubikCube->cubes[xIndex][yIndex][self->sliceIndex]->faces[faceIndex], ROTATION_ANGLE, self->ccw);
+          rotateFaceZ(&rubikCube->cubes[xIndex][yIndex][self->sliceIndex]->faces[faceIndex], self->rotationAngle, self->ccw);
         }
       }
     }

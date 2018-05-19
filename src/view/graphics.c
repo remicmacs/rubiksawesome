@@ -217,6 +217,34 @@ void generateTexture(GLuint * textureId, const char * url) {
 }
 
 
+void generateCubemapTexture(GLuint * textureId) {
+  glGenTextures(1, textureId);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, *textureId);
+
+  const char * files[22] = {
+    "res/skybox/right.png",
+    "res/skybox/left.png",
+    "res/skybox/top.png",
+    "res/skybox/bottom.png",
+    "res/skybox/front.png",
+    "res/skybox/back.png"
+  };
+
+  for (int imageIndex = 0; imageIndex < 6; imageIndex++) {
+    SDL_Surface * surf = IMG_Load(files[imageIndex]);
+
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB + imageIndex, 0, GL_RGBA, surf->w, surf->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surf->pixels);
+
+    SDL_FreeSurface(surf);
+  }
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
+
+
 image generateInstructions(enum FaceType faceType) {
   image newInstruction;
   switch(faceType) {
@@ -257,7 +285,6 @@ image generateInstructions(enum FaceType faceType) {
       generateTexture(&newInstruction.imageTexture.ccwId, "res/BACK.png");
       break;
     case RIGHT:
-      printf("Generating right texture\n");
       newInstruction.corners[0] = (vector3) {2.3, -1, 1};
       newInstruction.corners[1] = (vector3) {2.3, 1, 1};
       newInstruction.corners[2] = (vector3) {2.3, 1, -1};
@@ -327,11 +354,6 @@ void drawFace(face drawnFace, bool debug) {
 void drawInstruction(image drawnInstruction, bool ccw) {
   glBindTexture(GL_TEXTURE_2D, ccw ? drawnInstruction.imageTexture.ccwId : drawnInstruction.imageTexture.id);
 
-  //int angle = (int)(mainView->mainCamera.angles.y * (180.0 / PI)) % 360;
-  //int alpha = map(angle, 45, 135, 0, 255);
-
-  //printf("Radians: %f, Degrees: %d, Alpha: %d\n", mainView->mainCamera.angles.y, angle, alpha);
-
   glColor4ub(255, 255, 255, 255);
 
   float corners[4][2] = {
@@ -358,6 +380,70 @@ void drawInstruction(image drawnInstruction, bool ccw) {
   }
   glEnd();
   glDisable(GL_TEXTURE_2D);
+}
+
+
+void drawSkybox(GLuint textureId) {
+  // Taille du cube
+  float t = 500.0f;
+
+  // Utilisation de la texture CubeMap
+  glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, textureId);
+
+  glEnable(GL_TEXTURE_CUBE_MAP_ARB);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
+  glDepthMask(GL_FALSE);
+
+  glColor3ub(255, 255, 255);
+
+  // Rendu de la géométrie
+  glBegin(GL_TRIANGLE_STRIP);			// X Négatif
+  	glTexCoord3f(-t,-t,-t); glVertex3f(-t,-t,-t);
+  	glTexCoord3f(-t,t,-t); glVertex3f(-t,t,-t);
+  	glTexCoord3f(-t,-t,t); glVertex3f(-t,-t,t);
+  	glTexCoord3f(-t,t,t); glVertex3f(-t,t,t);
+  glEnd();
+
+  glBegin(GL_TRIANGLE_STRIP);			// X Positif
+  	glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
+  	glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
+  	glTexCoord3f(t,t,-t); glVertex3f(t,t,-t);
+  	glTexCoord3f(t,t,t); glVertex3f(t,t,t);
+  glEnd();
+
+  glBegin(GL_TRIANGLE_STRIP);			// Y Négatif
+  	glTexCoord3f(-t,-t,-t); glVertex3f(-t,-t,-t);
+  	glTexCoord3f(-t,-t,t); glVertex3f(-t,-t,t);
+  	glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
+  	glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
+  glEnd();
+
+  glBegin(GL_TRIANGLE_STRIP);			// Y Positif
+  	glTexCoord3f(-t,t,-t); glVertex3f(-t,t,-t);
+  	glTexCoord3f(t,t,-t); glVertex3f(t,t,-t);
+  	glTexCoord3f(-t,t,t); glVertex3f(-t,t,t);
+  	glTexCoord3f(t,t,t); glVertex3f(t,t,t);
+  glEnd();
+
+  glBegin(GL_TRIANGLE_STRIP);			// Z Négatif
+  	glTexCoord3f(-t,-t,-t); glVertex3f(-t,-t,-t);
+  	glTexCoord3f(t, -t,-t); glVertex3f(t,-t,-t);
+  	glTexCoord3f(-t,t,-t); glVertex3f(-t,t,-t);
+  	glTexCoord3f(t,t,-t); glVertex3f(t,t,-t);
+  glEnd();
+
+  glBegin(GL_TRIANGLE_STRIP);			// Z Positif
+  	glTexCoord3f(-t,-t,t); glVertex3f(-t,-t,t);
+  	glTexCoord3f(-t,t,t); glVertex3f(-t,t,t);
+  	glTexCoord3f(t,-t,t); glVertex3f(t,-t,t);
+  	glTexCoord3f(t,t,t); glVertex3f(t,t,t);
+  glEnd();
+
+  glDepthMask(GL_TRUE);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_CUBE_MAP_ARB);
 }
 
 

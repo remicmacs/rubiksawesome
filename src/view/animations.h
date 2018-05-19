@@ -22,12 +22,13 @@ typedef struct _animation {
   int targetStep;
   int currentStep;
   int sliceIndex;
+  float rotationAngle;
   enum FaceType animatedFace;
   struct _animation * next;
   void (* update)(struct _animation * self, rubikcube * rubikCube);
 } animation;
 
-animation * generateAnimation(int nbStep, enum FaceType animatedFace, int sliceIndex, bool ccw);
+animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw);
 void addAnimation(animation ** animations, animation * toAdd);
 void removeAnimation(animation ** animations, animation * toRemove);
 void updateAnimationList(animation ** animations);

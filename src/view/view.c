@@ -12,31 +12,55 @@
 #include "animations.h"
 #include "view.h"
 #include "graphics.h"
+#include "../model/cube.h"
 
 
 void setWindow() {
-  // Initialize everything
+  /*
+   * Initialize SDL
+   */
   SDL_Init(SDL_INIT_VIDEO);
 
+  /*
+   * Bind the SDL_Quit() function to the program's exit
+   */
   atexit(SDL_Quit);
 
-  // Set the window title
+  /*
+   *  Set the window title and set the window size, the colour depth and
+   *  context to OpenGL
+   */
   SDL_WM_SetCaption("Rubiksawesome", NULL);
-  // Set window size and colour depth and initialize an OpenGL context
   SDL_SetVideoMode(800, 600, 32, SDL_OPENGL);
 
-  // Set up of the projection matrix
+  /*
+   * Set up of the projection matrix to use perspective
+   */
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(70, (double)800 / 600, 1, 1000);
+
+  /*
+   * Enable depth testing (allows objects to hide each others)
+   */
   glEnable(GL_DEPTH_TEST);
 
+  /*
+   * Enable transparency by enabling blending between alpha channel and
+   * previous alpha channel
+   */
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
+  /*
+   * Enable lighting
+   */
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
+  /*
+   * Display SDL and OpenGL versions
+   */
   SDL_version sdlVersion;
   SDL_VERSION(&sdlVersion);
   printf("SDL version: %d.%d.%d\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
@@ -46,22 +70,37 @@ void setWindow() {
 
 
 rubikview generateView() {
+  /*
+   * Set the camera starting position
+   */
   camera mainCamera = {
     (vector3) {0, 0, 0},
     (vector3) {5, - 3 * PI / 4, PI / 3}
   };
 
+  /*
+   * Create the cube and assign the camera, the rubik's cube and an empty
+   * animations list
+   */
   rubikview mainView;
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.rubikCube = generateRubikCube();
   mainView.animations = NULL;
 
+  /*
+   * Generates instructions and add them to the view (hidden by default)
+   */
   enum FaceType facesTypes[6] = {FRONT, RIGHT, TOP, DOWN, BACK, LEFT};
-
   for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
     mainView.instructions[instructionIndex] = generateInstructions(facesTypes[instructionIndex]);
   }
   mainView.instructionsDisplayed = false;
+
+  generateCubemapTexture(&mainView.skybox);
+
+  /*
+   * Bind the update() function to the update structure member
+   */
   mainView.update = &update;
 
   return mainView;
@@ -110,46 +149,96 @@ void update(rubikview * mainView) {
       continue;
     }
 
+    move newMove;
+
     // DOWN ROTATION
     if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, DOWN, 0, keystate[SDLK_LSHIFT]);
-      addAnimation(&mainView->animations, newAnimation);
+      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = di;
+      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+        newMove = Di;
+      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = d;
+      } else {
+        newMove = D;
+      }
+
+      parseOrder(mainView, newMove);
     }
 
     // UP ROTATION
     if (event.key.keysym.sym == SDLK_u && event.key.type == SDL_KEYDOWN) {
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, TOP, 2, !keystate[SDLK_LSHIFT]);
-      addAnimation(&mainView->animations, newAnimation);
+      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = ui;
+      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+        newMove = Ui;
+      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = u;
+      } else {
+        newMove = U;
+      }
+
+      parseOrder(mainView, newMove);
     }
 
     // RIGHT ROTATION
     if (event.key.keysym.sym == SDLK_r && event.key.type == SDL_KEYDOWN) {
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, RIGHT, 2, !keystate[SDLK_LSHIFT]);
-      addAnimation(&mainView->animations, newAnimation);
+      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = ri;
+      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+        newMove = Ri;
+      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = r;
+      } else {
+        newMove = R;
+      }
+
+      parseOrder(mainView, newMove);
     }
 
     // LEFT ROTATION
     if (event.key.keysym.sym == SDLK_l && event.key.type == SDL_KEYDOWN) {
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, LEFT, 0, keystate[SDLK_LSHIFT]);
-      addAnimation(&mainView->animations, newAnimation);
+      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = li;
+      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+        newMove = Li;
+      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = l;
+      } else {
+        newMove = L;
+      }
+
+      parseOrder(mainView, newMove);
     }
 
     // FRONT ROTATION
     if (event.key.keysym.sym == SDLK_f && event.key.type == SDL_KEYDOWN) {
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, FRONT, 0, keystate[SDLK_LSHIFT]);
-      addAnimation(&mainView->animations, newAnimation);
+      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = fi;
+      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+        newMove = Fi;
+      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = f;
+      } else {
+        newMove = F;
+      }
+
+      parseOrder(mainView, newMove);
     }
 
     // BACK ROTATION
     if (event.key.keysym.sym == SDLK_b && event.key.type == SDL_KEYDOWN) {
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, BACK, 2, !keystate[SDLK_LSHIFT]);
-      addAnimation(&mainView->animations, newAnimation);
-    }
+      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = bi;
+      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+        newMove = Bi;
+      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+        newMove = b;
+      } else {
+        newMove = B;
+      }
 
-    // MIDDLE ROTATION
-    if (event.key.keysym.sym == SDLK_m && event.key.type == SDL_KEYDOWN) {
-      animation * newAnimation = generateAnimation(ANIMATIONS_STEP, MIDDLE, 1, keystate[SDLK_LSHIFT]);
-      addAnimation(&mainView->animations, newAnimation);
+      parseOrder(mainView, newMove);
     }
   }
 
@@ -171,16 +260,18 @@ void update(rubikview * mainView) {
 
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
-  GLfloat light_diffuse[] = {0.9, 0.9, 0.9, 1};  /* Red diffuse light. */
-  GLfloat light_ambient[] = {0.1, 0.1, 0.1, 1};  /* Red diffuse light. */
-  GLfloat light_specular[] = {0.6, 0.6, 0.6, 1};  /* Red diffuse light. */
+  drawSkybox(mainView->skybox);
+
+  GLfloat light_diffuse[] = {0.9, 0.9, 0.9, 1};
+  GLfloat light_ambient[] = {0.1, 0.1, 0.1, 1};
+  GLfloat light_specular[] = {0.6, 0.6, 0.6, 1};
 
   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
   glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
   glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
   //glColorMaterial(GL_RIGHT, GL_SPECULAR);
   glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-  //glColorMaterial(GL_FRONT_RIGHT, GL_SPECULAR);
+  glColorMaterial(GL_FRONT_RIGHT, GL_SPECULAR);
   glEnable(GL_COLOR_MATERIAL);
 
   for (int zIndex = 0; zIndex < 3; zIndex++) {
@@ -314,6 +405,139 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
       rubikCube->cubes[xIndex][0][zIndex] = rubikCube->cubes[xIndex][2][zIndex];
       rubikCube->cubes[xIndex][2][zIndex] = tempCube;
     }
+  }
+}
+
+
+void parseOrder(rubikview * mainView, move order) {
+  animation * newAnimation;
+  switch (order) {
+    case U:
+      newAnimation = generateAnimation(TOP, 2, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case D:
+      newAnimation = generateAnimation(DOWN, 0, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case R:
+      newAnimation = generateAnimation(RIGHT, 2, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case L:
+      newAnimation = generateAnimation(LEFT, 0, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case F:
+      newAnimation = generateAnimation(FRONT, 0, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case B:
+      newAnimation = generateAnimation(BACK, 2, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+
+    case Ui:
+      newAnimation = generateAnimation(TOP, 2, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case Di:
+      newAnimation = generateAnimation(DOWN, 0, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case Ri:
+      newAnimation = generateAnimation(RIGHT, 2, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case Li:
+      newAnimation = generateAnimation(LEFT, 0, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case Fi:
+      newAnimation = generateAnimation(FRONT, 0, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case Bi:
+      newAnimation = generateAnimation(BACK, 2, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+
+    case u:
+      newAnimation = generateAnimation(TOP, 2, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(TOP, 1, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case d:
+      newAnimation = generateAnimation(DOWN, 0, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(DOWN, 1, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case r:
+      newAnimation = generateAnimation(RIGHT, 2, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(RIGHT, 1, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case l:
+      newAnimation = generateAnimation(LEFT, 0, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(LEFT, 1, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case f:
+      newAnimation = generateAnimation(FRONT, 0, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 1, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case b:
+      newAnimation = generateAnimation(BACK, 2, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(BACK, 1, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+
+    case ui:
+      newAnimation = generateAnimation(TOP, 2, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(TOP, 1, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case di:
+      newAnimation = generateAnimation(DOWN, 0, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(DOWN, 1, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case ri:
+      newAnimation = generateAnimation(RIGHT, 2, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(RIGHT, 1, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case li:
+      newAnimation = generateAnimation(LEFT, 0, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(LEFT, 1, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case fi:
+      newAnimation = generateAnimation(FRONT, 0, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 1, ROTATION_ANGLE, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case bi:
+      newAnimation = generateAnimation(BACK, 2, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(BACK, 1, ROTATION_ANGLE, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+
+    default:
+      break;
   }
 }
 

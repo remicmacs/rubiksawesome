@@ -12,6 +12,7 @@
 #include <GL/gl.h>
 #include "graphics.h"
 #include "animations.h"
+#include "../model/cube.h"
 
 
 #define PI_DENOMINATOR 90
@@ -35,7 +36,7 @@ typedef struct _rubikview {
   camera mainCamera;          /**< The camera in the view */
   rubikcube * rubikCube;      /**< The Rubik's cube */
   animation * animations;
-  GLuint texture;
+  GLuint skybox;
   image instructions[6];
   bool instructionsDisplayed;
   void (* update)(struct _rubikview * mainView);
@@ -71,5 +72,7 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw);
  * Close the window
  */
 void closeWindow();
+
+void parseOrder(rubikview * mainView, move order);
 
 #endif

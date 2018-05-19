@@ -130,6 +130,12 @@ cube3d generateCube(transform cubeTransform);
 face generateFace(transform cubeTransform, enum FaceType faceType);
 
 
+void generateTexture(GLuint * textureId, const char * url);
+
+
+void generateCubemapTexture(GLuint * textureId);
+
+
 image generateInstructions(enum FaceType faceType);
 
 
@@ -158,6 +164,9 @@ void drawFace(face drawnFace, bool debug);
 
 
 void drawInstruction(image drawnInstruction, bool ccw);
+
+
+void drawSkybox(GLuint textureId);
 
 
 /**
