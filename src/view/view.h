@@ -9,6 +9,7 @@
 
 
 #include <stdbool.h>
+#include <GL/gl.h>
 #include "graphics.h"
 #include "animations.h"
 
@@ -34,6 +35,9 @@ typedef struct _rubikview {
   camera mainCamera;          /**< The camera in the view */
   rubikcube * rubikCube;      /**< The Rubik's cube */
   animation * animations;
+  GLuint texture;
+  image instructions[6];
+  void (* update)(struct _rubikview * mainView);
 } rubikview;
 
 

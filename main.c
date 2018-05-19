@@ -6,7 +6,7 @@ int main(int argc, char **argv) {
   rubikview mainView = generateView();
 
   while (1) {
-    update(&mainView);
+    mainView.update(&mainView);
   }
 
   closeWindow();

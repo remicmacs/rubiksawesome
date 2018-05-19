@@ -13,3 +13,6 @@ doc/view/Doxyfile
 doc/view/*.md
 doc/view/xml/*
 doc/view/html/*
+
+# Resources
+RESOURCES/*

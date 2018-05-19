@@ -11,6 +11,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <GL/gl.h>
 
 
 #define PI 3.141592653589793
@@ -43,6 +44,7 @@ typedef struct _vector3 {
 typedef struct _face {
   vector3 corners[4]; /**< The list of corners. Each corner is a vector
                            representing the position of a vertex */
+  vector3 normal;
   colour faceColour;  /**< The colour of the face */
 } face;
 
@@ -62,18 +64,32 @@ typedef struct _transform {
 /**
  * A structure for a simple cube. It holds 6 faces and a transform structure.
  */
-typedef struct _cube {
+typedef struct _cube3d {
   face faces[6];            /**< The faces of the cube */
   transform cubeTransform;  /**< The position, rotation and scale of the cube */
-} cube;
+} cube3d;
 
 
 /**
  * A structure for a rubik's cube
  */
 typedef struct _rubikcube {
-  cube **** cubes;        /**< A 3x3x3 matrix of pointers to cubes */
+  cube3d **** cubes;        /**< A 3x3x3 matrix of pointers to cubes */
 } rubikcube;
+
+
+typedef struct _texture {
+  GLuint id;
+  GLuint ccwId;
+} texture;
+
+
+typedef struct _image {
+  vector3 corners[4]; /**< The list of corners. Each corner is a vector
+                           representing the position of a vertex */
+  vector3 normal;
+  texture imageTexture;
+} image;
 
 
 /**
@@ -103,7 +119,7 @@ rubikcube * generateRubikCube();
  *                       rotation and scale
  * @return               A cube structure
  */
-cube generateCube(transform cubeTransform);
+cube3d generateCube(transform cubeTransform);
 
 /**
  * [generateFace description]
@@ -114,12 +130,15 @@ cube generateCube(transform cubeTransform);
 face generateFace(transform cubeTransform, enum FaceType faceType);
 
 
+image generateInstructions(enum FaceType faceType);
+
+
 /**
  * Set the colour of a cube
  * @param newColour    The colour we want to apply
  * @param selectedCube A pointer to the cube
  */
-void setCubeColour(colour newColour, cube * selectedCube);
+void setCubeColour(colour newColour, cube3d * selectedCube);
 
 
 /**
@@ -127,7 +146,7 @@ void setCubeColour(colour newColour, cube * selectedCube);
  * @param drawnCube The cube we will draw
  * @param debug     true to display the cube in magenta
  */
-void drawCube(cube drawnCube, bool debug);
+void drawCube(cube3d drawnCube, bool debug);
 
 
 /**
@@ -136,6 +155,9 @@ void drawCube(cube drawnCube, bool debug);
  * @param debug     true to display the face in magenta
  */
 void drawFace(face drawnFace, bool debug);
+
+
+void drawInstruction(image drawnInstruction, bool ccw);
 
 
 /**
