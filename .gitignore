@@ -23,3 +23,6 @@ fake_main.h
 # Test programs
 prog
 a.out
+
+# Resources
+RESOURCES/*

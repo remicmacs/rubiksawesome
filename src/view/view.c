@@ -4,6 +4,7 @@
 
 
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <math.h>
@@ -30,6 +31,12 @@ void setWindow() {
   gluPerspective(70, (double)800 / 600, 1, 1000);
   glEnable(GL_DEPTH_TEST);
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+
   SDL_version sdlVersion;
   SDL_VERSION(&sdlVersion);
   printf("SDL version: %d.%d.%d\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
@@ -48,6 +55,14 @@ rubikview generateView() {
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.rubikCube = generateRubikCube();
   mainView.animations = NULL;
+
+  enum FaceType facesTypes[6] = {FRONT, RIGHT, TOP, DOWN, BACK, LEFT};
+
+  for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
+    mainView.instructions[instructionIndex] = generateInstructions(facesTypes[instructionIndex]);
+  }
+
+  mainView.update = &update;
 
   return mainView;
 }
@@ -152,12 +167,28 @@ void update(rubikview * mainView) {
 
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
+  GLfloat light_diffuse[] = {0.9, 0.9, 0.9, 1};  /* Red diffuse light. */
+  GLfloat light_ambient[] = {0.1, 0.1, 0.1, 1};  /* Red diffuse light. */
+  GLfloat light_specular[] = {0.6, 0.6, 0.6, 1};  /* Red diffuse light. */
+
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+  //glColorMaterial(GL_RIGHT, GL_SPECULAR);
+  glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+  //glColorMaterial(GL_FRONT_RIGHT, GL_SPECULAR);
+  glEnable(GL_COLOR_MATERIAL);
+
   for (int zIndex = 0; zIndex < 3; zIndex++) {
     for (int yIndex = 0; yIndex < 3; yIndex++) {
       for (int xIndex = 0; xIndex < 3; xIndex++) {
         drawCube(*mainView->rubikCube->cubes[xIndex][yIndex][zIndex], false);
       }
     }
+  }
+
+  for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
+    drawInstruction(mainView->instructions[instructionIndex], keystate[SDLK_LSHIFT]);
   }
 
   glFlush();
@@ -185,7 +216,7 @@ void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw) {
    */
   for (int yIndex = 1; yIndex < 3; yIndex++) {
     for (int zIndex = 0; zIndex < yIndex; zIndex++) {
-      cube * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
+      cube3d * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
       rubikCube->cubes[xIndex][yIndex][zIndex] = rubikCube->cubes[xIndex][zIndex][yIndex];
       rubikCube->cubes[xIndex][zIndex][yIndex] = tempCube;
     }
@@ -196,7 +227,7 @@ void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw) {
      * Exchanging the columns
      */
     for (int yIndex = 0; yIndex < 3; yIndex++) {
-      cube * tempCube = rubikCube->cubes[xIndex][yIndex][0];
+      cube3d * tempCube = rubikCube->cubes[xIndex][yIndex][0];
       rubikCube->cubes[xIndex][yIndex][0] = rubikCube->cubes[xIndex][yIndex][2];
       rubikCube->cubes[xIndex][yIndex][2] = tempCube;
     }
@@ -205,7 +236,7 @@ void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw) {
      * Exchanging the rows
      */
     for (int zIndex = 0; zIndex < 3; zIndex++) {
-      cube * tempCube = rubikCube->cubes[xIndex][0][zIndex];
+      cube3d * tempCube = rubikCube->cubes[xIndex][0][zIndex];
       rubikCube->cubes[xIndex][0][zIndex] = rubikCube->cubes[xIndex][2][zIndex];
       rubikCube->cubes[xIndex][2][zIndex] = tempCube;
     }
@@ -219,7 +250,7 @@ void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw) {
    */
   for (int xIndex = 1; xIndex < 3; xIndex++) {
     for (int zIndex = 0; zIndex < xIndex; zIndex++) {
-      cube * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
+      cube3d * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
       rubikCube->cubes[xIndex][yIndex][zIndex] = rubikCube->cubes[zIndex][yIndex][xIndex];
       rubikCube->cubes[zIndex][yIndex][xIndex] = tempCube;
     }
@@ -230,7 +261,7 @@ void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw) {
      * Exchanging the columns
      */
     for (int zIndex = 0; zIndex < 3; zIndex++) {
-      cube * tempCube = rubikCube->cubes[0][yIndex][zIndex];
+      cube3d * tempCube = rubikCube->cubes[0][yIndex][zIndex];
       rubikCube->cubes[0][yIndex][zIndex] = rubikCube->cubes[2][yIndex][zIndex];
       rubikCube->cubes[2][yIndex][zIndex] = tempCube;
     }
@@ -239,7 +270,7 @@ void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw) {
      * Exchanging the rows
      */
     for (int xIndex = 0; xIndex < 3; xIndex++) {
-      cube * tempCube = rubikCube->cubes[xIndex][yIndex][0];
+      cube3d * tempCube = rubikCube->cubes[xIndex][yIndex][0];
       rubikCube->cubes[xIndex][yIndex][0] = rubikCube->cubes[xIndex][yIndex][2];
       rubikCube->cubes[xIndex][yIndex][2] = tempCube;
     }
@@ -253,7 +284,7 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
    */
   for (int xIndex = 1; xIndex < 3; xIndex++) {
     for (int yIndex = 0; yIndex < xIndex; yIndex++) {
-      cube * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
+      cube3d * tempCube = rubikCube->cubes[xIndex][yIndex][zIndex];
       rubikCube->cubes[xIndex][yIndex][zIndex] = rubikCube->cubes[yIndex][xIndex][zIndex];
       rubikCube->cubes[yIndex][xIndex][zIndex] = tempCube;
     }
@@ -264,7 +295,7 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
      * Exchanging the rows
      */
     for (int yIndex = 0; yIndex < 3; yIndex++) {
-      cube * tempCube = rubikCube->cubes[0][yIndex][zIndex];
+      cube3d * tempCube = rubikCube->cubes[0][yIndex][zIndex];
       rubikCube->cubes[0][yIndex][zIndex] = rubikCube->cubes[2][yIndex][zIndex];
       rubikCube->cubes[2][yIndex][zIndex] = tempCube;
     }
@@ -273,7 +304,7 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
      * Exchanging the columns
      */
     for (int xIndex = 0; xIndex < 3; xIndex++) {
-      cube * tempCube = rubikCube->cubes[xIndex][0][zIndex];
+      cube3d * tempCube = rubikCube->cubes[xIndex][0][zIndex];
       rubikCube->cubes[xIndex][0][zIndex] = rubikCube->cubes[xIndex][2][zIndex];
       rubikCube->cubes[xIndex][2][zIndex] = tempCube;
     }
