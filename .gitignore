@@ -1,6 +1,8 @@
 # Vim stuff
 *~
 *.un~
+.*.swp
+.*.swo
 
 # Executables
 main
@@ -13,3 +15,11 @@ doc/view/Doxyfile
 doc/view/*.md
 doc/view/xml/*
 doc/view/html/*
+
+# Mains
+fake_main.c
+fake_main.h
+
+# Test programs
+prog
+a.out
