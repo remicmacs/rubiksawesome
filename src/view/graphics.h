@@ -81,6 +81,8 @@ typedef struct _rubikcube {
 typedef struct _texture {
   GLuint id;
   GLuint ccwId;
+  GLuint id2;
+  GLuint ccwId2;
 } texture;
 
 
@@ -163,7 +165,7 @@ void drawCube(cube3d drawnCube, bool debug);
 void drawFace(face drawnFace, bool debug);
 
 
-void drawInstruction(image drawnInstruction, bool ccw);
+void drawInstruction(image drawnInstruction, bool ccw, bool two);
 
 
 void drawSkybox(GLuint textureId);

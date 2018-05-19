@@ -254,8 +254,10 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.corners[2] = (vector3) {1, -1, 2.3};
       newInstruction.corners[3] = (vector3) {-1, -1, 2.3};
       newInstruction.normal = (vector3) {0, 0, 1};
-      generateTexture(&newInstruction.imageTexture.id, "res/top.png");
-      generateTexture(&newInstruction.imageTexture.ccwId, "res/TOP.png");
+      generateTexture(&newInstruction.imageTexture.id, "res/up.png");
+      generateTexture(&newInstruction.imageTexture.ccwId, "res/UP.png");
+      generateTexture(&newInstruction.imageTexture.id2, "res/up2.png");
+      generateTexture(&newInstruction.imageTexture.ccwId2, "res/UP2.png");
       break;
     case DOWN:
       newInstruction.corners[0] = (vector3) {-1, -1, -2.3};
@@ -265,6 +267,8 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.normal = (vector3) {0, 0, -1};
       generateTexture(&newInstruction.imageTexture.id, "res/down.png");
       generateTexture(&newInstruction.imageTexture.ccwId, "res/DOWN.png");
+      generateTexture(&newInstruction.imageTexture.id2, "res/down2.png");
+      generateTexture(&newInstruction.imageTexture.ccwId2, "res/DOWN2.png");
       break;
     case FRONT:
       newInstruction.corners[0] = (vector3) {-1, -2.3, 1};
@@ -274,6 +278,8 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.normal = (vector3) {0, -1, 0};
       generateTexture(&newInstruction.imageTexture.id, "res/front.png");
       generateTexture(&newInstruction.imageTexture.ccwId, "res/FRONT.png");
+      generateTexture(&newInstruction.imageTexture.id2, "res/front2.png");
+      generateTexture(&newInstruction.imageTexture.ccwId2, "res/FRONT2.png");
       break;
     case BACK:
       newInstruction.corners[0] = (vector3) {1, 2.3, 1};
@@ -283,6 +289,8 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.normal = (vector3) {0, 1, 0};
       generateTexture(&newInstruction.imageTexture.id, "res/back.png");
       generateTexture(&newInstruction.imageTexture.ccwId, "res/BACK.png");
+      generateTexture(&newInstruction.imageTexture.id2, "res/back2.png");
+      generateTexture(&newInstruction.imageTexture.ccwId2, "res/BACK2.png");
       break;
     case RIGHT:
       newInstruction.corners[0] = (vector3) {2.3, -1, 1};
@@ -292,6 +300,8 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.normal = (vector3) {1, 0, 0};
       generateTexture(&newInstruction.imageTexture.id, "res/right.png");
       generateTexture(&newInstruction.imageTexture.ccwId, "res/RIGHT.png");
+      generateTexture(&newInstruction.imageTexture.id2, "res/right2.png");
+      generateTexture(&newInstruction.imageTexture.ccwId2, "res/RIGHT2.png");
       break;
     case LEFT:
       newInstruction.corners[0] = (vector3) {-2.3, 1, 1};
@@ -301,6 +311,8 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.normal = (vector3) {-1, 0, 0};
       generateTexture(&newInstruction.imageTexture.id, "res/left.png");
       generateTexture(&newInstruction.imageTexture.ccwId, "res/LEFT.png");
+      generateTexture(&newInstruction.imageTexture.id2, "res/left2.png");
+      generateTexture(&newInstruction.imageTexture.ccwId2, "res/LEFT2.png");
       break;
     default:
       break;
@@ -351,8 +363,19 @@ void drawFace(face drawnFace, bool debug) {
 }
 
 
-void drawInstruction(image drawnInstruction, bool ccw) {
-  glBindTexture(GL_TEXTURE_2D, ccw ? drawnInstruction.imageTexture.ccwId : drawnInstruction.imageTexture.id);
+void drawInstruction(image drawnInstruction, bool ccw, bool two) {
+  GLuint textureId;
+  if (ccw && two) {
+    textureId = drawnInstruction.imageTexture.ccwId2;
+  } else if (ccw && !two) {
+    textureId = drawnInstruction.imageTexture.ccwId;
+  } else if (!ccw && two) {
+    textureId = drawnInstruction.imageTexture.id2;
+  } else {
+    textureId = drawnInstruction.imageTexture.id;
+  }
+
+  glBindTexture(GL_TEXTURE_2D, textureId);
 
   glColor4ub(255, 255, 255, 255);
 

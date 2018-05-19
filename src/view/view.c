@@ -284,7 +284,7 @@ void update(rubikview * mainView) {
 
   if (mainView->instructionsDisplayed) {
     for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
-      drawInstruction(mainView->instructions[instructionIndex], keystate[SDLK_LSHIFT]);
+      drawInstruction(mainView->instructions[instructionIndex], keystate[SDLK_LSHIFT], keystate[SDLK_LCTRL]);
     }
   }
 

@@ -16,21 +16,53 @@ It is developped as a school project @ISEN-Lille.
 See [`topic.pdf`](topic.pdf).
 
 ## Key features
-* Animated 3D model
+* 3D model:
+  * Rotations animations
+  * Lighting
+  * Texturing
+  * Skybox
+  * Mouse and keyboard inputs
 * Command-line argument for bulk command parsing
-* Solving algorithm implemented
- * Jessica Fridrich
+* Solving algorithms:
+  * Jessica Fridrich
+
+## How to play
+
+Move the view by clicking and dragging with your mouse. The scroll wheel can be used to zoom/unzoom.
+
+The keyboard shortcuts are:
+
+Key | Function
+--- | ---
+`I` | Enable/Disable instructions
+`Left Shift` | Rotate counterclockwise
+`Left Ctrl` | Rotate 2 slices at once (lowercase moves)
+`F` | Rotate front
+`B` | Rotate back
+`U` | Rotate up
+`D` | Rotate down
+`L` | Rotate left
+`R` | Rotate right
 
 
 ## Requirements
-As of today, Rubiksawesome is implemented for compilation with `gcc` on a
-GNU/Linux system. **Windows is not supported, nor it ever will be**.
+
+Rubiksawesome needs:
+
+```
+SDL version: 1.2.15
+OpenGL version: 3.0
+```
+
+and can be compiled using `gcc` on a GNU/Linux system. **Windows is not supported, nor it ever will be**.
 
 For documentation generation, `doxygen` is required.
 
-CPU : core i7
-RAM : 16 GB or more (program leaks AF)
-GPU : Nvidia TITAN V
+### Recommended setup
+
+* CPU : core i7
+* RAM : 16 GB or more (program leaks AF)
+* GPU : Nvidia TITAN V (ultimate quality may need a quantic GPU)
 
 ## How to use
 
@@ -60,9 +92,8 @@ Command-line arguments
 ## Compiling
 
 ```bash
-gcc -Wall -lSDL -lGL -lGLU -lm main.c graphics.c -o main
+gcc -Wall -lSDL -lSDL_image -lGL -lGLU -lm main.c src/view/graphics.c src/view/view.c src/view/animations.c -o main
 ```
-`
 
 ### File structure
 > /  
