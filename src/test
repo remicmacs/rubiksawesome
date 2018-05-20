@@ -1,1 +1,1 @@
-gcc fake_main.c model/cubelet.c model/cube.c controller/errorController.c controller/f2l.c -o prog && ./prog
+gcc fake_main.c model/cubelet.c model/cube.c controller/utils.c controller/errorController.c controller/f2l.c controller/patternComparator.c -o prog && ./prog

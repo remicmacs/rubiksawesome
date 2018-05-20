@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "../model/cubelet.h"
+#include "../controller/commandParser.h"
+
 #include <stdbool.h>
 #include <unistd.h>
 
@@ -11,7 +13,7 @@
 /**
  * Do the white cross, first step to solve the Rubik’s Cube
  */
-cube * doWhiteCross(cube *rubikscube);
+char * doWhiteCross(cube *rubikscube);
 
 
 /*

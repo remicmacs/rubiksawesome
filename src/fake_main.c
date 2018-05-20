@@ -11,20 +11,38 @@ int main(int argc, char *argv[])
 
 	cube *tcube;
 	tcube = initCube(tcube);
-	printCube(tcube);
 
-		tcube->rotate(tcube,Ri);
-	tcube->rotate(tcube,Li);
-	tcube->rotate(tcube,D2);
-tcube->rotate(tcube,Ri);
-	tcube->rotate(tcube,Bi);
-	tcube->rotate(tcube,F2);
-tcube->rotate(tcube,Li);
-	tcube->rotate(tcube,L2);
+tcube->rotate(tcube,Di);
+    tcube->rotate(tcube,Bi);
+    tcube->rotate(tcube,D);
+    tcube->rotate(tcube,D);
+    tcube->rotate(tcube,F);
+    tcube->rotate(tcube,F);
+    tcube->rotate(tcube,R);
+    tcube->rotate(tcube,R);
+    tcube->rotate(tcube,L);
+    tcube->rotate(tcube,D);
+    tcube->rotate(tcube,B);
+    tcube->rotate(tcube,R);
+    tcube->rotate(tcube,R);
+    tcube->rotate(tcube,L);
+    tcube->rotate(tcube,L);
+    tcube->rotate(tcube,D);
+    tcube->rotate(tcube,Bi);
+    tcube->rotate(tcube,L);
+    tcube->rotate(tcube,L);
+    tcube->rotate(tcube,Bi);
+    tcube->rotate(tcube,D);
+    tcube->rotate(tcube,D);
+    tcube->rotate(tcube,L);
+    tcube->rotate(tcube,L);
+    tcube->rotate(tcube,F);
+    tcube->rotate(tcube,F);
 
-	orientEdges(tcube);
-	//printf("%s",moves);
 
+	char *movements = doWhiteCross(tcube);  
+
+	printf("%s",movements);
 }
 
 

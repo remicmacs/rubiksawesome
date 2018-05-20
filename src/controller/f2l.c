@@ -5,7 +5,7 @@ bool edgePlaced(cube *self){
 	for(int i=0; i <4; i++){
 		e = searchWhiteEdge(self,colors[i]);
 		if (correctPositionCross(self,e) == false && isEdgeOnFace(e,U) == false && isEdgeOnFace(e,D) == false){
-			printf("falseee....\n");
+			//printf("falseee....\n");
 			return false;
 		}
 
@@ -27,28 +27,22 @@ bool isReversedEdge(cube *self, edge elt)
 	return false;
 }
 
-
-
 char *orientEdges(cube *self){
-	cube *clone = copyCube(self);
-	char movements[200] = "";	
+	cube *clone = self->copy(self);
+	char *movements=  malloc(sizeof(char) * 200);	
 	strcat(movements,positionCommand(clone, 'g','y'));
 	positionCube(clone,'g','y');
 	edge e;
 	char colors[4] ={'o','b','r','g'};
 	while(edgePlaced(clone) == false){
-
 		for(int i=0; i <4; i++){
 			e = searchWhiteEdge(clone, colors[i]);
 			if(getFaceColor(clone,e.tiles[1]) != 'w'){
 				strcat(movements,positionCommand(clone, getFaceColor(clone,e.tiles[1]),'y'));
-
 				positionCube(clone,getFaceColor(clone,e.tiles[1]),'y');
-
 			}
 			else{
 				strcat(movements,positionCommand(clone, getFaceColor(clone,e.tiles[0]),'y'));
-
 				positionCube(clone,getFaceColor(clone,e.tiles[0]),'y');
 
 			}
@@ -58,9 +52,7 @@ char *orientEdges(cube *self){
 					clone->rotate(clone,F);
 					e = searchWhiteEdge(clone, colors[i]);
 					strcat(movements, "F ");
-
 				}
-
 			}
 			else{
 				if(e.tiles[0].col == 2 && e.tiles[1].col == 0){
@@ -77,7 +69,6 @@ char *orientEdges(cube *self){
 					clone->rotate(clone,F);
 					strcat(movements, "Fi U F ");
 				}
-
 				else{
 					while(isEdgeOnFace(e,U)==false){
 						clone->rotate(clone,F);
@@ -87,24 +78,33 @@ char *orientEdges(cube *self){
 				}
 			}
 			e = searchWhiteEdge(clone, colors[i]);
-
-			//		printEdge(clone,e);
-			//		printf("L’arete est bien positionnée : %d\n",correctPositionCross(clone,e)); 
-			//		printf("L’arete est sur la bonne face : %d\n",isEdgeOnFace(e,U)); 
-			//		printf("Une paire est présente: %d\n",ifPair(clone,e,e.tiles[1].face));
-
-			//
-		}}
+			//printEdge(clone,e);
+			//printf("L’arete est bien positionnée : %d\n",correctPositionCross(clone,e)); 
+			//printf("L’arete est sur la bonne face : %d\n",isEdgeOnFace(e,U)); 
+			//printf("Une paire est présente: %d\n",ifPair(clone,e,e.tiles[1].face));
+		}
+	}
 	printCube(clone);
-	printf("%s",movements);
 	return movements;
 }
 
 
 
+char *doWhiteCross(cube* self){
+	char *orient_moves = orientEdges(self);
+	char *movements = malloc(sizeof(char)*300);
+	strcat(movements, orient_moves);
+	printf("STRING  : %s\n",orient_moves);
 
-cube *doWhiteCross(cube* self){
-	return self;
+
+	cube * clone = initCube();
+	printCube(clone);
+
+	move* orient = commandParser(orient_moves);
+	clone = executeBulkCommand(clone, orient);
+
+	clone->print(clone);
+	return movements;
 }
 
 
