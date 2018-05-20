@@ -50,7 +50,7 @@ rubikcube * generateRubikCube() {
           (vector3) {(float)zIndex, (float)yIndex, (float)xIndex},
           (vector3) {0, 0, 0},
           (vector3) {0, 0, 0},
-          (vector3) {0.45, 0.45, 0.45}
+          (vector3) {0.48, 0.48, 0.48}
         };
 
         xCubes[xIndex + 1] = (cube3d *) malloc(sizeof(cube3d));

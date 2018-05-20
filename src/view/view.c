@@ -27,6 +27,20 @@ void setWindow() {
   atexit(SDL_Quit);
 
   /*
+   * Enabling SDL multisampling (antialiasing)
+   */
+  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+  /*
    *  Set the window title and set the window size, the colour depth and
    *  context to OpenGL
    */
@@ -57,6 +71,11 @@ void setWindow() {
    */
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
+
+  /*
+   * Enable OpenGL multisampling (antialiasing)
+   */
+  glEnable(GL_MULTISAMPLE);
 
   // Create light components
   GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -147,10 +166,16 @@ void update(rubikview * mainView) {
 
     if (event.button.button == SDL_BUTTON_WHEELUP) {
       mainCamera->angles.x -= 0.1;
+      if (mainCamera->angles.x < 4) {
+        mainCamera->angles.x = 4;
+      }
     }
 
     if (event.button.button == SDL_BUTTON_WHEELDOWN) {
       mainCamera->angles.x += 0.1;
+      if (mainCamera->angles.x > 50) {
+        mainCamera->angles.x = 50;
+      }
     }
 
     if (event.key.keysym.sym == SDLK_i && event.key.type == SDL_KEYDOWN) {
