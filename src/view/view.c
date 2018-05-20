@@ -58,6 +58,18 @@ void setWindow() {
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
+  // Create light components
+  GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+  GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+  GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+  GLfloat position[] = { -1.0f, 0, 0, 1.0f };
+
+  // Assign created components to GL_LIGHT0
+  glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+  glLightfv(GL_LIGHT0, GL_POSITION, position);
+
   /*
    * Display SDL and OpenGL versions
    */
@@ -75,7 +87,7 @@ rubikview generateView() {
    */
   camera mainCamera = {
     (vector3) {0, 0, 0},
-    (vector3) {5, - 3 * PI / 4, PI / 3}
+    (vector3) {8, - 3 * PI / 4, PI / 3}
   };
 
   /*
@@ -262,16 +274,13 @@ void update(rubikview * mainView) {
 
   drawSkybox(mainView->skybox);
 
-  GLfloat light_diffuse[] = {0.9, 0.9, 0.9, 1};
-  GLfloat light_ambient[] = {0.1, 0.1, 0.1, 1};
-  GLfloat light_specular[] = {0.6, 0.6, 0.6, 1};
+  GLfloat light_diffuse[] = {1, 1, 1, 1};
+  GLfloat light_specular[] = {0.9, 0.9, 0.9, 1};
 
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-  glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-  //glColorMaterial(GL_RIGHT, GL_SPECULAR);
+  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, light_diffuse);
+  glMaterialfv(GL_FRONT, GL_SPECULAR, light_specular);
   glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-  glColorMaterial(GL_FRONT_RIGHT, GL_SPECULAR);
+  glMateriali(GL_FRONT, GL_SHININESS, 96);
   glEnable(GL_COLOR_MATERIAL);
 
   for (int zIndex = 0; zIndex < 3; zIndex++) {
