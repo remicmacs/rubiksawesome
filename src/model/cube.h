@@ -55,6 +55,9 @@ typedef struct cubeStruct{
  */
 move mapCodeToMove(char * moveCode);
 
+
+char * mapMoveToCode(move aMove);
+
 /**
  * Returns the string of commands to perform to reach a specific orientation
  *

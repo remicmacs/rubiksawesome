@@ -1,9 +1,9 @@
 #ifndef COMMAND_QUEUE_H
 #define COMMAND_QUEUE_H
-#include "../model/cube.h"
 #include "../view/view.h"
 #include "debugController.h"
 #include "utils.h"
+#include "../model/cube.h"
 
 #include <stdlib.h>
 

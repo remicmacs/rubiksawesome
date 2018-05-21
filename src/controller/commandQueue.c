@@ -53,7 +53,7 @@ void printQueue(movequeue * queue) {
     
     moveLink * curr = queue->head;
     while (curr != NULL) {
-        printf("[%d]", curr->cmd);
+        printf("[%s]", mapMoveToCode(curr->cmd));
         curr = curr->next;
     }
     printf("\n");
