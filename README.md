@@ -4,9 +4,13 @@ Rémi B.
 Rodolphe H.
 Alexandre T.
 
+
+![Logo](docs/img/rubiks-cube.svg)
+
 > Our whole life is solving puzzles.
 >
 > _<div style="text-align: right"> Erno Rubik </div>_
+
 
 ## Intro
 Rubiksawesome is a Rubik's Cube 3x3x3 simulator with a 3D display and a solver

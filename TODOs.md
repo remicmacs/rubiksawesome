@@ -23,7 +23,7 @@
  * Command dispatch to models
  * Command dispatch to view
  * Store command to history
- * Move positionCube from model to controller
+ * ~~~Move positionCube from model to controller~~~
 
 ## Data manipulation
 * Rotations
@@ -57,6 +57,7 @@
  * Why a function to orientate the cube
  * Function to find a command to orientate the cube. (Justification of single
    responsability principle.
+ * Why a queue for communication
 
 ## Tests
 * 4 times the same move is like nothing happened
