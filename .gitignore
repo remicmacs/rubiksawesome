@@ -6,8 +6,10 @@
 
 # Executables
 main
+rubiksawesome
 
 # C stuffs
+*.o
 *.gch
 
 # Doxygen files (just for testing on my side)
