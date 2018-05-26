@@ -13,6 +13,7 @@
 #include "graphics.h"
 #include "animations.h"
 #include "../model/cube.h"
+#include "../controller/commandQueue.h"
 
 
 #define PI_DENOMINATOR 90
@@ -39,7 +40,8 @@ typedef struct _rubikview {
   GLuint skybox;
   image instructions[6];
   bool instructionsDisplayed;
-  void (* update)(struct _rubikview * mainView);
+  void (* update)(struct _rubikview * mainView, struct _movequeue * moveQueue);
+  void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;
 
 
@@ -62,7 +64,7 @@ rubikview generateView();
  * frame.
  * @param mainView The structure holding the view
  */
-void update(rubikview * mainView);
+void update(rubikview * mainView, struct _movequeue * moveQueue);
 
 void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw);
 void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw);
@@ -73,6 +75,6 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw);
  */
 void closeWindow();
 
-void parseOrder(rubikview * mainView, move order);
+void parseOrder(rubikview * mainView, move order, bool fast);
 
 #endif

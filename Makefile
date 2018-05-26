@@ -4,8 +4,8 @@ LIBS = -lSDL -lSDL_image -lGL -lGLU -lm
 
 all: rubiksawesome
 
-rubiksawesome: main.o graphics.o view.o animations.o
-	$(CC) $(LIBS) main.o graphics.o view.o animations.o -o rubiksawesome
+rubiksawesome: main.o graphics.o view.o animations.o commandQueue.o debugController.o utils.o cube.o patternComparator.o errorController.o
+	$(CC) $(LIBS) main.o graphics.o view.o animations.o commandQueue.o debugController.o utils.o cube.o patternComparator.o errorController.o -o rubiksawesome
 
 main.o: main.c
 	$(CC) $(CFLAGS) main.c
@@ -18,6 +18,24 @@ view.o: src/view/view.c
 
 animations.o: src/view/animations.c
 	$(CC) $(CFLAGS) src/view/animations.c
+
+commandQueue.o: src/controller/commandQueue.c
+	$(CC) $(CFLAGS) src/controller/commandQueue.c
+
+debugController.o: src/controller/debugController.o
+	$(CC) $(CFLAGS) src/controller/debugController.c
+
+errorController.o: src/controller/errorController.o
+	$(CC) $(CFLAGS) src/controller/errorController.c
+
+utils.o: src/controller/utils.o
+	$(CC) $(CFLAGS) src/controller/utils.c
+
+cube.o: src/model/cube.o
+	$(CC) $(CFLAGS) src/model/cube.c
+
+patternComparator.o: src/controller/patternComparator.o
+	$(CC) $(CFLAGS) src/controller/patternComparator.c
 
 clean:
 	-rm *.o
