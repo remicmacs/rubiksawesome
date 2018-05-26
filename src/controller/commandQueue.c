@@ -18,7 +18,7 @@ moveLink * initMoveLink(move cmd) {
 movequeue * enqueue(movequeue * queue, move cmd) {
     moveLink * newLink = initMoveLink(cmd);
     if (isEmpty(queue)) {
-        debug("in queue(), queue is empty, adding...");
+        // debug("in queue(), queue is empty, adding...");
         queue->head = newLink;
         queue->tail = newLink;
     } else {
@@ -31,18 +31,43 @@ movequeue * enqueue(movequeue * queue, move cmd) {
 }
 
 move dequeue(movequeue * queue) {
-    if (isEmpty(queue))
+    // debug("in dequeue(), entering...");
+    
+    if (isEmpty(queue)) {
+        //debug("in dequeue, queue is empty");
         return -1;
+    }
+    //debug("in dequeue, queue is not empty");
     moveLink * temp = queue->head;
     if (temp == queue->tail) {
+        // debug("in dequeue, queue is now empty");
         queue->head = queue->tail = NULL;
     } else {
+        // debug("in dequeue, popping head");
         queue->head = temp->next;
     }
-
+    
+    // debug("in dequeue, freeing old head");
     move cmd = temp->cmd;
     free(temp);
+    // debug("in dequeue, old head freed, exiting ...");
     return cmd;
+}
+
+move pop(movestack * stack) {
+    return dequeue(stack);
+}
+
+movestack * push(movestack * stack, move toAdd) {
+    moveLink * newLink = initMoveLink(toAdd);
+    if (isEmpty(stack)){
+        stack->head = newLink;
+        stack->tail = newLink;
+    } else {
+         newLink->next = stack->head;
+         stack->head = newLink;
+    }
+    return stack;
 }
 
 void printQueue(movequeue * queue) {

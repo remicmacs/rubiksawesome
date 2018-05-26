@@ -1,6 +1,5 @@
 #ifndef COMMAND_QUEUE_H
 #define COMMAND_QUEUE_H
-#include "../view/view.h"
 #include "debugController.h"
 #include "utils.h"
 #include "../model/cube.h"
@@ -15,17 +14,21 @@ typedef struct _moveLink {
 typedef struct _movequeue {
     moveLink * head;
     moveLink * tail;
-} movequeue;
+} movequeue, movestack;
 
-movequeue * enqueue(movequeue * head, move cmd);
+movequeue * enqueue(movequeue * queue, move cmd);
 
-move dequeue(movequeue * head);
+move dequeue(movequeue * queue);
 
-_Bool isEmpty(movequeue * head);
+move pop(movestack * stack);
+
+movestack * push(movestack * stack, move cmd);
+
+_Bool isEmpty(movequeue * queue);
 
 moveLink * initMoveLink(move cmd);
 
 movequeue *  initQueue();
 
-void printQueue(movequeue * head);
+void printQueue(movequeue * queue);
 #endif

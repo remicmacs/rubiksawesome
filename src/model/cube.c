@@ -3,6 +3,8 @@
 #include "../controller/debugController.h"
 
 char * mapMoveToCode(move aMove){
+    if ((int) aMove == -1)
+        return "NONE";
     char * codes[60] = {
      "F", "B", "R", "L", "U", "D",
      "f", "b", "r", "l", "u", "d",
