@@ -1,13 +1,27 @@
 #include "commandQueue.h"
 
+typedef struct _moveLink {
+    move cmd;
+    struct _moveLink * next;
+} moveLink;
+
+typedef struct movequeue {
+    moveLink * head;
+    moveLink * tail;
+} movequeue, movestack;
+
 _Bool isEmpty(movequeue * queue) {
     if (!queue)
         exitFatal("in queue(), a queue must be initialized before use !");
-
-
+    // if head and tail are NULL, queue is empty
     return (!queue->head && !queue->tail);
 }
 
+/**
+ * Function to create a new link for the queue/stack linked list
+ * @param cmd, command code to store in new link
+ * @returns a new moveLink
+ */
 moveLink * initMoveLink(move cmd) {
     moveLink * link = (moveLink * ) ec_malloc(sizeof(moveLink));
     link->next = NULL;
@@ -18,44 +32,33 @@ moveLink * initMoveLink(move cmd) {
 movequeue * enqueue(movequeue * queue, move cmd) {
     moveLink * newLink = initMoveLink(cmd);
     if (isEmpty(queue)) {
-        // debug("in queue(), queue is empty, adding...");
         queue->head = newLink;
         queue->tail = newLink;
     } else {
-        moveLink * temp;
-        temp = queue->tail;
-        temp->next = newLink;
+        queue->tail->next = newLink;
         queue->tail = newLink;
     }
     return queue;
 }
 
 move dequeue(movequeue * queue) {
-    // debug("in dequeue(), entering...");
-    
     if (isEmpty(queue)) {
-        //debug("in dequeue, queue is empty");
         return -1;
     }
-    //debug("in dequeue, queue is not empty");
     moveLink * temp = queue->head;
-    if (temp == queue->tail) {
-        // debug("in dequeue, queue is now empty");
+    if (temp == queue->tail) { // queue is now empty
         queue->head = queue->tail = NULL;
     } else {
-        // debug("in dequeue, popping head");
         queue->head = temp->next;
     }
     
-    // debug("in dequeue, freeing old head");
     move cmd = temp->cmd;
-    free(temp);
-    // debug("in dequeue, old head freed, exiting ...");
+    free(temp); // freeing old head
     return cmd;
 }
 
 move pop(movestack * stack) {
-    return dequeue(stack);
+    return dequeue(stack); // alias to dequeue
 }
 
 movestack * push(movestack * stack, move toAdd) {
@@ -75,7 +78,7 @@ void printQueue(movequeue * queue) {
         printf("Queue is empty\n");
         return;
     }
-    
+
     moveLink * curr = queue->head;
     while (curr != NULL) {
         printf("[%s]", mapMoveToCode(curr->cmd));
@@ -91,6 +94,6 @@ movequeue * initQueue() {
 }
 
 void freeQueue(movequeue * queue) {
-    while (dequeue(queue) != -1);
+    while ((int)dequeue(queue) != -1); // freeing all links
     free(queue);
 }
