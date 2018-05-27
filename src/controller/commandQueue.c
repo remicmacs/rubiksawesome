@@ -97,3 +97,17 @@ void freeQueue(movequeue * queue) {
     while ((int)dequeue(queue) != -1); // freeing all links
     free(queue);
 }
+
+move * head(movequeue * queue, int nb) {
+    move * moves = (move *) ec_malloc(sizeof(move)*(nb+1));
+
+    moveLink * currentLink = queue->head;
+    int i = 0;
+    while(i < nb) {
+        if (currentLink == NULL) break;
+        moves[i++] = currentLink->cmd; // saving cmd
+        currentLink = currentLink->next;
+    }
+    moves[i] = -1; // Endmark
+    return moves;
+}

@@ -69,4 +69,15 @@ void printQueue(movequeue * queue);
  * @param queue, pointer to the queue/stack data structure
  */
 void freeQueue(movequeue * queue);
+
+
+/**
+ * Returns the last nb moves stored in the head of the queue/stack
+ *
+ * @param queue the pointer to the queue/stack data structure.
+ * @param nb the number of wanted moves
+ * @returns an array of nb + 1 moves with an endmark -1. Must be freed when not
+ * needed.
+ */
+move * head(movequeue * queue, int nb);
 #endif
