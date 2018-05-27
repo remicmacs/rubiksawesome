@@ -84,7 +84,6 @@ char *orientEdges(cube *self){
 			//printf("Une paire est présente: %d\n",ifPair(clone,e,e.tiles[1].face));
 		}
 	}
-	printCube(clone);
 	return movements;
 }
 
@@ -94,18 +93,49 @@ char *doWhiteCross(cube* self){
 	char *orient_moves = orientEdges(self);
 	char *movements = malloc(sizeof(char)*300);
 	strcat(movements, orient_moves);
-	printf("STRING  : %s\n",orient_moves);
-
-
-	cube * clone = initCube();
-	printCube(clone);
-
+	cube * clone = self->copy(self); //shuffled cube from main
 	move* orient = commandParser(orient_moves);
-	clone = executeBulkCommand(clone, orient);
+	clone = executeBulkCommand(clone, orient); 
+
+	while(whiteCrossOk(clone) == false)
+	{
+		edge e;
+		char colors[4] ={'o','b','r','g'};
+		for(int i=0; i <4; i++){
+			e = searchWhiteEdge(clone, colors[i]);
+			strcat(movements,positionCommand(clone, colors[i], 'y'));
+			positionCube(clone,colors[i],'y');
+			if(isEdgeOnFace(e,U)){
+				while(correctPositionCross(clone, e) == false){
+					printEdge(clone,e);
+					if(clone->cube[U][2][1] == 'w' && clone->cube[F][0][1] == clone->cube[F][1][1] ){
+						printf("ok");
+						printEdge(clone,e);								
+						clone->rotate(clone,F2);
+						strcat(movements, "F2 ");
+					}
+					else{
+						printf("here");
+						clone->rotate(clone,U);
+						strcat(movements, "U ");
+					}
+					clone->print(clone);
+					e = searchWhiteEdge(clone, colors[i]);
+
+				}
+				e = searchWhiteEdge(clone, colors[i]);
+			}
+		}
+	}
 
 	clone->print(clone);
 	return movements;
 }
+
+
+
+
+
 
 
 edge searchWhiteEdge(cube* self, char color){
@@ -129,6 +159,7 @@ edge searchWhiteEdge(cube* self, char color){
 			}
 		}
 	}
+	return whiteEdge;
 }
 
 bool correctPositionCross(cube* self, edge elt){
@@ -168,8 +199,6 @@ bool whiteCrossOk(cube *self){
 
 	}
 	return true;
-
-
 
 }
 
