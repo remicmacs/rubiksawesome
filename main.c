@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
   setWindow();
 
   rubikview mainView = generateView();
-  movequeue * moveQueue = initQueue();
+  mvqueue moveQueue = initQueue();
   mvstack moveStack = initQueue();
   cube * cubeData = initCube();
 
