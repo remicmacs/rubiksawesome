@@ -1,15 +1,15 @@
 # TODO
 * Define coding guidelines
 * Choose linter and use pre-commit hook (**Rémi**)
-* ~~~Set up GitLab server (**Alex**)~~~
+ ~~~Set up GitLab server (**Alex**)~~~
 * Choose unit test framework and write howto (**Rémi**)
 * ~~~Choose graphical engine/library (**Rodolphe**)~~~
 * ~~~Define data structure representing RCube's **state** (**Rémi**)~~~
-* Create model for 3D representation (**Rodolphe**)
+* ~~~Create model for 3D representation (**Rodolphe**)~~~
 * Define **controller** functions to control cube validity (**Alex**)
 * ~~~Find website for cube manipulation (**Alex**)~~~
 * Define file structure hierarchy (folders `src`, `build`, `test`)
-* Create bulk string command parser
+* ~~~Create bulk string command parser~~~
 
 ## Main controller
 * Setup
@@ -23,7 +23,7 @@
  * Command dispatch to models
  * Command dispatch to view
  * Store command to history
- * Move positionCube from model to controller
+ * ~~~Move positionCube from model to controller~~~
 
 ## Data manipulation
 * Rotations
@@ -57,6 +57,7 @@
  * Why a function to orientate the cube
  * Function to find a command to orientate the cube. (Justification of single
    responsability principle.
+ * Why a queue for communication
 
 ## Tests
 * 4 times the same move is like nothing happened
