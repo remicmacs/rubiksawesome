@@ -4,8 +4,8 @@ LIBS = -lSDL -lSDL_image -lGL -lGLU -lm
 
 all: rubiksawesome
 
-rubiksawesome: main.o graphics.o view.o animations.o commandQueue.o debugController.o utils.o cube.o patternComparator.o errorController.o
-	$(CC) $(LIBS) main.o graphics.o view.o animations.o commandQueue.o debugController.o utils.o cube.o patternComparator.o errorController.o -o rubiksawesome
+rubiksawesome: main.o graphics.o view.o animations.o commandQueue.o debugController.o utils.o cube.o patternComparator.o errorController.o history.o
+	$(CC) $(LIBS) main.o graphics.o view.o animations.o commandQueue.o debugController.o utils.o cube.o patternComparator.o errorController.o history.o -o rubiksawesome
 
 main.o: main.c
 	$(CC) $(CFLAGS) main.c
@@ -36,6 +36,9 @@ cube.o: src/model/cube.o
 
 patternComparator.o: src/controller/patternComparator.o
 	$(CC) $(CFLAGS) src/controller/patternComparator.c
+
+history.o: src/controller/history.o
+	$(CC) $(CFLAGS) src/controller/history.c
 
 clean:
 	-rm *.o

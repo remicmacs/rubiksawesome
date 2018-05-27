@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <GL/gl.h>
+#include "../model/cube.h"
 
 
 #define PI 3.141592653589793
@@ -44,7 +45,7 @@ typedef struct _vector3 {
 typedef struct _face {
   vector3 corners[4]; /**< The list of corners. Each corner is a vector
                            representing the position of a vertex */
-  vector3 normal;
+  vector3 normal;     /**< The normal vector of the face */
   colour faceColour;  /**< The colour of the face */
 } face;
 
@@ -79,19 +80,60 @@ typedef struct _rubikcube {
 
 
 typedef struct _texture {
-  GLuint id;
-  GLuint ccwId;
-  GLuint id2;
-  GLuint ccwId2;
+  GLuint id;        /**< The ID for the base texture */
+  GLuint ccwId;     /**< The ID for the inverted texture */
+  GLuint id2;       /**< The ID for the double texture */
+  GLuint ccwId2;    /**< The ID for the double inverted texture */
 } texture;
 
 
 typedef struct _image {
-  vector3 corners[4]; /**< The list of corners. Each corner is a vector
+  vector3 corners[4];   /**< The list of corners. Each corner is a vector
                            representing the position of a vertex */
-  vector3 normal;
-  texture imageTexture;
+  vector3 normal;       /**< The normal vector of the face */
+  texture imageTexture; /**< The texture of the instruction */
 } image;
+
+
+typedef struct _historyDisplay {
+  GLuint id;
+  vector3 corners[4];
+} historyDisplay;
+
+
+typedef struct _textureStore {
+  GLuint up;
+  GLuint upi;
+  GLuint upid;
+  GLuint upd;
+
+  GLuint down;
+  GLuint downi;
+  GLuint downid;
+  GLuint downd;
+
+  GLuint front;
+  GLuint fronti;
+  GLuint frontid;
+  GLuint frontd;
+
+  GLuint back;
+  GLuint backi;
+  GLuint backid;
+  GLuint backd;
+
+  GLuint right;
+  GLuint righti;
+  GLuint rightid;
+  GLuint rightd;
+
+  GLuint left;
+  GLuint lefti;
+  GLuint leftid;
+  GLuint leftd;
+
+  GLuint skybox;
+} textureStore;
 
 
 /**
@@ -132,13 +174,34 @@ cube3d generateCube(transform cubeTransform);
 face generateFace(transform cubeTransform, enum FaceType faceType);
 
 
+/**
+ * Generate a texture from an image
+ * @param textureId The ID of the texture
+ * @param url       The path to the image
+ */
 void generateTexture(GLuint * textureId, const char * url);
 
 
+/**
+ * Generate a cubemap texture
+ * @param textureId The ID of the cubemap texture
+ */
 void generateCubemapTexture(GLuint * textureId);
 
 
-image generateInstructions(enum FaceType faceType);
+/**
+ * Generate the texture store
+ * @return A texture store
+ */
+textureStore generateTextureStore();
+
+
+/**
+ * Generate an instruction's image
+ * @param  faceType The face the instruction is attached to
+ * @return          The image structure holding all the textures
+ */
+image generateInstruction(enum FaceType faceType, textureStore texStore);
 
 
 /**
@@ -165,9 +228,19 @@ void drawCube(cube3d drawnCube, bool debug);
 void drawFace(face drawnFace, bool debug);
 
 
+/**
+ * Draw an instruction floating in front of a face
+ * @param drawnInstruction The image structure for the instruction's image
+ * @param ccw              Is the counterclockiwse modifier active ?
+ * @param two              Is the double modifier active ?
+ */
 void drawInstruction(image drawnInstruction, bool ccw, bool two);
 
 
+/**
+ * Draw the skybox
+ * @param textureId The ID of the skybox
+ */
 void drawSkybox(GLuint textureId);
 
 
@@ -196,5 +269,9 @@ void rotateFaceZ(face * currentFace, float angle, bool ccw);
  * @param ccw         True to set the rotation to counterclockwise;
  */
 void rotateFaceX(face * currentFace, float angle, bool ccw);
+
+
+GLuint moveToTexture(textureStore texStore, move command);
+
 
 #endif

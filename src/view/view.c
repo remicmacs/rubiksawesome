@@ -115,6 +115,8 @@ rubikview generateView() {
    * animations list
    */
   rubikview mainView;
+  mainView.texStore = generateTextureStore();
+
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.rubikCube = generateRubikCube();
   mainView.animations = NULL;
@@ -124,24 +126,27 @@ rubikview generateView() {
    */
   enum FaceType facesTypes[6] = {FRONT, RIGHT, TOP, DOWN, BACK, LEFT};
   for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
-    mainView.instructions[instructionIndex] = generateInstructions(facesTypes[instructionIndex]);
+    mainView.instructions[instructionIndex] = generateInstruction(facesTypes[instructionIndex], mainView.texStore);
   }
   mainView.instructionsDisplayed = false;
 
-  generateCubemapTexture(&mainView.skybox);
+  //generateCubemapTexture(&mainView.texStore.skybox);
 
   /*
-   * Bind the update() function to the update structure member
+   * Bind the update() function to the update structure function
    */
   mainView.update = &update;
 
+  /*
+   * Bind the parseOrder() function to the animate structure function
+   */
   mainView.animate = &parseOrder;
 
   return mainView;
 }
 
 
-void update(rubikview * mainView, movequeue * moveQueue) {
+void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   camera * mainCamera = &(mainView->mainCamera);
 
   SDL_Event event;
@@ -300,7 +305,7 @@ void update(rubikview * mainView, movequeue * moveQueue) {
 
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
-  drawSkybox(mainView->skybox);
+  drawSkybox(mainView->texStore.skybox);
 
   GLfloat light_diffuse[] = {1, 1, 1, 1};
   GLfloat light_specular[] = {0.9, 0.9, 0.9, 1};
@@ -324,6 +329,48 @@ void update(rubikview * mainView, movequeue * moveQueue) {
       drawInstruction(mainView->instructions[instructionIndex], keystate[SDLK_LSHIFT], keystate[SDLK_LCTRL]);
     }
   }
+
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+
+  gluOrtho2D(0.0, 800, 0.0, 600);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  glColor3ub(255, 255, 255);
+  glEnable(GL_TEXTURE_2D);
+
+  move * moves = head(moveStack, 13);
+
+  for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
+    int t = 50;
+    int xOffset = i * 60 + 20;
+    int yOffset = 20;
+    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, moves[i]));
+    glBegin(GL_QUADS);
+    glTexCoord2i(0,1); glVertex2i(xOffset, yOffset);
+    glTexCoord2i(0,0); glVertex2i(xOffset, yOffset + t);
+    glTexCoord2i(1,0); glVertex2i(xOffset + t, yOffset + t);
+    glTexCoord2i(1,1); glVertex2i(xOffset + t, yOffset);
+    glEnd();
+  }
+
+  free(moves);
+
+  glDisable(GL_TEXTURE_2D);
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_DEPTH_TEST);
 
   glFlush();
   SDL_GL_SwapBuffers();

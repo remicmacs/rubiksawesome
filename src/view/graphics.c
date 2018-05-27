@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graphics.h"
+#include "../model/cube.h"
 
 
 rubikcube * generateRubikCube() {
@@ -245,7 +246,44 @@ void generateCubemapTexture(GLuint * textureId) {
 }
 
 
-image generateInstructions(enum FaceType faceType) {
+textureStore generateTextureStore() {
+  textureStore texStore;
+  generateTexture(&texStore.up, "res/up.png");
+  generateTexture(&texStore.upi, "res/UP.png");
+  generateTexture(&texStore.upid, "res/UP2.png");
+  generateTexture(&texStore.upd, "res/up2.png");
+
+  generateTexture(&texStore.down, "res/down.png");
+  generateTexture(&texStore.downi, "res/DOWN.png");
+  generateTexture(&texStore.downid, "res/DOWN2.png");
+  generateTexture(&texStore.downd, "res/down2.png");
+
+  generateTexture(&texStore.front, "res/front.png");
+  generateTexture(&texStore.fronti, "res/FRONT.png");
+  generateTexture(&texStore.frontid, "res/FRONT2.png");
+  generateTexture(&texStore.frontd, "res/front2.png");
+
+  generateTexture(&texStore.back, "res/back.png");
+  generateTexture(&texStore.backi, "res/BACK.png");
+  generateTexture(&texStore.backid, "res/BACK2.png");
+  generateTexture(&texStore.backd, "res/back2.png");
+
+  generateTexture(&texStore.right, "res/right.png");
+  generateTexture(&texStore.righti, "res/RIGHT.png");
+  generateTexture(&texStore.rightid, "res/RIGHT2.png");
+  generateTexture(&texStore.rightd, "res/right2.png");
+
+  generateTexture(&texStore.left, "res/left.png");
+  generateTexture(&texStore.lefti, "res/LEFT.png");
+  generateTexture(&texStore.leftid, "res/LEFT2.png");
+  generateTexture(&texStore.leftd, "res/left2.png");
+
+  generateCubemapTexture(&texStore.skybox);
+  return texStore;
+}
+
+
+image generateInstruction(enum FaceType faceType, textureStore texStore) {
   image newInstruction;
   switch(faceType) {
     case TOP:
@@ -254,10 +292,10 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.corners[2] = (vector3) {1, -1, 2.3};
       newInstruction.corners[3] = (vector3) {-1, -1, 2.3};
       newInstruction.normal = (vector3) {0, 0, 1};
-      generateTexture(&newInstruction.imageTexture.id, "res/up.png");
-      generateTexture(&newInstruction.imageTexture.ccwId, "res/UP.png");
-      generateTexture(&newInstruction.imageTexture.id2, "res/up2.png");
-      generateTexture(&newInstruction.imageTexture.ccwId2, "res/UP2.png");
+      newInstruction.imageTexture.id = texStore.up;
+      newInstruction.imageTexture.ccwId = texStore.upi;
+      newInstruction.imageTexture.ccwId2 = texStore.upid;
+      newInstruction.imageTexture.id2 = texStore.upd;
       break;
     case DOWN:
       newInstruction.corners[0] = (vector3) {-1, -1, -2.3};
@@ -265,10 +303,10 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.corners[2] = (vector3) {1, 1, -2.3};
       newInstruction.corners[3] = (vector3) {-1, 1, -2.3};
       newInstruction.normal = (vector3) {0, 0, -1};
-      generateTexture(&newInstruction.imageTexture.id, "res/down.png");
-      generateTexture(&newInstruction.imageTexture.ccwId, "res/DOWN.png");
-      generateTexture(&newInstruction.imageTexture.id2, "res/down2.png");
-      generateTexture(&newInstruction.imageTexture.ccwId2, "res/DOWN2.png");
+      newInstruction.imageTexture.id = texStore.down;
+      newInstruction.imageTexture.ccwId = texStore.downi;
+      newInstruction.imageTexture.ccwId2 = texStore.downid;
+      newInstruction.imageTexture.id2 = texStore.downd;
       break;
     case FRONT:
       newInstruction.corners[0] = (vector3) {-1, -2.3, 1};
@@ -276,10 +314,10 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.corners[2] = (vector3) {1, -2.3, -1};
       newInstruction.corners[3] = (vector3) {-1, -2.3, -1};
       newInstruction.normal = (vector3) {0, -1, 0};
-      generateTexture(&newInstruction.imageTexture.id, "res/front.png");
-      generateTexture(&newInstruction.imageTexture.ccwId, "res/FRONT.png");
-      generateTexture(&newInstruction.imageTexture.id2, "res/front2.png");
-      generateTexture(&newInstruction.imageTexture.ccwId2, "res/FRONT2.png");
+      newInstruction.imageTexture.id = texStore.front;
+      newInstruction.imageTexture.ccwId = texStore.fronti;
+      newInstruction.imageTexture.ccwId2 = texStore.frontid;
+      newInstruction.imageTexture.id2 = texStore.frontd;
       break;
     case BACK:
       newInstruction.corners[0] = (vector3) {1, 2.3, 1};
@@ -287,10 +325,10 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.corners[2] = (vector3) {-1, 2.3, -1};
       newInstruction.corners[3] = (vector3) {1, 2.3, -1};
       newInstruction.normal = (vector3) {0, 1, 0};
-      generateTexture(&newInstruction.imageTexture.id, "res/back.png");
-      generateTexture(&newInstruction.imageTexture.ccwId, "res/BACK.png");
-      generateTexture(&newInstruction.imageTexture.id2, "res/back2.png");
-      generateTexture(&newInstruction.imageTexture.ccwId2, "res/BACK2.png");
+      newInstruction.imageTexture.id = texStore.back;
+      newInstruction.imageTexture.ccwId = texStore.backi;
+      newInstruction.imageTexture.ccwId2 = texStore.backid;
+      newInstruction.imageTexture.id2 = texStore.backd;
       break;
     case RIGHT:
       newInstruction.corners[0] = (vector3) {2.3, -1, 1};
@@ -298,10 +336,10 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.corners[2] = (vector3) {2.3, 1, -1};
       newInstruction.corners[3] = (vector3) {2.3, -1, -1};
       newInstruction.normal = (vector3) {1, 0, 0};
-      generateTexture(&newInstruction.imageTexture.id, "res/right.png");
-      generateTexture(&newInstruction.imageTexture.ccwId, "res/RIGHT.png");
-      generateTexture(&newInstruction.imageTexture.id2, "res/right2.png");
-      generateTexture(&newInstruction.imageTexture.ccwId2, "res/RIGHT2.png");
+      newInstruction.imageTexture.id = texStore.right;
+      newInstruction.imageTexture.ccwId = texStore.righti;
+      newInstruction.imageTexture.ccwId2 = texStore.rightid;
+      newInstruction.imageTexture.id2 = texStore.rightd;
       break;
     case LEFT:
       newInstruction.corners[0] = (vector3) {-2.3, 1, 1};
@@ -309,10 +347,10 @@ image generateInstructions(enum FaceType faceType) {
       newInstruction.corners[2] = (vector3) {-2.3, -1, -1};
       newInstruction.corners[3] = (vector3) {-2.3, 1, -1};
       newInstruction.normal = (vector3) {-1, 0, 0};
-      generateTexture(&newInstruction.imageTexture.id, "res/left.png");
-      generateTexture(&newInstruction.imageTexture.ccwId, "res/LEFT.png");
-      generateTexture(&newInstruction.imageTexture.id2, "res/left2.png");
-      generateTexture(&newInstruction.imageTexture.ccwId2, "res/LEFT2.png");
+      newInstruction.imageTexture.id = texStore.left;
+      newInstruction.imageTexture.ccwId = texStore.lefti;
+      newInstruction.imageTexture.ccwId2 = texStore.leftid;
+      newInstruction.imageTexture.id2 = texStore.leftd;
       break;
     default:
       break;
@@ -545,4 +583,89 @@ void rotateFaceX(face * currentFace, float angle, bool ccw) {
 
   currentFace->normal.z = zNormalPrime;
   currentFace->normal.y = yNormalPrime;
+}
+
+
+GLuint moveToTexture(textureStore texStore, move command) {
+  GLuint textureId;
+  switch(command) {
+    case U:
+      textureId = texStore.up;
+      break;
+    case D:
+      textureId = texStore.down;
+      break;
+    case F:
+      textureId = texStore.front;
+      break;
+    case B:
+      textureId = texStore.back;
+      break;
+    case R:
+      textureId = texStore.right;
+      break;
+    case L:
+      textureId = texStore.left;
+      break;
+
+    case Ui:
+      textureId = texStore.upi;
+      break;
+    case Di:
+      textureId = texStore.downi;
+      break;
+    case Fi:
+      textureId = texStore.fronti;
+      break;
+    case Bi:
+      textureId = texStore.backi;
+      break;
+    case Ri:
+      textureId = texStore.righti;
+      break;
+    case Li:
+      textureId = texStore.lefti;
+      break;
+    default:
+      break;
+
+    case u:
+      textureId = texStore.upd;
+      break;
+    case d:
+      textureId = texStore.downd;
+      break;
+    case f:
+      textureId = texStore.frontd;
+      break;
+    case b:
+      textureId = texStore.backd;
+      break;
+    case r:
+      textureId = texStore.rightd;
+      break;
+    case l:
+      textureId = texStore.leftd;
+      break;
+
+    case ui:
+      textureId = texStore.upid;
+      break;
+    case di:
+      textureId = texStore.downid;
+      break;
+    case fi:
+      textureId = texStore.frontid;
+      break;
+    case bi:
+      textureId = texStore.backid;
+      break;
+    case ri:
+      textureId = texStore.rightid;
+      break;
+    case li:
+      textureId = texStore.leftid;
+      break;
+  }
+  return textureId;
 }

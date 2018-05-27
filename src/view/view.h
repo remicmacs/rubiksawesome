@@ -14,6 +14,7 @@
 #include "animations.h"
 #include "../model/cube.h"
 #include "../controller/commandQueue.h"
+//#include "../controller/history.h"
 
 
 #define PI_DENOMINATOR 90
@@ -36,11 +37,11 @@ typedef struct _camera {
 typedef struct _rubikview {
   camera mainCamera;          /**< The camera in the view */
   rubikcube * rubikCube;      /**< The Rubik's cube */
-  animation * animations;
-  GLuint skybox;
-  image instructions[6];
-  bool instructionsDisplayed;
-  void (* update)(struct _rubikview * mainView, struct _movequeue * moveQueue);
+  animation * animations;     /**< A list of the animations */
+  image instructions[6];      /**< An array of images for the instructions */
+  textureStore texStore;
+  bool instructionsDisplayed; /**< Set to true to show the instructions */
+  void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;
 
@@ -64,17 +65,49 @@ rubikview generateView();
  * frame.
  * @param mainView The structure holding the view
  */
-void update(rubikview * mainView, struct _movequeue * moveQueue);
+void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
 
+
+/**
+ * Rotate the data around the X axis
+ * @param rubikCube The rubik's cube structure
+ * @param xIndex    The index of the slice you want to rotate, on the X axis
+ * @param ccw       Set to true for a counterclockwise rotation
+ */
 void rotateDataX(rubikcube * rubikCube, int xIndex, bool ccw);
+
+
+/**
+ * Rotate the data around the Y axis
+ * @param rubikCube The rubik's cube structure
+ * @param xIndex    The index of the slice you want to rotate, on the Y axis
+ * @param ccw       Set to true for a counterclockwise rotation
+ */
 void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw);
+
+
+/**
+ * Rotate the data around the Z axis
+ * @param rubikCube The rubik's cube structure
+ * @param xIndex    The index of the slice you want to rotate, on the Z axis
+ * @param ccw       Set to true for a counterclockwise rotation
+ */
 void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw);
+
+
+/**
+ * Parse and order and animate the cube accordingly
+ * @param mainView The rubikview structure (needed to access the data)
+ * @param order    The order, a move structure from cube.h
+ * @param fast     Set to true to disable animation and have instantaneous move
+ */
+void parseOrder(rubikview * mainView, move order, bool fast);
+
 
 /**
  * Close the window
  */
 void closeWindow();
 
-void parseOrder(rubikview * mainView, move order, bool fast);
 
 #endif
