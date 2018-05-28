@@ -17,7 +17,10 @@ Rubiksawesome is a Rubik's Cube 3x3x3 simulator with a 3D display and a solver
 engine.
 It is developped as a school project @ISEN-Lille.
 
-See [`topic.pdf`](topic.pdf).
+Here is a capture of the current state:
+![Current state capture](docs/capture.png)
+
+See [`topic.pdf`](docs/topic.pdf).
 
 ## Key features
 * 3D model:
@@ -47,7 +50,9 @@ Key | Function
 `D` | Rotate down
 `L` | Rotate left
 `R` | Rotate right
-
+`X` | Rotate the cube around X axis
+`Y` | Rotate the cube around Y axis
+`Z` | Rotate the cube around Z axis
 
 ## Requirements
 
@@ -78,7 +83,7 @@ $ git clone ...
 $ cd rubiksawesome
 
 # Use make to build the project
-$ make build
+$ make
 
 # Enjoy !
 $ ./rubiksawesome
@@ -93,11 +98,6 @@ Command-line arguments
 [`MODEL.md`](MODEL.md) : Description of data model.
 [`RESOURCES.md`](RESOURCES.md) : Sources of inspiration.
 [`TODOs.md`](TODOs.md) : What is done and not yet accomplished.
-## Compiling
-
-```bash
-gcc -Wall -lSDL -lSDL_image -lGL -lGLU -lm main.c src/view/graphics.c src/view/view.c src/view/animations.c -o main
-```
 
 ### File structure
 > /  
