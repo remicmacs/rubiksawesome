@@ -3,6 +3,15 @@
 #include "src/model/cube.h"
 #include "src/controller/history.h"
 
+void cancelMove(cube * cubeData, rubikview * mainView, mvstack history) {
+    // Command is RETURN
+    move cancelCmd = inverseMove(pop(history));
+    fprintf(stderr, "Inverse move is %s\n", mapMoveToCode(cancelCmd));
+    cubeData->rotate(cubeData, cancelCmd);
+    mainView->animate(mainView, cancelCmd, true);
+    return;
+}
+
 int main(int argc, char **argv) {
   setWindow();
 
@@ -15,12 +24,17 @@ int main(int argc, char **argv) {
     mainView.update(&mainView, moveQueue, moveStack);
 
     if (!isEmpty(moveQueue)) {
-      printQueue(moveQueue);
       move newMove = dequeue(moveQueue);
-      mainView.animate(&mainView, newMove, false);
-      cubeData->rotate(cubeData, newMove);
-      cubeData->print(cubeData);
-      addCmdToHistory(moveStack, newMove);
+      printQueue(moveQueue);
+        if (newMove == RETURN) {
+            cancelMove(cubeData, &mainView, moveStack);
+        } else {
+            mainView.animate(&mainView, newMove, false);
+            cubeData->rotate(cubeData, newMove);
+            cubeData->print(cubeData);
+            addCmdToHistory(moveStack, newMove);
+
+        }
     }
   }
 

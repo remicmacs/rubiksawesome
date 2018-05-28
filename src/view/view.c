@@ -285,6 +285,12 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
       enqueue(moveQueue, newMove);
     }
+
+    if(event.key.keysym.sym == SDLK_BACKSPACE \
+            && event.key.type == SDL_KEYDOWN) {
+        newMove = RETURN;
+        enqueue(moveQueue, newMove);
+    }
   }
 
   animation * animationsPtr = mainView->animations;
@@ -376,7 +382,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   SDL_GL_SwapBuffers();
 }
 
-/*******************************************************************************
+/******************************************************************************
  * ROTATING FACES DATA
  *
  * Here we rotate the matrices 90° or -90°. The techniques as are follow:

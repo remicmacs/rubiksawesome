@@ -21,8 +21,26 @@ typedef enum {
     x2,y2,z2,
     Fi2,Bi2,Ri2,Li2,Ui2,Di2,
     fi2,bi2,ri2,li2,ui2,di2,
-    xi2,yi2,zi2
+    xi2,yi2,zi2,
+    RETURN
 } move;
+
+/**
+ * Returns the inverse of the given move
+ *
+ * If a cube is modified this way :
+ * ```C
+ *  move aMove = F;
+ *  cube aCube = initCube();
+ *  aCube->rotate(aMove);
+ *  aCube->rotate(inverseMove(aMove));
+ *  ```
+ *  then the cube shouldn't be modified
+ *
+ *  @param aMove the move to be inversed
+ *  @returns a move being the inverse of aMove
+ */
+move inverseMove(move aMove);
 
 
 /**
@@ -42,7 +60,7 @@ typedef struct cubeStruct{
  * The function maps a valid string token to all the 60 moves implemented.
  * The token format is the following :
  *  <BASEMOVE>[i][2]
- *  
+ *
  *  BASEMOVE : F|B|R|L|U|D
  *
  *  [i] : counter-clockwise rotation notation
@@ -50,28 +68,10 @@ typedef struct cubeStruct{
  *
  * @param moveCode the string token of the given move
  *
- * @returns a enum move representing the rotation
+ * @returns a enum move representing the rotation, -1 if the code is incorrect
  * @see enum move
  */
 move mapCodeToMove(char * moveCode);
-
-
-/**
- * Returns the inverse of the given move
- *
- * If a cube is modified this way :
- * ```C
- *  move aMove = F;
- *  cube aCube = initCube();
- *  aCube->rotate(aMove);
- *  aCube->rotate(inverseMove(aMove));
- *  ```
- *  then the cube shouldn't be modified
- *
- *  @param aMove the move to be inversed
- *  @returns a move being the inverse of aMove
- */
-move inverseMove(move aMove);
 
 /**
  * Returns a string matching the given move.
