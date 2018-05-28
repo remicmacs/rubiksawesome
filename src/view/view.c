@@ -288,8 +288,8 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     if(event.key.keysym.sym == SDLK_BACKSPACE \
             && event.key.type == SDL_KEYDOWN) {
-        newMove = RETURN;
-        enqueue(moveQueue, newMove);
+      newMove = RETURN;
+      enqueue(moveQueue, newMove);
     }
   }
 
@@ -348,7 +348,6 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   glPushMatrix();
   glLoadIdentity();
 
-  glColor3ub(255, 255, 255);
   glEnable(GL_TEXTURE_2D);
 
   move * moves = head(moveStack, 13);
@@ -357,6 +356,8 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     int t = 50;
     int xOffset = i * 60 + 20;
     int yOffset = 20;
+    int alpha = 255 - (i * (255 / 13));
+    glColor4ub(255, 255, 255, alpha);
     glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, moves[i]));
     glBegin(GL_QUADS);
     glTexCoord2i(0,1); glVertex2i(xOffset, yOffset);

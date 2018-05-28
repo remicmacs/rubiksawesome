@@ -8,7 +8,7 @@ void cancelMove(cube * cubeData, rubikview * mainView, mvstack history) {
     move cancelCmd = inverseMove(pop(history));
     fprintf(stderr, "Inverse move is %s\n", mapMoveToCode(cancelCmd));
     cubeData->rotate(cubeData, cancelCmd);
-    mainView->animate(mainView, cancelCmd, true);
+    mainView->animate(mainView, cancelCmd, false);
     return;
 }
 
@@ -26,15 +26,16 @@ int main(int argc, char **argv) {
     if (!isEmpty(moveQueue)) {
       move newMove = dequeue(moveQueue);
       printQueue(moveQueue);
-        if (newMove == RETURN) {
-            cancelMove(cubeData, &mainView, moveStack);
-        } else {
-            mainView.animate(&mainView, newMove, false);
-            cubeData->rotate(cubeData, newMove);
-            cubeData->print(cubeData);
-            addCmdToHistory(moveStack, newMove);
-
+      if (newMove == RETURN) {
+        if (!isEmpty(moveStack)) {
+          cancelMove(cubeData, &mainView, moveStack);
         }
+      } else {
+        mainView.animate(&mainView, newMove, false);
+        cubeData->rotate(cubeData, newMove);
+        cubeData->print(cubeData);
+        addCmdToHistory(moveStack, newMove);
+      }
     }
   }
 
