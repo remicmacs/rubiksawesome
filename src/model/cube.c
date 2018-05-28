@@ -2,6 +2,25 @@
 #include "../controller/patternComparator.h"
 #include "../controller/debugController.h"
 
+move inverseMove(move aMove) {
+    move inverseMoves[60] = {
+        Fi,Bi,Ri,Li,Ui,Di,
+        fi,bi,ri,li,ui,di,
+        xi,yi,zi,
+        F,B,R,L,U,D,
+        f,b,r,l,u,d,
+        x,y,z,
+        Fi2,Bi2,Ri2,Li2,Ui2,Di2,
+        fi2,bi2,ri2,li2,ui2,di2,
+        xi2,yi2,zi2,
+        F2,B2,R2,L2,U2,D2,
+        f2,b2,r2,l2,u2,d2,
+        x2,y2,z2
+    };
+
+    return inverseMoves[aMove];
+}
+
 char * mapMoveToCode(move aMove){
     if ((int) aMove == -1)
         return "NONE";

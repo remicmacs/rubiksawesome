@@ -56,6 +56,34 @@ typedef struct cubeStruct{
 move mapCodeToMove(char * moveCode);
 
 
+/**
+ * Returns the inverse of the given move
+ *
+ * If a cube is modified this way :
+ * ```C
+ *  move aMove = F;
+ *  cube aCube = initCube();
+ *  aCube->rotate(aMove);
+ *  aCube->rotate(inverseMove(aMove));
+ *  ```
+ *  then the cube shouldn't be modified
+ *
+ *  @param aMove the move to be inversed
+ *  @returns a move being the inverse of aMove
+ */
+move inverseMove(move aMove);
+
+/**
+ * Returns a string matching the given move.
+ *
+ * The function maps a valid move variable with a string token describing one of
+ * all the 60 moves implemented.
+ * Useful to print sequences of commands.
+ *
+ * @param aMove the move variable describing a move command
+ * @returns a char * describing by a literal code the corresponding move
+ *  e.g. : F2 => "F2"
+ */
 char * mapMoveToCode(move aMove);
 
 /**
