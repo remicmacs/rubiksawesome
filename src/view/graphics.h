@@ -133,6 +133,9 @@ typedef struct _textureStore {
   GLuint leftd;
 
   GLuint skybox;
+
+  GLuint xyz;
+  GLuint xyzi;
 } textureStore;
 
 

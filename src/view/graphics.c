@@ -279,6 +279,9 @@ textureStore generateTextureStore() {
   generateTexture(&texStore.leftd, "res/left2.png");
 
   generateCubemapTexture(&texStore.skybox);
+
+  generateTexture(&texStore.xyz, "res/xyz.png");
+  generateTexture(&texStore.xyzi, "res/xyzi.png");
   return texStore;
 }
 
@@ -626,8 +629,6 @@ GLuint moveToTexture(textureStore texStore, move command) {
     case Li:
       textureId = texStore.lefti;
       break;
-    default:
-      break;
 
     case u:
       textureId = texStore.upd;
@@ -665,6 +666,20 @@ GLuint moveToTexture(textureStore texStore, move command) {
       break;
     case li:
       textureId = texStore.leftid;
+      break;
+
+    case x:
+    case y:
+    case z:
+      textureId = texStore.xyz;
+      break;
+
+    case xi:
+    case yi:
+    case zi:
+      textureId = texStore.xyzi;
+
+    default:
       break;
   }
   return textureId;

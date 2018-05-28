@@ -286,6 +286,39 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       enqueue(moveQueue, newMove);
     }
 
+    // X ROTATION
+    if (event.key.keysym.sym == SDLK_x && event.key.type == SDL_KEYDOWN) {
+      if (keystate[SDLK_LSHIFT]) {
+        newMove = xi;
+      } else {
+        newMove = x;
+      }
+
+      enqueue(moveQueue, newMove);
+    }
+
+    // Y ROTATION
+    if (event.key.keysym.sym == SDLK_y && event.key.type == SDL_KEYDOWN) {
+      if (keystate[SDLK_LSHIFT]) {
+        newMove = yi;
+      } else {
+        newMove = y;
+      }
+
+      enqueue(moveQueue, newMove);
+    }
+
+    // Z ROTATION
+    if (event.key.keysym.sym == SDLK_z && event.key.type == SDL_KEYDOWN) {
+      if (keystate[SDLK_LSHIFT]) {
+        newMove = zi;
+      } else {
+        newMove = z;
+      }
+
+      enqueue(moveQueue, newMove);
+    }
+
     if(event.key.keysym.sym == SDLK_BACKSPACE \
             && event.key.type == SDL_KEYDOWN) {
       newMove = RETURN;
@@ -368,6 +401,20 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   }
 
   free(moves);
+
+  if (keystate[SDLK_LSHIFT]) {
+    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, xi));
+  }
+  else {
+    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, x));
+  }
+  glColor3ub(255, 255, 255);
+  glBegin(GL_QUADS);
+  glTexCoord2i(0,0); glVertex2i(20, 590);
+  glTexCoord2i(0,1); glVertex2i(20, 490);
+  glTexCoord2i(1,1); glVertex2i(120, 490);
+  glTexCoord2i(1,0); glVertex2i(120, 590);
+  glEnd();
 
   glDisable(GL_TEXTURE_2D);
 
@@ -625,6 +672,57 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
       newAnimation = generateAnimation(BACK, 2, rotationAngle, false);
       addAnimation(&mainView->animations, newAnimation);
       newAnimation = generateAnimation(BACK, 1, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+
+    case x:
+      newAnimation = generateAnimation(RIGHT, 0, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case xi:
+      newAnimation = generateAnimation(RIGHT, 0, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+
+    case y:
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 2, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case yi:
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 2, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+
+    case z:
+      newAnimation = generateAnimation(TOP, 0, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(TOP, 1, rotationAngle, true);
+      addAnimation(&mainView->animations, newAnimation);
+      break;
+    case zi:
+      newAnimation = generateAnimation(TOP, 0, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, false);
+      addAnimation(&mainView->animations, newAnimation);
+      newAnimation = generateAnimation(TOP, 1, rotationAngle, false);
       addAnimation(&mainView->animations, newAnimation);
       break;
 
