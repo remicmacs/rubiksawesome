@@ -3,7 +3,7 @@
 #include "../controller/utils.h"
 
 move inverseMove(move aMove) {
-    move inverseMoves[61] = {
+    move inverseMoves[62] = {
         Fi,Bi,Ri,Li,Ui,Di,
         fi,bi,ri,li,ui,di,
         xi,yi,zi,
@@ -16,7 +16,7 @@ move inverseMove(move aMove) {
         F2,B2,R2,L2,U2,D2,
         f2,b2,r2,l2,u2,d2,
         x2,y2,z2,
-        RETURN
+        RETURN, RESTART
     };
 
     return inverseMoves[aMove];
@@ -25,7 +25,7 @@ move inverseMove(move aMove) {
 char * mapMoveToCode(move aMove){
     if ((int) aMove == -1)
         return "NONE";
-    char * codes[61] = {
+    char * codes[62] = {
      "F", "B", "R", "L", "U", "D",
      "f", "b", "r", "l", "u", "d",
      "x", "y", "z",
@@ -38,14 +38,14 @@ char * mapMoveToCode(move aMove){
      "Fi2", "Bi2", "Ri2", "Li2", "Ui2", "Di2",
      "fi2", "bi2", "ri2", "li2", "ui2", "di2",
      "xi2", "yi2", "zi2",
-     "RETURN"
+     "RETURN", "RESTART"
     };
 
     return codes[aMove];
 }
 
 move mapCodeToMove(char * moveCode){
-    // 15 base moves for 60 rotations implemented 
+    // 15 base moves for 60 rotations implemented
     //  (double and counter-clockwise)
     char codes[15] = {
         'F', 'B', 'R', 'L', 'U', 'D',
@@ -174,7 +174,7 @@ cube * rotateCurrentFace(cube * self, int current){
  * @see rotateCurrentFace()
  */
 cube * rotateCurrentFaceCCLW(cube * self, int current) {
-    char swap[3]; 
+    char swap[3];
     swap[0] = self->cube[current][0][0];
     swap[1] = self->cube[current][0][1];
     swap[2] = self->cube[current][0][2];
@@ -769,7 +769,7 @@ void printCube(cube * self){
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
-        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\n", 
+        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\n",
             self->cube[U][0][0],self->cube[U][0][1], self->cube[U][0][2],
             self->cube[U][1][0],self->cube[U][1][1], self->cube[U][1][2],
             self->cube[U][2][0],self->cube[U][2][1], self->cube[U][2][2],
@@ -820,4 +820,3 @@ cube* voidCube(cube *self){
     }
       return self;
 }
-

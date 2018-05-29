@@ -91,10 +91,10 @@ void setWindow() {
   glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
+  if (Mix_OpenAudio(24000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
     printf("%s", Mix_GetError());
   }
-  Mix_AllocateChannels(1);
+  Mix_AllocateChannels(2);
 
   /*
    * Display SDL and OpenGL versions
@@ -203,6 +203,16 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     if (event.key.keysym.sym == SDLK_F10 && event.key.type == SDL_KEYDOWN) {
       mainView->gameWon = !mainView->gameWon;
+      if (mainView->gameWon) {
+        Mix_Chunk *sound;
+        sound = Mix_LoadWAV("res/sounds/clapping.wav");
+        Mix_PlayChannel(-1, sound, 0);
+      }
+    }
+
+    if(event.key.keysym.sym == SDLK_F2 \
+            && event.key.type == SDL_KEYDOWN) {
+      enqueue(moveQueue, RESTART);
     }
 
     if (mainView->gameWon) {
@@ -446,10 +456,10 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     glBindTexture(GL_TEXTURE_2D, mainView->texStore.winner);
     glColor4ub(255, 255, 255, 255);
     glBegin(GL_QUADS);
-    glTexCoord2i(1,1); glVertex2i(5, 0);
-    glTexCoord2i(1,0); glVertex2i(5, 600);
-    glTexCoord2i(0,0); glVertex2i(795, 600);
-    glTexCoord2i(0,1); glVertex2i(795, 0);
+    glTexCoord2i(0,1); glVertex2i(5, 0);
+    glTexCoord2i(0,0); glVertex2i(5, 600);
+    glTexCoord2i(1,0); glVertex2i(795, 600);
+    glTexCoord2i(1,1); glVertex2i(795, 0);
     glEnd();
   }
 

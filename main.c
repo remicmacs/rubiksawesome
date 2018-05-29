@@ -30,7 +30,14 @@ int main(int argc, char **argv) {
         if (!isEmpty(moveStack)) {
           cancelMove(cubeData, &mainView, moveStack);
         }
-      } else {
+      }
+      else if (newMove == RESTART) {
+        mainView = generateView();
+        moveQueue = initQueue();
+        moveStack = initQueue();
+        cubeData = initCube();
+      }
+      else {
         mainView.animate(&mainView, newMove, false);
         cubeData->rotate(cubeData, newMove);
         cubeData->print(cubeData);

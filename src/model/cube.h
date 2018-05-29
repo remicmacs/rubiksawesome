@@ -22,7 +22,7 @@ typedef enum {
     Fi2,Bi2,Ri2,Li2,Ui2,Di2,
     fi2,bi2,ri2,li2,ui2,di2,
     xi2,yi2,zi2,
-    RETURN
+    RETURN, RESTART
 } move;
 
 /**
@@ -143,7 +143,7 @@ cube * initCube();
  * Rotates the cube given a string token. Tokens may be longer than 3 chars byt
  *  won't be parsed further than moveCode[2], given mapCodeToMove()
  *  implementation.
- * 
+ *
  *
  * Inputs :
  *   @param self cube to be modified
@@ -191,7 +191,7 @@ cube * copyCube(cube * self);
  * Two cubes are equal if the combination is the same, even if they are not
  * oriented in the same direction.
  *
- * @param aCube Reference cube. Is self when called with 
+ * @param aCube Reference cube. Is self when called with
  *  aCube->equals(aCube, bCube)
  * @param bCube Cube to compare to aCube
  *
