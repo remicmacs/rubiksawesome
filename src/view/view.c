@@ -120,6 +120,7 @@ rubikview generateView() {
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.rubikCube = generateRubikCube();
   mainView.animations = NULL;
+  mainView.gameWon = false;
 
   /*
    * Generates instructions and add them to the view (hidden by default)
@@ -194,7 +195,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       exit(0);
     }
 
-    if (mainView->animations != NULL) {
+    if (event.key.keysym.sym == SDLK_F10 && event.key.type == SDL_KEYDOWN) {
+      mainView->gameWon = !mainView->gameWon;
+    }
+
+    if (mainView->animations != NULL || mainView->gameWon) {
       continue;
     }
 
@@ -333,8 +338,8 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   animation * animationsPtr = mainView->animations;
   while (animationsPtr != NULL) {
     animationsPtr->update(animationsPtr, mainView->rubikCube);
-    animationsPtr = animationsPtr->next;
     updateAnimationList(&mainView->animations);
+    animationsPtr = animationsPtr->next;
   }
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -375,6 +380,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
+  glDepthMask(GL_FALSE);
 
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
@@ -420,6 +426,20 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   glTexCoord2i(1,0); glVertex2i(120, 590);
   glEnd();
 
+  /*
+   * Winning texture
+   */
+  if (mainView->gameWon) {
+    glBindTexture(GL_TEXTURE_2D, mainView->texStore.winner);
+    glColor4ub(255, 255, 255, 255);
+    glBegin(GL_QUADS);
+    glTexCoord2i(1,1); glVertex2i(5, 0);
+    glTexCoord2i(1,0); glVertex2i(5, 600);
+    glTexCoord2i(0,0); glVertex2i(795, 600);
+    glTexCoord2i(0,1); glVertex2i(795, 0);
+    glEnd();
+  }
+
   glDisable(GL_TEXTURE_2D);
 
   glMatrixMode(GL_PROJECTION);
@@ -427,6 +447,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
+  glDepthMask(GL_TRUE);
   glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 

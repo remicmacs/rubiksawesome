@@ -207,11 +207,11 @@ void generateTexture(GLuint * textureId, const char * url) {
   SDL_Surface * surf = IMG_Load(url);
   glGenTextures(1, textureId);
   glBindTexture(GL_TEXTURE_2D, *textureId);
-  int Mode = GL_RGBA;
+  int Mode = GL_RGB;
   if(surf->format->BytesPerPixel == 4) {
       Mode = GL_RGBA;
   }
-  glTexImage2D(GL_TEXTURE_2D, 0, Mode, surf->w, surf->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, surf->pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, Mode, surf->w, surf->h, 0, GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8, surf->pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   SDL_FreeSurface(surf);
@@ -282,6 +282,8 @@ textureStore generateTextureStore() {
 
   generateTexture(&texStore.xyz, "res/xyz.png");
   generateTexture(&texStore.xyzi, "res/xyzi.png");
+
+  generateTexture(&texStore.winner, "res/winner.png");
   return texStore;
 }
 

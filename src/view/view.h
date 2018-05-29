@@ -41,6 +41,7 @@ typedef struct _rubikview {
   image instructions[6];      /**< An array of images for the instructions */
   textureStore texStore;
   bool instructionsDisplayed; /**< Set to true to show the instructions */
+  bool gameWon;
   void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;

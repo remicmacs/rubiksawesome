@@ -136,6 +136,8 @@ typedef struct _textureStore {
 
   GLuint xyz;
   GLuint xyzi;
+
+  GLuint winner;
 } textureStore;
 
 
