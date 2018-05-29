@@ -190,6 +190,10 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       mainView->instructionsDisplayed = !mainView->instructionsDisplayed;
     }
 
+    if (event.key.keysym.sym == SDLK_ESCAPE && event.key.type == SDL_KEYDOWN) {
+      exit(0);
+    }
+
     if (mainView->animations != NULL) {
       continue;
     }
