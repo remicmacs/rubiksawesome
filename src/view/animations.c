@@ -12,6 +12,62 @@
 #include "animations.h"
 
 
+animationStack * generateAnimationStack() {
+  animationStack * returnedStack;
+  returnedStack = (animationStack *)malloc(sizeof(animationStack));
+  returnedStack->animations = NULL;
+  return returnedStack;
+}
+
+
+void addAnimationStack(animationStack ** animStack, animationStack * toAdd) {
+  animationStack * currentAnimationStack = *animStack;
+  if (currentAnimationStack == NULL) {
+    *animStack = toAdd;
+  } else {
+    while (currentAnimationStack->next != NULL) {
+      currentAnimationStack = currentAnimationStack->next;
+    }
+    currentAnimationStack->next = toAdd;
+  }
+}
+
+
+void removeAnimationStack(animationStack ** animStack, animationStack * toRemove) {
+  animationStack * currentAnimation = *animStack;
+  if (currentAnimation == toRemove) {
+    if (currentAnimation->next != NULL) {
+      *animStack = currentAnimation->next;
+    }
+    else {
+      *animStack = NULL;
+    }
+  }
+  while (currentAnimation != NULL) {
+    if (currentAnimation->next == toRemove) {
+      currentAnimation->next = toRemove->next;
+      updateAnimationList(&toRemove->animations);
+      free(toRemove);
+      break;
+    }
+    currentAnimation = currentAnimation->next;
+  }
+}
+
+
+int animationStackCount(animationStack * animStack) {
+  int count = 0;
+  if (animStack != NULL) {
+    animationStack * currentAnimationStack = animStack;
+    while (currentAnimationStack != NULL) {
+      count++;
+      currentAnimationStack = currentAnimationStack->next;
+    }
+  }
+  return count;
+}
+
+
 animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw) {
   animation * returnedAnimation;
   returnedAnimation = (animation *)malloc(sizeof(animation));

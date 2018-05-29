@@ -28,6 +28,18 @@ typedef struct _animation {
   void (* update)(struct _animation * self, rubikcube * rubikCube);
 } animation;
 
+
+typedef struct _animationStack {
+  animation * animations;
+  struct _animationStack * next;
+} animationStack;
+
+
+animationStack * generateAnimationStack();
+void addAnimationStack(animationStack ** animStack, animationStack * toAdd);
+void removeAnimationStack(animationStack ** animStack, animationStack * toRemove);
+int animationStackCount(animationStack * animStack);
+
 animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw);
 void addAnimation(animation ** animations, animation * toAdd);
 void removeAnimation(animation ** animations, animation * toRemove);

@@ -120,6 +120,7 @@ rubikview generateView() {
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.rubikCube = generateRubikCube();
   mainView.animations = NULL;
+  mainView.animStack = NULL;
   mainView.gameWon = false;
 
   /*
@@ -199,7 +200,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       mainView->gameWon = !mainView->gameWon;
     }
 
-    if (mainView->animations != NULL || mainView->gameWon) {
+    if (mainView->gameWon) {
       continue;
     }
 
@@ -335,11 +336,18 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     }
   }
 
-  animation * animationsPtr = mainView->animations;
-  while (animationsPtr != NULL) {
-    animationsPtr->update(animationsPtr, mainView->rubikCube);
-    updateAnimationList(&mainView->animations);
-    animationsPtr = animationsPtr->next;
+  animationStack * animStackPtr = mainView->animStack;
+  if (animStackPtr != NULL) {
+    animation * animationsPtr = animStackPtr->animations;
+    bool stackFinished = false;
+    while (animationsPtr != NULL) {
+      animationsPtr->update(animationsPtr, mainView->rubikCube);
+      stackFinished = animationsPtr->isActive;
+      animationsPtr = animationsPtr->next;
+    }
+    if (!stackFinished) {
+      removeAnimationStack(&mainView->animStack, animStackPtr);
+    }
   }
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -574,186 +582,188 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
 
 void parseOrder(rubikview * mainView, move order, bool fast) {
   animation * newAnimation;
+  animationStack * newAnimStack = generateAnimationStack();
   float rotationAngle = fast ? PI / 2 : ROTATION_ANGLE;
   switch (order) {
     case U:
       newAnimation = generateAnimation(TOP, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case D:
       newAnimation = generateAnimation(DOWN, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case R:
       newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case L:
       newAnimation = generateAnimation(LEFT, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case F:
       newAnimation = generateAnimation(FRONT, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case B:
       newAnimation = generateAnimation(BACK, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case Ui:
       newAnimation = generateAnimation(TOP, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Di:
       newAnimation = generateAnimation(DOWN, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Ri:
       newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Li:
       newAnimation = generateAnimation(LEFT, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Fi:
       newAnimation = generateAnimation(FRONT, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Bi:
       newAnimation = generateAnimation(BACK, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case u:
       newAnimation = generateAnimation(TOP, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case d:
       newAnimation = generateAnimation(DOWN, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(DOWN, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case r:
       newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(RIGHT, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case l:
       newAnimation = generateAnimation(LEFT, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(LEFT, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case f:
       newAnimation = generateAnimation(FRONT, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(FRONT, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case b:
       newAnimation = generateAnimation(BACK, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(BACK, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case ui:
       newAnimation = generateAnimation(TOP, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case di:
       newAnimation = generateAnimation(DOWN, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(DOWN, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case ri:
       newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(RIGHT, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case li:
       newAnimation = generateAnimation(LEFT, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(LEFT, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case fi:
       newAnimation = generateAnimation(FRONT, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(FRONT, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case bi:
       newAnimation = generateAnimation(BACK, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(BACK, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case x:
       newAnimation = generateAnimation(RIGHT, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(RIGHT, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case xi:
       newAnimation = generateAnimation(RIGHT, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(RIGHT, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case y:
       newAnimation = generateAnimation(FRONT, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(FRONT, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(FRONT, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case yi:
       newAnimation = generateAnimation(FRONT, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(FRONT, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(FRONT, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case z:
       newAnimation = generateAnimation(TOP, 0, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 2, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 1, rotationAngle, true);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case zi:
       newAnimation = generateAnimation(TOP, 0, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 2, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 1, rotationAngle, false);
-      addAnimation(&mainView->animations, newAnimation);
+      addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     default:
       break;
   }
+  addAnimationStack(&mainView->animStack, newAnimStack);
 }
 
 
