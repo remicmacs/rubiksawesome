@@ -37,7 +37,6 @@ typedef struct _camera {
 typedef struct _rubikview {
   camera mainCamera;          /**< The camera in the view */
   rubikcube * rubikCube;      /**< The Rubik's cube */
-  animation * animations;     /**< A list of the animations */
   animationStack * animStack;
   image instructions[6];      /**< An array of images for the instructions */
   textureStore texStore;

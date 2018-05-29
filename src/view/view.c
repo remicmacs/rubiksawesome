@@ -5,6 +5,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <math.h>
@@ -90,6 +91,11 @@ void setWindow() {
   glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
+    printf("%s", Mix_GetError());
+  }
+  Mix_AllocateChannels(1);
+
   /*
    * Display SDL and OpenGL versions
    */
@@ -119,7 +125,6 @@ rubikview generateView() {
 
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.rubikCube = generateRubikCube();
-  mainView.animations = NULL;
   mainView.animStack = NULL;
   mainView.gameWon = false;
 
@@ -764,6 +769,10 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
       break;
   }
   addAnimationStack(&mainView->animStack, newAnimStack);
+
+  Mix_Chunk *sound;
+  sound = Mix_LoadWAV("res/sounds/rumble.wav");
+  Mix_PlayChannel(-1, sound, 0);
 }
 
 
