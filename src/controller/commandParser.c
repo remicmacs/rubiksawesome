@@ -1,16 +1,19 @@
 #include "commandParser.h"
-#include "debugController.h"
+
+void cancelMove(cube * cubeData, rubikview * mainView, mvstack history) {
+    move cancelCmd = inverseMove(pop(history));
+    cubeData->rotate(cubeData, cancelCmd);
+    mainView->animate(mainView, cancelCmd, false);
+    return;
+}
 
 move * commandParser(char * str) {
     if (!str) {
         return NULL;
     } // Check if string exists
-    // char buffer[100];
-    // debug("in commandParser()");
 
     char * strCopy = (char *) ec_malloc(sizeof(char)*strlen(str));
     strncpy(strCopy, str, strlen(str));
-    // debug(strCopy);
 
     // Command tokenization
     int tokenNb = 1;
@@ -18,38 +21,24 @@ move * commandParser(char * str) {
 
     // First call to strtok with start pointer
     char * cmdToken = strtok(strCopy, " ");
-    //debug(cmdToken);
     do {
         tokens[tokenNb-1] = cmdToken;
-        //debug(tokens[tokenNb-1]);
         tokenNb += 1;
         tokens = (char **) ec_realloc(tokens, sizeof(char *) * tokenNb);
     } while ((cmdToken = strtok(NULL, " "))); // Next calls with NULL
-
-    /*for (int i = 0 ; i < tokenNb-1 ; i++) {     
-        sprintf(buffer, "move command n°%d str is %s",i, tokens[i]);
-        debug(buffer);
-    
-    }*/
 
     // Convert token in moves
     move * moves;
     moves = (move *) ec_malloc(sizeof(move)*(tokenNb));
     int index;
     for (index = 0 ; index < tokenNb-1 ; index++) {
-        //sprintf(buffer, "move command str is %s", tokens[index]);
-        //debug(buffer);
         move currentMove = mapCodeToMove(tokens[index]);
-        //sprintf(buffer, "move n°%d is %d", index, currentMove);
-        //debug(buffer);
         if ((int) currentMove == -1) {
             free(moves);
             return NULL;
-            //debug("in commandParser() found invalid move");
         }
         moves[index] = currentMove;
     }
-    //debug("in commandParser() after moves init");
 
     moves[index] = -1; // Endmark for move array
 
@@ -66,7 +55,6 @@ cube * executeBulkCommand(cube * aCube, move * moves) {
     if (moves == NULL || aCube == NULL) {
         return aCube;
     } // Returns NULL if one of both parameters does not exists
-    //debug("in executeBulkCommand()");
 
     move currentMove = -1;
     int index = -1;
@@ -75,3 +63,37 @@ cube * executeBulkCommand(cube * aCube, move * moves) {
     } // Executing commands until endmark
     return aCube;
 }
+
+move * randomScramble(int sizeMin, int sizeMax) {
+    int a = sizeMin;
+    int b = sizeMax;
+    if (a > b) swapInt(&a, &b);
+    int maxMoves = (rand() % (b - a + 1)) + a;
+
+    a = 0;
+    b= 11; // @TODO : add other moves
+    move * generatedMoves = (move *) ec_malloc(sizeof(move) * maxMoves + 1);
+    int index;
+    for (index = 0 ; index < maxMoves ; index++) {
+        generatedMoves[index] = (rand() % (b - a + 1)) + a;
+    }
+    generatedMoves[index] = -1;
+    return generatedMoves;
+}
+
+void scrambleCube(
+        cube * cubeData,
+        rubikview * mainView,
+        move * moves
+        ) {
+
+    int index = 0;
+    move currmove = -1;
+    while(((int) (currmove = moves[index++]) != -1)) {
+        mainView->animate(mainView, currmove, true);
+        cubeData->rotate(cubeData, currmove);
+    }
+    return;
+}
+
+

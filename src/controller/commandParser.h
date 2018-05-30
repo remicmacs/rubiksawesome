@@ -1,11 +1,22 @@
 #ifndef COMMAND_PARSER_H
 #define COMMAND_PARSER_H
 #include "../model/cube.h"
+#include "../view/view.h"
+#include "commandQueue.h"
 #include "utils.h"
 #include "errorController.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+/**
+ * Cancels the last move in the history
+ *
+ * @param cubeData - A pointer to the 2D cube data to modifiy
+ * @param mainView - A pointer to the 3D cube data to modify
+ * @param history - A stack of moves representing the history of moves
+ */
+void cancelMove(cube * cubeData, rubikview * mainView, mvstack history);
 
 /**
  * Parse and converts a string of commands in an array of moves
@@ -24,7 +35,7 @@ move * commandParser(char * str);
 
 /**
  * Apply a chain of commands on a given cube.
- * This function takes a list of commands as an array of move. it applies the
+ * This function takes a list of commands as an array of move. It applies the
  * moves to the cube pointed to by the cube pointer fed as parameter.
  *
  * @params aCube pointer to the cube to modify
@@ -34,5 +45,26 @@ move * commandParser(char * str);
  * @returns pointer to cube if it is a correct list of moves and the cube exists
  */
 cube * executeBulkCommand(cube * aCube, move * moves);
+
+/**
+ * Generate a random scramble
+ *
+ * @returns an array of a size n+1 with n included in [16,60] and terminated by
+ * a move == -1
+ */
+move * randomScramble(int sizeMin, int sizeMax);
+
+/**
+ * Scrambles the cube according a given sequence of moves
+ *
+ * @param cubeData - Pointer to the 2D cube data to scramble
+ * @param cubeView - Pointer to the 3D cube data to scramble
+ * @param moves - array of n+1 moves, the last one being the -1 endmark
+ */
+void scrambleCube(
+        cube * cubeData,
+        rubikview * cubeView,
+        move * moves
+        );
 
 #endif
