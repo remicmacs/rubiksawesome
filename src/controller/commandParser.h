@@ -52,7 +52,7 @@ cube * executeBulkCommand(cube * aCube, move * moves);
  * @returns an array of a size n+1 with n included in [16,60] and terminated by
  * a move == -1
  */
-move * randomScramble();
+move * randomScramble(int sizeMin, int sizeMax);
 
 /**
  * Scrambles the cube according a given sequence of moves

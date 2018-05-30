@@ -33,7 +33,7 @@ mode argParsing(int argc, char ** argv) {
     return gameMode;
 }
 
-void initGame(
+move * initGame(
         cube * cubeData,
         rubikview * mainView,
         mode gameMode,
@@ -45,15 +45,14 @@ void initGame(
     if (gameMode == SCRAMBLE_SEQ) {
         moves = commandParser(argv[2]);
     } else if (gameMode == NORMAL) {
-        moves = randomScramble();
+        moves = randomScramble(16, 60);
     } else {
         moves = (move *) ec_malloc(sizeof(move));
         moves[0] = -1;
     } // If the mode is with a completed cube, scramble sequence is empty
 
     scrambleCube(cubeData, mainView, moves);
-    free(moves);
-    return;
+    return moves;
 }
 
 

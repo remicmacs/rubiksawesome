@@ -15,8 +15,14 @@ int main(int argc, char **argv) {
     mvstack moveStack = initQueue();
     cube * cubeData = initCube();
 
-    // Scramble (or not)
-    initGame(cubeData, &mainView, gameMode, argv);
+    // Scramble (or not) and saving init sequence for dev purposes
+    move * initSequence = initGame(cubeData, &mainView, gameMode, argv);
+    move currMove = -1;
+    int i = -1;
+    while( (int) (currMove = initSequence[++i]) != -1) {
+        fprintf(stderr, "[%s]", mapMoveToCode(currMove));
+    }
+    fprintf(stderr,"\n");
 
   while (1) { // Main loop
     mainView.update(&mainView, moveQueue, moveStack);
@@ -41,6 +47,6 @@ int main(int argc, char **argv) {
     }
   }
 
-  closeWindow();
+  closeWindow(); // lol
   return 0;
 }

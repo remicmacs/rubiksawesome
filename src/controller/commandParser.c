@@ -64,9 +64,10 @@ cube * executeBulkCommand(cube * aCube, move * moves) {
     return aCube;
 }
 
-move * randomScramble() {
-    int a = 16;
-    int b = 60;
+move * randomScramble(int sizeMin, int sizeMax) {
+    int a = sizeMin;
+    int b = sizeMax;
+    if (a > b) swapInt(&a, &b);
     int maxMoves = (rand() % (b - a + 1)) + a;
 
     a = 0;

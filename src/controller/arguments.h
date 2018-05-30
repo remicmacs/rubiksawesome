@@ -36,7 +36,7 @@ mode argParsing(int argc, char ** argv);
  * @param gameMode
  * @param argv - Pointer to the standard array of command-line args
  */
-void initGame(
+move * initGame(
         cube * cubeData,
         rubikview * mainView,
         mode gameMode,
