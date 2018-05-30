@@ -137,6 +137,15 @@ typedef struct _textureStore {
   GLuint xyz;
   GLuint xyzi;
 
+  GLuint x;
+  GLuint xi;
+
+  GLuint y;
+  GLuint yi;
+
+  GLuint z;
+  GLuint zi;
+
   GLuint winner;
 } textureStore;
 

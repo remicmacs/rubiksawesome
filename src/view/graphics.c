@@ -283,6 +283,15 @@ textureStore generateTextureStore() {
   generateTexture(&texStore.xyz, "res/xyz.png");
   generateTexture(&texStore.xyzi, "res/xyzi.png");
 
+  generateTexture(&texStore.x, "res/x.png");
+  generateTexture(&texStore.xi, "res/xi.png");
+
+  generateTexture(&texStore.y, "res/y.png");
+  generateTexture(&texStore.yi, "res/yi.png");
+
+  generateTexture(&texStore.z, "res/z.png");
+  generateTexture(&texStore.zi, "res/zi.png");
+
   generateTexture(&texStore.winner, "res/winner.png");
   return texStore;
 }
@@ -671,15 +680,24 @@ GLuint moveToTexture(textureStore texStore, move command) {
       break;
 
     case x:
+      textureId = texStore.x;
+      break;
     case y:
+      textureId = texStore.y;
+      break;
     case z:
-      textureId = texStore.xyz;
+      textureId = texStore.z;
       break;
 
     case xi:
+      textureId = texStore.xi;
+      break;
     case yi:
+      textureId = texStore.yi;
+      break;
     case zi:
-      textureId = texStore.xyzi;
+      textureId = texStore.zi;
+      break;
 
     default:
       break;

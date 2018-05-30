@@ -436,10 +436,10 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   free(moves);
 
   if (keystate[SDLK_LSHIFT]) {
-    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, xi));
+    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyzi);
   }
   else {
-    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, x));
+    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz);
   }
   glColor3ub(255, 255, 255);
   glBegin(GL_QUADS);
@@ -742,23 +742,6 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
       break;
 
     case y:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false);
-      addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 2, rotationAngle, false);
-      addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 1, rotationAngle, false);
-      addAnimation(&newAnimStack->animations, newAnimation);
-      break;
-    case yi:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true);
-      addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 2, rotationAngle, true);
-      addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 1, rotationAngle, true);
-      addAnimation(&newAnimStack->animations, newAnimation);
-      break;
-
-    case z:
       newAnimation = generateAnimation(TOP, 0, rotationAngle, true);
       addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 2, rotationAngle, true);
@@ -766,12 +749,29 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
       newAnimation = generateAnimation(TOP, 1, rotationAngle, true);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
-    case zi:
+    case yi:
       newAnimation = generateAnimation(TOP, 0, rotationAngle, false);
       addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 2, rotationAngle, false);
       addAnimation(&newAnimStack->animations, newAnimation);
       newAnimation = generateAnimation(TOP, 1, rotationAngle, false);
+      addAnimation(&newAnimStack->animations, newAnimation);
+      break;
+
+    case z:
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false);
+      addAnimation(&newAnimStack->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 2, rotationAngle, false);
+      addAnimation(&newAnimStack->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, false);
+      addAnimation(&newAnimStack->animations, newAnimation);
+      break;
+    case zi:
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true);
+      addAnimation(&newAnimStack->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 2, rotationAngle, true);
+      addAnimation(&newAnimStack->animations, newAnimation);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, true);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
