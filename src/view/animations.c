@@ -16,6 +16,7 @@ animationStack * generateAnimationStack() {
   animationStack * returnedStack;
   returnedStack = (animationStack *)malloc(sizeof(animationStack));
   returnedStack->animations = NULL;
+  returnedStack->next = NULL;
   return returnedStack;
 }
 
