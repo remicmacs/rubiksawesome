@@ -10,6 +10,7 @@
 
 #include <stdbool.h>
 #include <GL/gl.h>
+#include <SDL/SDL_mixer.h>
 #include "graphics.h"
 #include "animations.h"
 #include "../model/cube.h"
@@ -31,6 +32,12 @@ typedef struct _camera {
 } camera;
 
 
+typedef struct _soundStore {
+  Mix_Chunk * rumbling;
+  Mix_Chunk * clapping;
+} soundStore;
+
+
 /**
  * A structure holding all the informations related to the view
  */
@@ -40,6 +47,7 @@ typedef struct _rubikview {
   animationStack * animStack;
   image instructions[6];      /**< An array of images for the instructions */
   textureStore texStore;
+  soundStore sndStore;
   bool instructionsDisplayed; /**< Set to true to show the instructions */
   bool gameWon;
   void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
@@ -103,6 +111,13 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw);
  * @param fast     Set to true to disable animation and have instantaneous move
  */
 void parseOrder(rubikview * mainView, move order, bool fast);
+
+
+/**
+ * Generate a sound store
+ * @return The sound store that has been generated
+ */
+soundStore generateSoundStore();
 
 
 /**

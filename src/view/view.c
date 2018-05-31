@@ -79,18 +79,22 @@ void setWindow() {
    */
   glEnable(GL_MULTISAMPLE);
 
-  // Create light components
+  /*
+   * Create light components and assign them to GL_LIGHT0
+   */
   GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
   GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
   GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
   GLfloat position[] = { -1.0f, 0, 0, 1.0f };
 
-  // Assign created components to GL_LIGHT0
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
   glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
+  /*
+   * Initialize sound
+   */
   if (Mix_OpenAudio(24000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
     printf("%s", Mix_GetError());
   }
@@ -122,6 +126,7 @@ rubikview generateView() {
    */
   rubikview mainView;
   mainView.texStore = generateTextureStore();
+  mainView.sndStore = generateSoundStore();
 
   memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
   mainView.rubikCube = generateRubikCube();
@@ -137,16 +142,12 @@ rubikview generateView() {
   }
   mainView.instructionsDisplayed = false;
 
-  //generateCubemapTexture(&mainView.texStore.skybox);
-
   /*
-   * Bind the update() function to the update structure function
+   * Functions bindings
+   * update() -> update()
+   * animate() -> parseOrder()
    */
   mainView.update = &update;
-
-  /*
-   * Bind the parseOrder() function to the animate structure function
-   */
   mainView.animate = &parseOrder;
 
   return mainView;
@@ -155,6 +156,27 @@ rubikview generateView() {
 
 void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   camera * mainCamera = &(mainView->mainCamera);
+
+  /*
+   * Update animations
+   */
+  animationStack * animStackPtr = mainView->animStack;
+  if (animStackPtr != NULL) {
+    if (!animStackPtr->hasStarted) {
+      Mix_PlayChannel(0, mainView->sndStore.rumbling, 0);
+      animStackPtr->hasStarted = true;
+    }
+    animation * animationsPtr = animStackPtr->animations;
+    bool stackFinished = false;
+    while (animationsPtr != NULL) {
+      animationsPtr->update(animationsPtr, mainView->rubikCube);
+      stackFinished = animationsPtr->isActive;
+      animationsPtr = animationsPtr->next;
+    }
+    if (!stackFinished) {
+      removeAnimationStack(&mainView->animStack, animStackPtr);
+    }
+  }
 
   SDL_Event event;
   Uint8 *keystate = SDL_GetKeyState(NULL);
@@ -204,9 +226,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     if (event.key.keysym.sym == SDLK_F10 && event.key.type == SDL_KEYDOWN) {
       mainView->gameWon = !mainView->gameWon;
       if (mainView->gameWon) {
-        Mix_Chunk *sound;
-        sound = Mix_LoadWAV("res/sounds/clapping.wav");
-        Mix_PlayChannel(-1, sound, 0);
+        Mix_PlayChannel(1, mainView->sndStore.clapping, 0);
       }
     }
 
@@ -351,19 +371,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     }
   }
 
-  animationStack * animStackPtr = mainView->animStack;
-  if (animStackPtr != NULL) {
-    animation * animationsPtr = animStackPtr->animations;
-    bool stackFinished = false;
-    while (animationsPtr != NULL) {
-      animationsPtr->update(animationsPtr, mainView->rubikCube);
-      stackFinished = animationsPtr->isActive;
-      animationsPtr = animationsPtr->next;
-    }
-    if (!stackFinished) {
-      removeAnimationStack(&mainView->animStack, animStackPtr);
-    }
-  }
+  /****************
+   *
+   * Draw the scene
+   *
+   ****************/
 
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -418,6 +430,9 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
   move * moves = head(moveStack, 13);
 
+  /*
+   * History display
+   */
   for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
     int t = 50;
     int xOffset = i * 60 + 20;
@@ -435,6 +450,9 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
   free(moves);
 
+  /*
+   * Display xyz instructions
+   */
   if (keystate[SDLK_LSHIFT]) {
     glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyzi);
   }
@@ -597,7 +615,7 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
 
 void parseOrder(rubikview * mainView, move order, bool fast) {
   animation * newAnimation;
-  animationStack * newAnimStack = generateAnimationStack();
+  animationStack * newAnimStack = generateAnimationStack(mainView->sndStore.rumbling);
   float rotationAngle = fast ? PI / 2 : ROTATION_ANGLE;
   switch (order) {
     case U:
@@ -780,9 +798,16 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
   }
   addAnimationStack(&mainView->animStack, newAnimStack);
 
-  Mix_Chunk *sound;
-  sound = Mix_LoadWAV("res/sounds/rumble.wav");
-  Mix_PlayChannel(-1, sound, 0);
+  // Mix_PlayChannel(1, sound, 0);
+  // Mix_HaltChannel(1);
+}
+
+
+soundStore generateSoundStore() {
+  soundStore sndStore;
+  sndStore.rumbling = Mix_LoadWAV("res/sounds/rumble.wav");
+  sndStore.clapping = Mix_LoadWAV("res/sounds/clapping.wav");
+  return sndStore;
 }
 
 

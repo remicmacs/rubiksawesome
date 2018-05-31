@@ -9,6 +9,7 @@
 
 
 #include <stdbool.h>
+#include <SDL/SDL_mixer.h>
 #include "graphics.h"
 
 
@@ -31,11 +32,13 @@ typedef struct _animation {
 
 typedef struct _animationStack {
   animation * animations;
+  Mix_Chunk * sound;
+  bool hasStarted;
   struct _animationStack * next;
 } animationStack;
 
 
-animationStack * generateAnimationStack();
+animationStack * generateAnimationStack(Mix_Chunk * sound);
 void addAnimationStack(animationStack ** animStack, animationStack * toAdd);
 void removeAnimationStack(animationStack ** animStack, animationStack * toRemove);
 int animationStackCount(animationStack * animStack);

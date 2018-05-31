@@ -7,16 +7,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <SDL/SDL_mixer.h>
 #include "graphics.h"
 #include "view.h"
 #include "animations.h"
 
 
-animationStack * generateAnimationStack() {
+animationStack * generateAnimationStack(Mix_Chunk * sound) {
   animationStack * returnedStack;
   returnedStack = (animationStack *)malloc(sizeof(animationStack));
   returnedStack->animations = NULL;
   returnedStack->next = NULL;
+  returnedStack->sound = sound;
+  returnedStack->hasStarted = false;
   return returnedStack;
 }
 
@@ -43,11 +46,14 @@ void removeAnimationStack(animationStack ** animStack, animationStack * toRemove
     else {
       *animStack = NULL;
     }
+    Mix_HaltChannel(0);
+    free(toRemove);
   }
   while (currentAnimation != NULL) {
     if (currentAnimation->next == toRemove) {
       currentAnimation->next = toRemove->next;
       updateAnimationList(&toRemove->animations);
+      Mix_HaltChannel(0);
       free(toRemove);
       break;
     }
@@ -186,6 +192,14 @@ void animateZ(animation * self, rubikcube * rubikCube) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
           rotateFaceZ(&rubikCube->cubes[xIndex][yIndex][self->sliceIndex]->faces[faceIndex], self->rotationAngle, self->ccw);
+
+          /*
+           * Just for fun, VIBRATIONS !
+           */
+          // if (self->targetStep != 1) {
+          //   float angle = self->currentStep % 2 ? -PI/45 : PI/45;
+          //   rotateFaceX(&rubikCube->cubes[xIndex][yIndex][self->sliceIndex]->faces[faceIndex], angle, self->ccw);
+          // }
         }
       }
     }
