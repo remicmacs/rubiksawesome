@@ -10,7 +10,8 @@
 
 #include <stdbool.h>
 #include <GL/gl.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 #include "graphics.h"
 #include "animations.h"
 #include "../model/cube.h"
@@ -18,7 +19,7 @@
 //#include "../controller/history.h"
 
 
-#define PI_DENOMINATOR 90
+#define PI_DENOMINATOR 1080
 #define ROTATION_ANGLE (PI / PI_DENOMINATOR)
 #define ANIMATIONS_STEP (PI_DENOMINATOR / 2)
 
