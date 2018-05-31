@@ -71,7 +71,7 @@ move * randomScramble(int sizeMin, int sizeMax) {
     int maxMoves = (rand() % (b - a + 1)) + a;
 
     a = 0;
-    b= 11; // @TODO : add other moves
+    b= 29;
     move * generatedMoves = (move *) ec_malloc(sizeof(move) * maxMoves + 1);
     int index;
     for (index = 0 ; index < maxMoves ; index++) {
