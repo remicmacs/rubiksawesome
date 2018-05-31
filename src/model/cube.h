@@ -22,7 +22,7 @@ typedef enum {
     Fi2,Bi2,Ri2,Li2,Ui2,Di2,
     fi2,bi2,ri2,li2,ui2,di2,
     xi2,yi2,zi2,     // Double moves [30 - 59]
-    RETURN, RESTART
+    RETURN, RESTART, SOLVE_PLS
 } move;
 
 /**

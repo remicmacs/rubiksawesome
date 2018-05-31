@@ -3,6 +3,7 @@
 #include "src/model/cube.h"
 #include "src/controller/history.h"
 #include "src/controller/arguments.h"
+#include "src/controller/solver.h"
 
 int main(int argc, char **argv) {
     srand(time(NULL));                      // Seeding random command
@@ -14,17 +15,9 @@ int main(int argc, char **argv) {
     mvqueue moveQueue = initQueue();
     mvstack moveStack = initQueue();
     cube * cubeData = initCube();
-
     // Scramble (or not) and saving init sequence for dev purposes
     move * initSequence = initGame(cubeData, &mainView, gameMode, argv);
-    move currMove = -1;
-    int i = -1;
-    while( (int) (currMove = initSequence[++i]) != -1) {
-        fprintf(stderr, "[%s]", mapMoveToCode(currMove));
-    }
-    fprintf(stderr,"\n");
-
-  while (1) { // Main loop
+     while (1) { // Main loop
     mainView.update(&mainView, moveQueue, moveStack);
 
     if (!isEmpty(moveQueue)) {
@@ -38,6 +31,17 @@ int main(int argc, char **argv) {
         moveQueue = initQueue();
         moveStack = initQueue();
         cubeData = initCube();
+      } else if (newMove == SOLVE_PLS) {
+          move * winSequence = fakeSolve(initSequence, moveStack);
+
+          // TEMPORARY DISPLAY
+          int index = -1;
+          move aMove = -1;
+          fprintf(stderr, "Solving sequence : \n");
+          while((int) (aMove = winSequence[++index]) != -1) {
+            fprintf(stderr, "[%s]", mapMoveToCode(aMove));
+          }
+          fprintf(stderr, "\n");
       } else {
         mainView.animate(&mainView, newMove, false);
         cubeData->rotate(cubeData, newMove);
