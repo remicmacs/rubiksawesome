@@ -50,6 +50,7 @@ typedef struct _rubikview {
   soundStore sndStore;
   bool instructionsDisplayed; /**< Set to true to show the instructions */
   bool gameWon;
+  int konamiCount;
   void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;

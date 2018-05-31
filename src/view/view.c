@@ -132,6 +132,7 @@ rubikview generateView() {
   mainView.rubikCube = generateRubikCube();
   mainView.animStack = NULL;
   mainView.gameWon = false;
+  mainView.konamiCount = 0;
 
   /*
    * Generates instructions and add them to the view (hidden by default)
@@ -212,6 +213,27 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       mainCamera->angles.x += 0.1;
       if (mainCamera->angles.x > 50) {
         mainCamera->angles.x = 50;
+      }
+    }
+
+    int evntSym = event.key.keysym.sym;
+    int * konamiCount = &mainView->konamiCount;
+    if (event.key.type == SDL_KEYDOWN) {
+      if (*konamiCount == 0 && evntSym == SDLK_UP) { (*konamiCount)++; }
+      else if (*konamiCount == 1 && evntSym == SDLK_UP) { (*konamiCount)++; }
+      else if (*konamiCount == 2 && evntSym == SDLK_DOWN) { (*konamiCount)++; }
+      else if (*konamiCount == 3 && evntSym == SDLK_DOWN) { (*konamiCount)++; }
+      else if (*konamiCount == 4 && evntSym == SDLK_LEFT) { (*konamiCount)++; }
+      else if (*konamiCount == 5 && evntSym == SDLK_RIGHT) { (*konamiCount)++; }
+      else if (*konamiCount == 6 && evntSym == SDLK_LEFT) { (*konamiCount)++; }
+      else if (*konamiCount == 7 && evntSym == SDLK_RIGHT) { (*konamiCount)++; }
+      else if (*konamiCount == 8 && evntSym == SDLK_b) { (*konamiCount)++; }
+      else if (*konamiCount == 9 && evntSym == SDLK_a) {
+        printf("KONAMI CODE!\n");
+        enqueue(moveQueue, SOLVE_PLS);
+      }
+      else {
+        *konamiCount = 0;
       }
     }
 
@@ -797,9 +819,6 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
       break;
   }
   addAnimationStack(&mainView->animStack, newAnimStack);
-
-  // Mix_PlayChannel(1, sound, 0);
-  // Mix_HaltChannel(1);
 }
 
 
