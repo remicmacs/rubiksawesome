@@ -16,11 +16,23 @@ bool isEdge(tile elt){
 	return false;
 }
 
+bool isCorner(tile elt){
+	int corners[4][2] = {
+		{0, 0}, {0, 2},
+		{2, 0}, {2, 2}
+	};
+	for (int i=0;i < 4;i++){
+		if(corners[i][0] == elt.col && corners[i][1] == elt.row){
+			return true;
+		}	
+	}
+	return false;
+}
+
 bool isCenter(tile elt){
 	if(elt.row == 1 && elt.col == 1){
 		return true;
 	}	
-
 	return false;
 }
 
@@ -69,7 +81,6 @@ adjacentFaces getAdjacentFaces(tile elt){
 	}
 
 	adj.nb = i;
-
 	return adj;
 }
 
@@ -83,7 +94,7 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 			case(F):
 				switch(elt.face){
 					case(R):
-						adjtiles.tiles[i].col = 2;//OK
+						adjtiles.tiles[i].col = 2;
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(L):
@@ -97,14 +108,12 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 						break;
 					case(D):
 						adjtiles.tiles[i].col = elt.col;
-						adjtiles.tiles[i].row = 2;//ok
+						adjtiles.tiles[i].row = 2;
 						break;
 				}
 				adjtiles.tiles[i].face = F;
 				i++;
 				break;
-				//DONE
-
 			case(B):
 				switch(elt.face){
 					case(R):
@@ -117,16 +126,16 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 						break;
 					case(U):
 						adjtiles.tiles[i].col = elt.col;
-						adjtiles.tiles[i].row =0;
+						adjtiles.tiles[i].row = 0;
 						break;
 					case(D):
-						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].col = 2-elt.col;
 						adjtiles.tiles[i].row = 2;
 						break;
 				}
 				adjtiles.tiles[i].face = B;
 				i++;
-				break;//DONE
+				break;
 			case(R):
 				adjtiles.tiles[i].face = R;
 				switch(elt.face){
@@ -139,7 +148,7 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(U):
-						adjtiles.tiles[i].col = elt.row;
+						adjtiles.tiles[i].col = 2-elt.row;
 						adjtiles.tiles[i].row = 0;
 						break;
 					case(D):
@@ -161,7 +170,7 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 						adjtiles.tiles[i].row = elt.row;
 						break;
 					case(D):
-						adjtiles.tiles[i].col = elt.row;
+						adjtiles.tiles[i].col = 2-elt.row;
 						adjtiles.tiles[i].row = 2;
 						break;
 					case(U):
@@ -180,7 +189,8 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 						adjtiles.tiles[i].row = 2;
 						break;
 					case(B):
-						adjtiles.tiles[i].col = elt.col;
+ 										
+						adjtiles.tiles[i].col = 2-elt.col;
 						adjtiles.tiles[i].row = 0;
 						break;
 					case(L):
@@ -189,8 +199,9 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 
 						break;
 					case(R):
-						adjtiles.tiles[i].col = 2;
-						adjtiles.tiles[i].row = elt.col;
+						adjtiles.tiles[i].col = 2;	
+						adjtiles.tiles[i].row = 2-elt.col;	
+					
 
 						break;
 				}
@@ -200,46 +211,43 @@ adjacentTiles getAdjacentTiles(cube *self, tile elt)
 			case(D):
 				switch(elt.face){
 					case(R):
-						adjtiles.tiles[i].row = elt.col;
+						adjtiles.tiles[i].row = 2-elt.row;
 						adjtiles.tiles[i].col = 2;
 						break;
 					case(L):
 						adjtiles.tiles[i].col = 0;
-						adjtiles.tiles[i].row = elt.col;
+						adjtiles.tiles[i].row = 2-elt.col;
 						break;
 					case(F):
 						adjtiles.tiles[i].col = elt.col;
 						adjtiles.tiles[i].row = 0;
 						break;
 					case(B):
-						adjtiles.tiles[i].col = elt.col;
+						adjtiles.tiles[i].col = 2-elt.col;
 						adjtiles.tiles[i].row = 2;
 						break;
 				}
 				adjtiles.tiles[i].face =D; 
 				i++;
 				break;
-		
 		}
 	}
 	adjtiles.nb = i;
 	return adjtiles;
-
-
 }
 
 
 edge defineEdge(cube *self, tile elt){
 	adjacentTiles adjtile = getAdjacentTiles(self, elt);
 	edge newedge = {{elt, adjtile.tiles[0]}};
-
 	return newedge;
 }
 
 
 void printTile(cube *self, tile elt)
 {
-	cube * pattern = voidCube(self);
+	cube * pattern = copyCube(self);
+	pattern = voidCube(pattern);
 	pattern->cube[elt.face][elt.row][elt.col] = self->cube[elt.face][elt.row][elt.col];
 	pattern->print(pattern);
 	printf("{f:%d,r:%d,c:%d}\n",elt.face,elt.row,elt.col);
@@ -272,10 +280,44 @@ char getFaceColor(cube *self, tile elt){
 
 bool isEdgeOnFace(edge elt, int face)
 {
+	for(int i=0; i < 2; i++)
+	{
+		if(elt.tiles[i].face == face){
+			return true;}
+	}
+	return false;
+}
+
+bool isCornerOnFace(corner elt, int face)
+{
 	for(int i=0; i < 3; i++)
 	{
 		if(elt.tiles[i].face == face){
 			return true;}
 	}
 	return false;
+}
+
+
+corner defineCorner(cube *self, tile elt){
+	adjacentTiles adjtile = getAdjacentTiles(self, elt);
+	corner newcorner = {{elt, adjtile.tiles[0], adjtile.tiles[1]}};
+	return newcorner;
+}
+
+
+void printCorner(cube *self, corner elt)
+{
+	printf("\n-- Display Corner --\n");	
+	cube * pattern = copyCube(self);
+	pattern = voidCube(pattern);
+	for(int i=0; i< 3;i++){
+		pattern->cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col] = self->cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col];
+
+	}
+	pattern->print(pattern);
+	for(int i=0; i< 3;i++){
+		printf("{f:%d,r:%d,c:%d}\n",elt.tiles[i].face,elt.tiles[i].row,elt.tiles[i].col);
+	}
+	printf("--------------------\n");
 }

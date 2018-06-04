@@ -54,14 +54,53 @@ typedef struct adjacentFaces{
  */
 bool isEdge(tile elt);
 
+/**
+ * Define an edge thanks to his adjacent tile
+ */
 edge defineEdge(cube *self, tile elt);
 
+/**
+ * Print given edge
+ */
 void printEdge(cube *self, edge elt);
 
 /**
  * Test if one of the edge’s tiles is on the selected face
  */
 bool isEdgeOnFace(edge elt, int face);
+
+
+/***************************
+ * Corner related functions
+ ***************************/
+
+typedef struct corner{
+		tile tiles[3];
+	}corner;
+
+
+/**
+ * Define a corner thanks to his adjacents tiles.
+ */
+corner defineCorner(cube *self, tile elt);
+
+/**
+ * Print given corner 
+ */
+void printCorner(cube *self, corner elt);
+
+/**
+ * Verify if the given tile corresponding to a corner.
+ */
+bool isCorner(tile elt);
+
+
+/**
+ * Test if one of the edge’s tiles is on the selected face
+ */
+bool isCornerOnFace(corner elt, int face);
+
+
 
 /****************************
  * Misc
@@ -77,6 +116,8 @@ adjacentFaces getAdjacentFaces(tile elt);
  */
 bool isCenter(tile elt);
 
+
 char getFaceColor(cube *self, tile elt);
+//corner searchCorner(cube *self, char color0, char color1, char color2);
 
 #endif
