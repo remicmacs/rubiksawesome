@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 
           // TEMPORARY DISPLAY
           int index = -1;
-          move aMove = -1;
+          move aMove = (move)-1;
           fprintf(stderr, "Solving sequence : \n");
           while((int) (aMove = winSequence[++index]) != -1) {
             fprintf(stderr, "[%s]", mapMoveToCode(aMove));

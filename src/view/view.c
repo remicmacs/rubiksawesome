@@ -3,9 +3,9 @@
  */
 
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <math.h>
@@ -15,6 +15,9 @@
 #include "graphics.h"
 #include "../model/cube.h"
 #include "../controller/commandQueue.h"
+
+
+static SDL_Window *screen;
 
 
 void setWindow() {
@@ -46,8 +49,15 @@ void setWindow() {
    *  Set the window title and set the window size, the colour depth and
    *  context to OpenGL
    */
-  SDL_WM_SetCaption("Rubiksawesome", NULL);
-  SDL_SetVideoMode(800, 600, 32, SDL_OPENGL);
+  //SDL_WM_SetCaption("Rubiksawesome", NULL);
+  //SDL_SetVideoMode(800, 600, 32, SDL_OPENGL);
+  screen = SDL_CreateWindow("Rubiksawesome",
+                          SDL_WINDOWPOS_UNDEFINED,
+                          SDL_WINDOWPOS_UNDEFINED,
+                          800, 600,
+                          SDL_WINDOW_OPENGL);
+  SDL_CreateRenderer(screen, -1, 0);
+  SDL_GL_CreateContext(screen);
 
   /*
    * Set up of the projection matrix to use perspective
@@ -132,6 +142,7 @@ rubikview generateView() {
   mainView.rubikCube = generateRubikCube();
   mainView.animStack = NULL;
   mainView.gameWon = false;
+  mainView.konamiCount = 0;
 
   /*
    * Generates instructions and add them to the view (hidden by default)
@@ -179,7 +190,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   }
 
   SDL_Event event;
-  Uint8 *keystate = SDL_GetKeyState(NULL);
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 
   while (SDL_PollEvent(&event)) {
     switch(event.type)
@@ -196,22 +207,44 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
           }
         }
         break;
+      case SDL_MOUSEWHEEL:
+        if (event.wheel.y > 0) {
+          mainCamera->angles.x -= 0.1;
+          if (mainCamera->angles.x < 4) {
+            mainCamera->angles.x = 4;
+          }
+        }
+
+        if (event.wheel.y < 0) {
+          mainCamera->angles.x += 0.1;
+          if (mainCamera->angles.x > 50) {
+            mainCamera->angles.x = 50;
+          }
+        }
+        break;
       case SDL_QUIT:
         exit(0);
         break;
     }
 
-    if (event.button.button == SDL_BUTTON_WHEELUP) {
-      mainCamera->angles.x -= 0.1;
-      if (mainCamera->angles.x < 4) {
-        mainCamera->angles.x = 4;
+    int evntSym = event.key.keysym.sym;
+    int * konamiCount = &mainView->konamiCount;
+    if (event.key.type == SDL_KEYDOWN) {
+      if (*konamiCount == 0 && evntSym == SDLK_UP) { (*konamiCount)++; }
+      else if (*konamiCount == 1 && evntSym == SDLK_UP) { (*konamiCount)++; }
+      else if (*konamiCount == 2 && evntSym == SDLK_DOWN) { (*konamiCount)++; }
+      else if (*konamiCount == 3 && evntSym == SDLK_DOWN) { (*konamiCount)++; }
+      else if (*konamiCount == 4 && evntSym == SDLK_LEFT) { (*konamiCount)++; }
+      else if (*konamiCount == 5 && evntSym == SDLK_RIGHT) { (*konamiCount)++; }
+      else if (*konamiCount == 6 && evntSym == SDLK_LEFT) { (*konamiCount)++; }
+      else if (*konamiCount == 7 && evntSym == SDLK_RIGHT) { (*konamiCount)++; }
+      else if (*konamiCount == 8 && evntSym == SDLK_b) { (*konamiCount)++; }
+      else if (*konamiCount == 9 && evntSym == SDLK_a) {
+        printf("KONAMI CODE!\n");
+        enqueue(moveQueue, SOLVE_PLS);
       }
-    }
-
-    if (event.button.button == SDL_BUTTON_WHEELDOWN) {
-      mainCamera->angles.x += 0.1;
-      if (mainCamera->angles.x > 50) {
-        mainCamera->angles.x = 50;
+      else {
+        *konamiCount = 0;
       }
     }
 
@@ -243,11 +276,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // DOWN ROTATION
     if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = di;
-      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
         newMove = Di;
-      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = d;
       } else {
         newMove = D;
@@ -258,11 +291,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // UP ROTATION
     if (event.key.keysym.sym == SDLK_u && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = ui;
-      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
         newMove = Ui;
-      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = u;
       } else {
         newMove = U;
@@ -273,11 +306,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // RIGHT ROTATION
     if (event.key.keysym.sym == SDLK_r && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = ri;
-      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
         newMove = Ri;
-      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = r;
       } else {
         newMove = R;
@@ -288,11 +321,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // LEFT ROTATION
     if (event.key.keysym.sym == SDLK_l && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = li;
-      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
         newMove = Li;
-      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = l;
       } else {
         newMove = L;
@@ -303,11 +336,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // FRONT ROTATION
     if (event.key.keysym.sym == SDLK_f && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = fi;
-      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
         newMove = Fi;
-      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = f;
       } else {
         newMove = F;
@@ -318,11 +351,11 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // BACK ROTATION
     if (event.key.keysym.sym == SDLK_b && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = bi;
-      } else if (keystate[SDLK_LSHIFT] && !keystate[SDLK_LCTRL]) {
+      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
         newMove = Bi;
-      } else if (!keystate[SDLK_LSHIFT] && keystate[SDLK_LCTRL]) {
+      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
         newMove = b;
       } else {
         newMove = B;
@@ -333,7 +366,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // X ROTATION
     if (event.key.keysym.sym == SDLK_x && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT]) {
+      if (keystate[SDL_SCANCODE_LSHIFT]) {
         newMove = xi;
       } else {
         newMove = x;
@@ -344,7 +377,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // Y ROTATION
     if (event.key.keysym.sym == SDLK_y && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT]) {
+      if (keystate[SDL_SCANCODE_LSHIFT]) {
         newMove = yi;
       } else {
         newMove = y;
@@ -355,7 +388,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
     // Z ROTATION
     if (event.key.keysym.sym == SDLK_z && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDLK_LSHIFT]) {
+      if (keystate[SDL_SCANCODE_LSHIFT]) {
         newMove = zi;
       } else {
         newMove = z;
@@ -409,7 +442,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
   if (mainView->instructionsDisplayed) {
     for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
-      drawInstruction(mainView->instructions[instructionIndex], keystate[SDLK_LSHIFT], keystate[SDLK_LCTRL]);
+      drawInstruction(mainView->instructions[instructionIndex], keystate[SDL_SCANCODE_LSHIFT], keystate[SDL_SCANCODE_LCTRL]);
     }
   }
 
@@ -453,12 +486,13 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   /*
    * Display xyz instructions
    */
-  if (keystate[SDLK_LSHIFT]) {
+  if (keystate[SDL_SCANCODE_LSHIFT]) {
     glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyzi);
   }
   else {
     glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz);
   }
+  //glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz);
   glColor3ub(255, 255, 255);
   glBegin(GL_QUADS);
   glTexCoord2i(0,0); glVertex2i(20, 590);
@@ -493,7 +527,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   glEnable(GL_DEPTH_TEST);
 
   glFlush();
-  SDL_GL_SwapBuffers();
+  SDL_GL_SwapWindow(screen);
 }
 
 /******************************************************************************
@@ -797,9 +831,6 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
       break;
   }
   addAnimationStack(&mainView->animStack, newAnimStack);
-
-  // Mix_PlayChannel(1, sound, 0);
-  // Mix_HaltChannel(1);
 }
 
 

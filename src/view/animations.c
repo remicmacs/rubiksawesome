@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include "graphics.h"
 #include "view.h"
 #include "animations.h"
