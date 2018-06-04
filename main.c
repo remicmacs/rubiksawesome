@@ -7,6 +7,13 @@
 
 int main(int argc, char **argv) {
     srand(time(NULL));                      // Seeding random command
+    printf( "    _ _ _\n"
+            "  /_/_/_/\\ \n"
+            " /_/_/_/\\/\\\n"
+            "/_/_/_/\\/\\/\\ \n"
+            "\\_\\_\\_\\/\\/\\/ \n"
+            " \\_\\_\\_\\/\\/ \n"
+            "  \\_\\_\\_\\/ WELCOME TO RUBIKSAWESOME !!!\n");
     mode gameMode = argParsing(argc, argv); // Identify game mode
 
     // Initializing data and graphic environment
