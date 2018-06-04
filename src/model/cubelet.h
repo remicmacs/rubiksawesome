@@ -1,5 +1,10 @@
+/**
+ * @file cubelet.h
+ */
+
 #ifndef CUBELET
 #define CUBELET
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -10,15 +15,15 @@
  */
 
 typedef struct tile{
-int face;
-int row;
-int col;
-}tile;
+    int face;
+    int row;
+    int col;
+} tile;
 
 typedef struct adjacentTiles{
-tile tiles[2];
-int nb;
-}adjacentTiles;
+    tile tiles[2];
+    int nb;
+} adjacentTiles;
 
 /**
  * Draw a cube pattern with the selected tile
@@ -28,7 +33,7 @@ void printTile(cube *self, tile elt);
 /**
  * Get adjacent(s) tile(s)
  */
-adjacentTiles getAdjacentTiles(cube *self, tile elt);
+adjacentTiles getAdjacentTiles(tile elt);
 /**
  * Return the color of the given tile
  */
@@ -41,13 +46,13 @@ char getColorTile(cube *self, tile elt);
  ***************************/
 
 typedef struct edge{
-		tile tiles[2];
-	}edge;
+        tile tiles[2];
+} edge;
 
 typedef struct adjacentFaces{
-		int faces[2];
-		int nb;
-}adjacentFaces;
+        int faces[2];
+        int nb;
+} adjacentFaces;
 
 /**
  * Test if the given tile is an edge
@@ -75,8 +80,8 @@ bool isEdgeOnFace(edge elt, int face);
  ***************************/
 
 typedef struct corner{
-		tile tiles[3];
-	}corner;
+        tile tiles[3];
+    }corner;
 
 
 /**
