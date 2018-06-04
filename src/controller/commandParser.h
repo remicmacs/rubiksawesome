@@ -1,13 +1,18 @@
+/**
+ * @file commandParser.h
+ */
+
 #ifndef COMMAND_PARSER_H
 #define COMMAND_PARSER_H
-#include "../model/cube.h"
-#include "../view/view.h"
-#include "commandQueue.h"
-#include "utils.h"
-#include "errorController.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "errorController.h"
+#include "utils.h"
+#include "../model/cube.h"
+#include "../view/view.h"
+#include "commandQueue.h"
 
 /**
  * Cancels the last move in the history

@@ -1,15 +1,25 @@
+/**
+ * @file commandQueue.h
+ */
+
 #ifndef COMMAND_QUEUE_H
 #define COMMAND_QUEUE_H
-#include "debugController.h"
-#include "utils.h"
-#include "../model/cube.h"
 
 #include <stdlib.h>
+#include "../model/cube.h"
+#include "debugController.h"
+#include "utils.h"
 
 /**
  * Data structure to handle a queue or a stack
  */
 typedef struct movequeue *mvqueue, *mvstack, movequeue, movestack;
+
+/**
+ * Initializes queue/stack
+ * @returns a pointer to an initialized queue/stack
+ */
+movequeue *  initQueue();
 
 /**
  * Adds a move to the tail of the queue
@@ -21,20 +31,12 @@ movequeue * enqueue(movequeue * queue, move cmd);
 
 /**
  * Returns the head of the queue
- * 
+ *
  * Old head memory is freed
  * @param queue pointer to the queue data structure
  * @returns the move command dequeued, -1 if list is empty
  */
 move dequeue(movequeue * queue);
-/**
- * Pops the top of the stack
- * 
- * Old top memory is freed
- * @param stack pointer to the stack data structure
- * @returns the unstacked move command, -1 if stack is empty
- */
-move pop(movestack * stack);
 
 /**
  * Pushes a move to the command stack
@@ -46,17 +48,20 @@ move pop(movestack * stack);
 movestack * push(movestack * stack, move cmd);
 
 /**
+ * Pops the top of the stack
+ *
+ * Old top memory is freed
+ * @param stack pointer to the stack data structure
+ * @returns the unstacked move command, -1 if stack is empty
+ */
+move pop(movestack * stack);
+
+/**
  * Returns true if the queue or stack is empty
  *
  * @param queue, pointer to the queue or stack data structure
  */
 _Bool isEmpty(movequeue * queue);
-
-/**
- * Initializes queue/stack
- * @returns a pointer to an initialized queue/stack
- */
-movequeue *  initQueue();
 
 /**
  * Prints the contents of the queue/stack to stderr
@@ -69,7 +74,6 @@ void printQueue(movequeue * queue);
  * @param queue, pointer to the queue/stack data structure
  */
 void freeQueue(movequeue * queue);
-
 
 /**
  * Returns the last nb moves stored in the head of the queue/stack

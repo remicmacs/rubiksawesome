@@ -1,10 +1,14 @@
+/**
+ * @file arguments.h
+ */
+
 #ifndef ARGUMENTS_H
 #define ARGUMENTS_H
 
-#include "commandParser.h"
 #include <time.h>
 #include <unistd.h>
 #include "../view/view.h"
+#include "commandParser.h"
 
 /**
  * Enum to describe the game mode chosen by the player at launch

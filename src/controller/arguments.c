@@ -1,6 +1,11 @@
+/**
+ * @file arguments.c
+ */
+
 #include "arguments.h"
 
-void displayUsage() {
+void displayUsage()
+{
     printf("Welcome in Rubiksawesome !!\n");
     printf("Usage is :\n\t./rubiksawesome [-option [scramble str]]\n");
     printf("Options are\n\t-S [scramble str] : scramble the cube to a randomly"
@@ -10,7 +15,8 @@ void displayUsage() {
             " scramble\n");
 }
 
-mode argParsing(int argc, char ** argv) {
+mode argParsing(int argc, char ** argv)
+{
     if (argc < 2) return NORMAL;
     if (argc > 3) {
         displayUsage();

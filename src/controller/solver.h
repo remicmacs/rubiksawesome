@@ -1,5 +1,6 @@
 #ifndef SOLVER_H
 #define SOLVER_H
+
 #include "../model/cube.h"
 #include "../view/view.h"
 #include "commandQueue.h"
