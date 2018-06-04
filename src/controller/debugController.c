@@ -1,6 +1,6 @@
 #include "debugController.h"
 
-zsh:1: command not found: q
+void debug(char * msg){
     fprintf(stderr, "[DEBUG] ");
     fprintf(stderr, "%s\n", msg);
 }
