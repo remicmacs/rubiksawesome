@@ -20,22 +20,32 @@ It is developped as a school project @ISEN-Lille.
 Here is a capture of the current state:
 ![Current state capture](docs/capture.png)
 
-See [`topic.pdf`](docs/topic.pdf).
+
+The objectives evaluated are available (in French) in the file linked below :
+[`topic.pdf`](docs/topic.pdf).
 
 ## Key features
-* 3D model:
+* 3D model
   * Rotations animations
   * Lighting
   * Texturing
   * Skybox
   * Mouse and keyboard inputs
-* Command-line argument for bulk command parsing
-* Solving algorithms:
+  * Beautiful win screen
+  * Marvelous Creative Commons sound effects
+  * Display of the command history
+  * Enabling/Disabling of command overlay
+* Command-line arguments for game modes
+    * Random scrambling (default)
+    * Precise scramble
+    * Non-scrambled cube
+* Solving algorithms
   * Jessica Fridrich
 
 ## How to play
 
-Move the view by clicking and dragging with your mouse. The scroll wheel can be used to zoom/unzoom.
+Move the view by clicking and dragging with your mouse.
+The scroll wheel can be used to zoom/unzoom.
 
 The keyboard shortcuts are:
 
@@ -63,7 +73,8 @@ SDL version: 1.2.15
 OpenGL version: 3.0
 ```
 
-and can be compiled using `gcc` on a GNU/Linux system. **Windows is not supported, nor it ever will be**.
+and can be compiled using `gcc` on a GNU/Linux system. 
+**Windows is not supported, nor it ever will be**.
 
 For documentation generation, `doxygen` is required.
 
@@ -90,8 +101,20 @@ $ ./rubiksawesome
 ```
 
 ### Options
-Command-line arguments
-    -S
+```
+$ ./rubiksawesome -h
+```
+outputs :
+
+```
+Usage is :
+	./rubiksawesome [-option [scramble str]]
+Options are
+	-S [scramble str] : scramble the cube to a randomly generated scramble (default behavior)
+		or to a scramble sequence passed as a double quote delimited string
+	-C : start the came with a completed Rubik's Cube yours to scramble
+```
+
 
 
 ## Documentation

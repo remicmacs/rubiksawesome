@@ -35,7 +35,10 @@ mode argParsing(int argc, char ** argv)
             displayUsage();
             exit(1);
         }
+    return gameMode;
    }
+    displayUsage();
+    exit(1);
     return gameMode;
 }
 
