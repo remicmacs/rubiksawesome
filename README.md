@@ -119,8 +119,10 @@ Options are
 
 ## Documentation
 [`MODEL.md`](MODEL.md) : Description of data model.
+[`CONTROLLER.md`](CONTROLLER.md) : Core logic description
+[`VIEW.md`](VIEW.md) : 3D display, GUI and main user interface presentation
 [`RESOURCES.md`](RESOURCES.md) : Sources of inspiration.
-[`TODOs.md`](TODOs.md) : What is done and not yet accomplished.
+[`TODOs.md`](TODOs.md) : What is done and thus not yet accomplished.
 
 ### File structure
 > /  
@@ -130,7 +132,6 @@ Options are
 > |     |-- model/  
 > |     |-- view/  
 > |     |-- controller/  
-> |     |-- tests/  
 > |     |-- main.c  
 > |     |-- main.h  
 > |  
