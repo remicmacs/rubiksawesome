@@ -24,6 +24,10 @@ int main(int argc, char **argv) {
     cube * cubeData = initCube();
     // Scramble (or not) and saving init sequence for dev purposes
     move * initSequence = initGame(cubeData, &mainView, gameMode, argv);
+
+    // Solving sequence
+    // mvqueue solveQueue = initQueue();
+
      while (1) { // Main loop
     mainView.update(&mainView, moveQueue, moveStack);
 

@@ -8,15 +8,18 @@
 #define VIEW_H
 
 
+#include <math.h>
 #include <stdbool.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 #include "graphics.h"
 #include "animations.h"
 #include "../model/cube.h"
 #include "../controller/commandQueue.h"
-//#include "../controller/history.h"
 
 
 #define PI_DENOMINATOR 1080

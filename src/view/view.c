@@ -3,28 +3,25 @@
  */
 
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <math.h>
-#include <stdbool.h>
-#include "animations.h"
 #include "view.h"
-#include "graphics.h"
-#include "../model/cube.h"
-#include "../controller/commandQueue.h"
 
 
 static SDL_Window *screen;
-
+static SDL_Window *solveScreen;
+static SDL_GLContext mainContext;
+//static SDL_Surface * img;
+static bool windowToDisplay = false;
+static bool windowDisplayed = false;
+SDL_Surface * solveSurface = NULL;
+TTF_Font * police = NULL;
 
 void setWindow() {
   /*
    * Initialize SDL
    */
   SDL_Init(SDL_INIT_VIDEO);
+
+  //img = IMG_Load("res/xyz.png");
 
   /*
    * Bind the SDL_Quit() function to the program's exit
@@ -57,7 +54,9 @@ void setWindow() {
                           800, 600,
                           SDL_WINDOW_OPENGL);
   SDL_CreateRenderer(screen, -1, 0);
-  SDL_GL_CreateContext(screen);
+  mainContext = SDL_GL_CreateContext(screen);
+
+  SDL_GL_MakeCurrent(screen, mainContext);
 
   /*
    * Set up of the projection matrix to use perspective
@@ -109,6 +108,16 @@ void setWindow() {
     printf("%s", Mix_GetError());
   }
   Mix_AllocateChannels(2);
+
+  /*
+   * Initialize TTF
+   */
+  TTF_Init();
+  police = TTF_OpenFont("res/MontserratAlternates-Regular.ttf", 48);
+  if(!police) {
+    printf("TTF_OpenFont: %s\n", TTF_GetError());
+    // handle error
+  }
 
   /*
    * Display SDL and OpenGL versions
@@ -189,6 +198,18 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     }
   }
 
+  if (windowToDisplay) {
+    windowToDisplay = false;
+    SDL_DestroyWindow(solveScreen);
+    windowDisplayed = false;
+    solveScreen = SDL_CreateWindow("Help",
+                            SDL_WINDOWPOS_UNDEFINED,
+                            SDL_WINDOWPOS_UNDEFINED,
+                            300, 100, 0);
+    windowDisplayed = true;
+    solveSurface = SDL_GetWindowSurface(solveScreen);
+  }
+
   SDL_Event event;
   const Uint8 *keystate = SDL_GetKeyboardState(NULL);
 
@@ -225,6 +246,17 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       case SDL_QUIT:
         exit(0);
         break;
+      case SDL_WINDOWEVENT:
+        if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
+          if (event.window.windowID == SDL_GetWindowID(screen)) {
+            exit(0);
+          }
+          else {
+            SDL_DestroyWindow(solveScreen);
+            windowDisplayed = false;
+          }
+        }
+        break;
     }
 
     int evntSym = event.key.keysym.sym;
@@ -242,6 +274,8 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       else if (*konamiCount == 9 && evntSym == SDLK_a) {
         printf("KONAMI CODE!\n");
         enqueue(moveQueue, SOLVE_PLS);
+        windowToDisplay = true;
+        *konamiCount = 0;
       }
       else {
         *konamiCount = 0;
@@ -461,11 +495,10 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
   glEnable(GL_TEXTURE_2D);
 
-  move * moves = head(moveStack, 13);
-
   /*
    * History display
    */
+  move * moves = head(moveStack, 13);
   for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
     int t = 50;
     int xOffset = i * 60 + 20;
@@ -492,7 +525,6 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   else {
     glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz);
   }
-  //glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz);
   glColor3ub(255, 255, 255);
   glBegin(GL_QUADS);
   glTexCoord2i(0,0); glVertex2i(20, 590);
@@ -528,6 +560,35 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
 
   glFlush();
   SDL_GL_SwapWindow(screen);
+
+
+  /*
+   * Update the solve window
+   */
+  if (windowDisplayed) {
+    SDL_FillRect(solveSurface, NULL, SDL_MapRGB(solveSurface->format, 0, 0, 0));
+    move * moves = head(moveStack, 13);
+    for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
+      SDL_Color white = {255, 255, 255, 255};
+      SDL_Surface * text = TTF_RenderText_Blended(police, mapMoveToCode(moves[i]), white);
+      SDL_Rect position;
+      position.x = 10 + (i * 50);
+      position.y = 20;
+      SDL_BlitSurface(text, NULL, solveSurface, &position);
+    }
+
+    free(moves);
+
+    // int height = 100;
+    // int width = 100;
+    // SDL_Rect texr;
+    // texr.x = 100;
+    // texr.y = 100;
+    // texr.w = width * 2;
+    // texr.h = height * 2;
+    // SDL_BlitSurface(img, &texr, solveSurface, NULL);
+    SDL_UpdateWindowSurface(solveScreen);
+  }
 }
 
 /******************************************************************************
@@ -843,5 +904,7 @@ soundStore generateSoundStore() {
 
 
 void closeWindow() {
+  TTF_CloseFont(police);
+  TTF_Quit();
   SDL_Quit();
 }
