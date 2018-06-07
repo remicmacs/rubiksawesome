@@ -96,4 +96,38 @@ void scrambleCube(
     return;
 }
 
+move * expandCommand(move * moves) {
+    if (!moves) exitFatal("in expandCommand(), list of moves should not be NULL");
+    int allocatedMvs = 2;
+    int usedMvs = 0;
+    move * newMoves = (move *) ec_malloc(sizeof(move) * (allocatedMvs + 1));
+    move currMove = -1;
+    move * start = moves;
+    while ((int) (currMove = *moves++) != -1) {
+        // Memory reallocation if needed
+        if (allocatedMvs >= usedMvs - 2) {
+            allocatedMvs *= 2;
+            newMoves = (move *) ec_realloc(
+                    newMoves,
+                    sizeof(move) * (allocatedMvs + 1)
+                    );
+        }
+
+        // Copy of moves
+        if ((int) currMove < 30) {
+            // If it is a single move, just copy the move
+            *(newMoves+usedMvs) = currMove;
+        } else {
+            // If it is a double move, copy it two times
+            *(newMoves+usedMvs) = currMove - 30;
+            *(newMoves+usedMvs+1) = currMove - 30;
+            usedMvs += 1;
+        }
+        usedMvs += 1;
+    }
+    *(newMoves+usedMvs) = -1;
+    free(start);
+    return newMoves;
+}
+
 

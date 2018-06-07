@@ -130,5 +130,15 @@ soundStore generateSoundStore();
  */
 void closeWindow();
 
+/**
+ * Reset the view passed as parameter
+ *
+ * Helper function to reset the view to a new game position.
+ *
+ * @param aView - Pointer to the rubikview to reset. Unallocates the memory of
+ * each nested structure
+ */
+void resetView(rubikview * aView);
+
 
 #endif
