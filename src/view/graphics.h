@@ -287,5 +287,14 @@ void rotateFaceX(face * currentFace, float angle, bool ccw);
 
 GLuint moveToTexture(textureStore texStore, move command);
 
+/**
+ * Destroys the rubikcube
+ *
+ * Frees the memory of the rubikcube data structure and of nested data
+ * structures inside it
+ *
+ * @param aCube - Pointer to the rubikcube data structure to free
+ */
+void destroyRubikCube(rubikcube * aCube);
 
 #endif

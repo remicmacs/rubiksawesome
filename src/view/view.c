@@ -845,3 +845,25 @@ soundStore generateSoundStore() {
 void closeWindow() {
   SDL_Quit();
 }
+
+void resetView(rubikview * aView) {
+    // Reset camera
+    // Set the camera starting position
+    camera mainCamera = {
+        (vector3) {0, 0, 0},
+        (vector3) {8, - 3 * PI / 4, PI / 3}
+    };
+    aView->mainCamera = mainCamera;
+
+    // Empty the animation stack just to be safe
+    aView->animStack = NULL;
+
+    // Frees the rubikCube
+    // Overkill, just to show off that we planned to free the allocated mem
+    destroyRubikCube(aView->rubikCube);
+    aView->rubikCube = generateRubikCube();
+    aView->gameWon = false;
+    aView->instructionsDisplayed = false;
+    aView->konamiCount = 0;
+    return;
+}

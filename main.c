@@ -4,6 +4,7 @@
 #include "src/controller/history.h"
 #include "src/controller/arguments.h"
 #include "src/controller/solver.h"
+#include "src/controller/patternComparator.h"
 
 int main(int argc, char **argv) {
     srand(time(NULL));                      // Seeding random command
@@ -22,6 +23,7 @@ int main(int argc, char **argv) {
     mvqueue moveQueue = initQueue();
     mvstack moveStack = initQueue();
     cube * cubeData = initCube();
+    cube * finishedCube = initCube();
     // Scramble (or not) and saving init sequence for dev purposes
     move * initSequence = initGame(cubeData, &mainView, gameMode, argv);
      while (1) { // Main loop
@@ -34,10 +36,17 @@ int main(int argc, char **argv) {
           cancelMove(cubeData, &mainView, moveStack);
         }
       } else if (newMove == RESTART) {
-        mainView = generateView();
+        destroyCube(cubeData);
+        freeQueue(moveQueue);
+        freeQueue(moveStack);
+        resetView(&mainView);
         moveQueue = initQueue();
         moveStack = initQueue();
         cubeData = initCube();
+
+        // Reinitialize the game with the same game mode as at start
+        free(initSequence);
+        initSequence = initGame(cubeData, &mainView, gameMode, argv);
       } else if (newMove == SOLVE_PLS) {
           move * winSequence = fakeSolve(initSequence, moveStack);
 
@@ -54,6 +63,8 @@ int main(int argc, char **argv) {
         cubeData->rotate(cubeData, newMove);
         cubeData->print(cubeData);
         addCmdToHistory(moveStack, newMove);
+        if (patternMatches(cubeData, finishedCube))
+            mainView.gameWon = true;
       }
     }
   }

@@ -704,3 +704,9 @@ GLuint moveToTexture(textureStore texStore, move command) {
   }
   return textureId;
 }
+
+void destroyRubikCube(rubikcube * aCube) {
+    free(aCube->cubes);
+    free(aCube);
+    return;
+}
