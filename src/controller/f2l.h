@@ -5,9 +5,10 @@
 #include <string.h>
 #include "../model/cubelet.h"
 #include "../controller/commandParser.h"
-
+#include "debugController.h"
 #include <stdbool.h>
 #include <unistd.h>
+#include "utils.h"
 
 /*------------------------------
  * White cross related functions
@@ -71,5 +72,8 @@ bool firstLayerDone(cube *self);
 /**
  * Test if white corners are on the UP face and correctly placed beetween the correct faces.
  */
-//char *placeWhiteCorners(cube *self);
+char *placeWhiteCorners(cube *self);
+
+
+bool secondLayerDone(cube *self);
 #endif

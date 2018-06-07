@@ -14,32 +14,34 @@ int main(int argc, char *argv[])
 
 //
 ////
-tcube->rotate(tcube,L);
-tcube->rotate(tcube,U2);
-tcube->rotate(tcube,B);
 tcube->rotate(tcube,Li);
-tcube->rotate(tcube,F2);
-	tcube->rotate(tcube,Fi);
-	tcube->rotate(tcube,Fi);
-	tcube->rotate(tcube,Li);
-	tcube->rotate(tcube,R);
-tcube->rotate(tcube,U);
-tcube->rotate(tcube,Ri);
 tcube->rotate(tcube,Fi);
 tcube->rotate(tcube,Bi);
-tcube->rotate(tcube,F);
+tcube->rotate(tcube,Ri);
+tcube->rotate(tcube,F2);
+	tcube->rotate(tcube,Di);
+	tcube->rotate(tcube,Ri);
+	tcube->rotate(tcube,Ui);
+	tcube->rotate(tcube,R);
+tcube->rotate(tcube,Di);
+tcube->rotate(tcube,Fi);
+tcube->rotate(tcube,Li);
+tcube->rotate(tcube,Di);
+tcube->rotate(tcube,Fi);
 tcube->rotate(tcube,Di);
 tcube->rotate(tcube,F2);
-tcube->rotate(tcube,L2);
-tcube->rotate(tcube,Di);
-//tcube->rotate(tcube,D2);
+tcube->rotate(tcube,R2);
+tcube->rotate(tcube,Fi);
+tcube->rotate(tcube,U2);
 printCube(tcube);
 //char *movements = orientEdges(tcube);
 //
 //searchCorner(tcube,'g','o','w');
-char *movements = orientWhiteCorners(tcube);
+//char *movements = orientWhiteCorners(tcube);
 //char *movements = doWhiteCross(tcube);
-//printf("%d",firstLayerDone(tcube));
+char *movements = placeSecondLayer(tcube);
+
+printf("%d",secondLayerDone(tcube));
 printf("%s",movements);
 
 }

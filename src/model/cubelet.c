@@ -552,6 +552,7 @@ void printEdge(cube *self, edge elt)
     }
     printf("--------------------\n");
 }
+
 char getColorTile(cube *self, tile elt)
 {
     return self->cube[elt.face][elt.row][elt.col];
