@@ -71,5 +71,15 @@ void scrambleCube(
         rubikview * cubeView,
         move * moves
         );
-
+/**
+ * Expands a list with double moves in a list with sequence of two moves
+ *
+ * Given a list of moves {R, Bi2, x}, returns {R, Bi, Bi, x}
+ *
+ * The lists passed as parameters should be terminated by a move == -1, as in
+ * other functions
+ * @param moves - pointer to the list of moves to expand
+ * @returns a list of moves at least the same size of the original list
+ */
+move * expandCommand(move * moves);
 #endif
