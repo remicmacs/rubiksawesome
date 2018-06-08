@@ -48,22 +48,27 @@ typedef struct _soundStore {
 typedef struct _rubikview {
   camera mainCamera;          /**< The camera in the view */
   rubikcube * rubikCube;      /**< The Rubik's cube */
-  animationStack * animStack;
+  animationStack * animStack; /**< Animation stack to update them serially */
   image instructions[6];      /**< An array of images for the instructions */
-  textureStore texStore;
+  textureStore texStore;      /**< */
   soundStore sndStore;
   bool instructionsDisplayed; /**< Set to true to show the instructions */
   bool gameWon;
   int konamiCount;
+  SDL_Window * mainWindow;
+  SDL_Window * solveWindow;
+  bool windowToDisplay;
+  bool windowDisplayed;
+  TTF_Font * font;
   void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;
 
 
 /**
- * Creates and displays the window
+ * Set SDL
  */
-void setWindow();
+void setSDL();
 
 
 /**
@@ -126,11 +131,6 @@ soundStore generateSoundStore();
 
 
 /**
- * Close the window
- */
-void closeWindow();
-
-/**
  * Reset the view passed as parameter
  *
  * Helper function to reset the view to a new game position.
@@ -140,5 +140,12 @@ void closeWindow();
  */
 void resetView(rubikview * aView);
 
+
+/**
+ * Close the window
+ *
+ * @param mainView - Pointer to the view
+ */
+void closeWindow(rubikview * mainView);
 
 #endif

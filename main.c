@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     mode gameMode = argParsing(argc, argv); // Identify game mode
 
     // Initializing data and graphic environment
-    setWindow();
+    setSDL();
     rubikview mainView = generateView();
     mvqueue moveQueue = initQueue();
     mvstack moveStack = initQueue();
@@ -73,6 +73,6 @@ int main(int argc, char **argv) {
     }
   }
 
-  closeWindow(); // lol
+  closeWindow(&mainView);
   return 0;
 }

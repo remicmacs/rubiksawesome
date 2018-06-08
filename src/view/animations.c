@@ -3,12 +3,6 @@
  */
 
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <SDL2/SDL_mixer.h>
-#include "graphics.h"
 #include "view.h"
 #include "animations.h"
 

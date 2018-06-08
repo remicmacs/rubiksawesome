@@ -6,27 +6,15 @@
 #include "view.h"
 
 
-static SDL_Window *screen;
-static SDL_Window *solveScreen;
-static SDL_GLContext mainContext;
 //static SDL_Surface * img;
-static bool windowToDisplay = false;
-static bool windowDisplayed = false;
-SDL_Surface * solveSurface = NULL;
-TTF_Font * police = NULL;
+//SDL_Surface * solveSurface = NULL;
 
-void setWindow() {
+
+void setSDL() {
   /*
    * Initialize SDL
    */
   SDL_Init(SDL_INIT_VIDEO);
-
-  //img = IMG_Load("res/xyz.png");
-
-  /*
-   * Bind the SDL_Quit() function to the program's exit
-   */
-  atexit(SDL_Quit);
 
   /*
    * Enabling SDL multisampling (antialiasing)
@@ -43,20 +31,41 @@ void setWindow() {
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
   /*
+   * Initialize sound
+   */
+  if (Mix_OpenAudio(24000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
+    printf("%s", Mix_GetError());
+  }
+  Mix_AllocateChannels(2);
+
+  /*
+   * Initialize TTF
+   */
+  TTF_Init();
+
+  /*
+   * Display SDL version
+   */
+  SDL_version sdlVersion;
+  SDL_VERSION(&sdlVersion);
+  printf("SDL version: %d.%d.%d\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
+}
+
+
+rubikview generateView() {
+  rubikview mainView;
+
+  /*
    *  Set the window title and set the window size, the colour depth and
    *  context to OpenGL
    */
-  //SDL_WM_SetCaption("Rubiksawesome", NULL);
-  //SDL_SetVideoMode(800, 600, 32, SDL_OPENGL);
-  screen = SDL_CreateWindow("Rubiksawesome",
+  mainView.mainWindow = SDL_CreateWindow("Rubiksawesome",
                           SDL_WINDOWPOS_UNDEFINED,
                           SDL_WINDOWPOS_UNDEFINED,
                           800, 600,
                           SDL_WINDOW_OPENGL);
-  SDL_CreateRenderer(screen, -1, 0);
-  mainContext = SDL_GL_CreateContext(screen);
-
-  SDL_GL_MakeCurrent(screen, mainContext);
+  SDL_CreateRenderer(mainView.mainWindow, -1, 0);
+  SDL_GL_CreateContext(mainView.mainWindow);
 
   /*
    * Set up of the projection matrix to use perspective
@@ -101,36 +110,9 @@ void setWindow() {
   glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-  /*
-   * Initialize sound
-   */
-  if (Mix_OpenAudio(24000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
-    printf("%s", Mix_GetError());
-  }
-  Mix_AllocateChannels(2);
-
-  /*
-   * Initialize TTF
-   */
-  TTF_Init();
-  police = TTF_OpenFont("res/MontserratAlternates-Regular.ttf", 48);
-  if(!police) {
-    printf("TTF_OpenFont: %s\n", TTF_GetError());
-    // handle error
-  }
-
-  /*
-   * Display SDL and OpenGL versions
-   */
-  SDL_version sdlVersion;
-  SDL_VERSION(&sdlVersion);
-  printf("SDL version: %d.%d.%d\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
   printf("OpenGL version: %s\n", glGetString(GL_VERSION));
   fflush(stdout);
-}
 
-
-rubikview generateView() {
   /*
    * Set the camera starting position
    */
@@ -143,15 +125,29 @@ rubikview generateView() {
    * Create the cube and assign the camera, the rubik's cube and an empty
    * animations list
    */
-  rubikview mainView;
   mainView.texStore = generateTextureStore();
   mainView.sndStore = generateSoundStore();
 
-  memcpy(&(mainView.mainCamera), &mainCamera, sizeof(camera));
+  mainView.mainCamera = mainCamera;
   mainView.rubikCube = generateRubikCube();
   mainView.animStack = NULL;
   mainView.gameWon = false;
   mainView.konamiCount = 0;
+
+  /*
+   * Setting the parameters for the solving window display
+   */
+  mainView.windowToDisplay = false;
+  mainView.windowDisplayed = false;
+  mainView.solveWindow = NULL;
+
+  /*
+   * Load the font that will be used for the solve queue
+   */
+  mainView.font = TTF_OpenFont("res/MontserratAlternates-Regular.ttf", 48);
+  if(!mainView.font) {
+    printf("TTF_OpenFont: %s\n", TTF_GetError());
+  }
 
   /*
    * Generates instructions and add them to the view (hidden by default)
@@ -198,16 +194,15 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     }
   }
 
-  if (windowToDisplay) {
-    windowToDisplay = false;
-    SDL_DestroyWindow(solveScreen);
-    windowDisplayed = false;
-    solveScreen = SDL_CreateWindow("Help",
+  if (mainView->windowToDisplay) {
+    mainView->windowToDisplay = false;
+    SDL_DestroyWindow(mainView->solveWindow);
+    mainView->windowDisplayed = false;
+    mainView->solveWindow = SDL_CreateWindow("Help",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
                             300, 100, 0);
-    windowDisplayed = true;
-    solveSurface = SDL_GetWindowSurface(solveScreen);
+    mainView->windowDisplayed = true;
   }
 
   SDL_Event event;
@@ -244,16 +239,16 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
         }
         break;
       case SDL_QUIT:
-        exit(0);
+        closeWindow(mainView);
         break;
       case SDL_WINDOWEVENT:
         if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
-          if (event.window.windowID == SDL_GetWindowID(screen)) {
-            exit(0);
+          if (event.window.windowID == SDL_GetWindowID(mainView->mainWindow)) {
+            closeWindow(mainView);
           }
           else {
-            SDL_DestroyWindow(solveScreen);
-            windowDisplayed = false;
+            SDL_DestroyWindow(mainView->solveWindow);
+            mainView->windowDisplayed = false;
           }
         }
         break;
@@ -274,7 +269,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
       else if (*konamiCount == 9 && evntSym == SDLK_a) {
         printf("KONAMI CODE!\n");
         enqueue(moveQueue, SOLVE_PLS);
-        windowToDisplay = true;
+        mainView->windowToDisplay = true;
         *konamiCount = 0;
       }
       else {
@@ -287,7 +282,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     }
 
     if (event.key.keysym.sym == SDLK_ESCAPE && event.key.type == SDL_KEYDOWN) {
-      exit(0);
+      closeWindow(mainView);
     }
 
     if (event.key.keysym.sym == SDLK_F10 && event.key.type == SDL_KEYDOWN) {
@@ -444,10 +439,10 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
    *
    ****************/
 
-  glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glMatrixMode( GL_MODELVIEW );
-  glLoadIdentity( );
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 
   mainCamera->position.x = mainCamera->angles.x * sinf(mainCamera->angles.z) * cosf(mainCamera->angles.y);
   mainCamera->position.y = mainCamera->angles.x * sinf(mainCamera->angles.z) * sinf(mainCamera->angles.y);
@@ -559,18 +554,19 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   glEnable(GL_DEPTH_TEST);
 
   glFlush();
-  SDL_GL_SwapWindow(screen);
+  SDL_GL_SwapWindow(mainView->mainWindow);
 
 
   /*
    * Update the solve window
    */
-  if (windowDisplayed) {
+  if (mainView->windowDisplayed) {
+    SDL_Surface * solveSurface = SDL_GetWindowSurface(mainView->solveWindow);
     SDL_FillRect(solveSurface, NULL, SDL_MapRGB(solveSurface->format, 0, 0, 0));
     move * moves = head(moveStack, 13);
     for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
       SDL_Color white = {255, 255, 255, 255};
-      SDL_Surface * text = TTF_RenderText_Blended(police, mapMoveToCode(moves[i]), white);
+      SDL_Surface * text = TTF_RenderText_Blended(mainView->font, mapMoveToCode(moves[i]), white);
       SDL_Rect position;
       position.x = 10 + (i * 50);
       position.y = 20;
@@ -587,7 +583,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     // texr.w = width * 2;
     // texr.h = height * 2;
     // SDL_BlitSurface(img, &texr, solveSurface, NULL);
-    SDL_UpdateWindowSurface(solveScreen);
+    SDL_UpdateWindowSurface(mainView->solveWindow);
   }
 }
 
@@ -903,12 +899,6 @@ soundStore generateSoundStore() {
 }
 
 
-void closeWindow() {
-  TTF_CloseFont(police);
-  TTF_Quit();
-  SDL_Quit();
-}
-
 void resetView(rubikview * aView) {
     // Reset camera
     // Set the camera starting position
@@ -929,4 +919,12 @@ void resetView(rubikview * aView) {
     aView->instructionsDisplayed = false;
     aView->konamiCount = 0;
     return;
+}
+
+
+void closeWindow(rubikview * mainView) {
+  TTF_CloseFont(mainView->font);
+  TTF_Quit();
+  SDL_Quit();
+  exit(0);
 }

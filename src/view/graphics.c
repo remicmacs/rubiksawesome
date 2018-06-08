@@ -24,16 +24,7 @@
  */
 
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "graphics.h"
-#include "../model/cube.h"
 
 
 rubikcube * generateRubikCube() {
@@ -402,12 +393,35 @@ void drawFace(face drawnFace, bool debug) {
   /** We set the colour of the vertices */
   glColor3ub(faceColour.r, faceColour.g, faceColour.b);
 
-  glBegin(GL_QUADS);
+  // glBegin(GL_QUADS);
+  // glNormal3f(drawnFace.normal.x, drawnFace.normal.y, drawnFace.normal.z);
+  // for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
+  //   float x = drawnFace.corners[vertexIndex].x;
+  //   float y = drawnFace.corners[vertexIndex].y;
+  //   float z = drawnFace.corners[vertexIndex].z;
+  //
+  //   glVertex3d(x, y, z);
+  // }
+  // glEnd();
+
+  glBegin(GL_TRIANGLES);
   glNormal3f(drawnFace.normal.x, drawnFace.normal.y, drawnFace.normal.z);
-  for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
+  for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
     float x = drawnFace.corners[vertexIndex].x;
     float y = drawnFace.corners[vertexIndex].y;
     float z = drawnFace.corners[vertexIndex].z;
+
+    glVertex3d(x, y, z);
+  }
+  glEnd();
+
+  int otherCoord[] = {0, 2, 3};
+  glBegin(GL_TRIANGLES);
+  glNormal3f(drawnFace.normal.x, drawnFace.normal.y, drawnFace.normal.z);
+  for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+    float x = drawnFace.corners[otherCoord[vertexIndex]].x;
+    float y = drawnFace.corners[otherCoord[vertexIndex]].y;
+    float z = drawnFace.corners[otherCoord[vertexIndex]].z;
 
     glVertex3d(x, y, z);
   }

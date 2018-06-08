@@ -9,7 +9,11 @@
 
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 #include <SDL2/SDL_mixer.h>
+//#include "view.h"
 #include "graphics.h"
 
 
@@ -27,6 +31,7 @@ typedef struct _animation {
   enum FaceType animatedFace;
   struct _animation * next;
   void (* update)(struct _animation * self, rubikcube * rubikCube);
+  void (* onFinished)(rubikcube * cube, int sliceIndex, bool ccw);
 } animation;
 
 

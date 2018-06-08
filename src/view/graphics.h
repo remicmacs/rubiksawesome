@@ -9,9 +9,14 @@
 #define GRAPHICS_H
 
 
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <GL/gl.h>
+#include <stdlib.h>
 #include "../model/cube.h"
 
 
@@ -285,7 +290,14 @@ void rotateFaceZ(face * currentFace, float angle, bool ccw);
 void rotateFaceX(face * currentFace, float angle, bool ccw);
 
 
+/**
+ * Translate a move to a texture. Used to display history.
+ * @param  texStore The structure where the textures are stored
+ * @param  command  The move command
+ * @return          The ID of the OpenGL's texture
+ */
 GLuint moveToTexture(textureStore texStore, move command);
+
 
 /**
  * Destroys the rubikcube
