@@ -14,25 +14,20 @@ int main(int argc, char *argv[])
 
 //
 ////
+
+tcube->rotate(tcube,U2);
+	tcube->rotate(tcube,Bi);
+	tcube->rotate(tcube,Fi);
+	tcube->rotate(tcube,Ui);
+	tcube->rotate(tcube,Fi);
 tcube->rotate(tcube,Li);
-tcube->rotate(tcube,Fi);
-tcube->rotate(tcube,Bi);
+tcube->rotate(tcube,Ri);
+tcube->rotate(tcube,Ui);
+tcube->rotate(tcube,Di);
+tcube->rotate(tcube,Ui);
+
 tcube->rotate(tcube,Ri);
 tcube->rotate(tcube,F2);
-	tcube->rotate(tcube,Di);
-	tcube->rotate(tcube,Ri);
-	tcube->rotate(tcube,Ui);
-	tcube->rotate(tcube,R);
-tcube->rotate(tcube,Di);
-tcube->rotate(tcube,Fi);
-tcube->rotate(tcube,Li);
-tcube->rotate(tcube,Di);
-tcube->rotate(tcube,Fi);
-tcube->rotate(tcube,Di);
-tcube->rotate(tcube,F2);
-tcube->rotate(tcube,R2);
-tcube->rotate(tcube,Fi);
-tcube->rotate(tcube,U2);
 printCube(tcube);
 //char *movements = orientEdges(tcube);
 //
@@ -41,7 +36,6 @@ printCube(tcube);
 //char *movements = doWhiteCross(tcube);
 char *movements = placeSecondLayer(tcube);
 
-printf("%d",secondLayerDone(tcube));
 printf("%s",movements);
 
 }

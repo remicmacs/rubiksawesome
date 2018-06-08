@@ -520,7 +520,7 @@ adjacentTiles getAdjacentTiles(tile elt)
     return tiles[elt.face][elt.row][elt.col];
 }
 
-edge defineEdge(cube *self, tile elt){
+edge defineEdge(tile elt){
     adjacentTiles adjtile = getAdjacentTiles(elt);
     edge newedge = {{elt, adjtile.tiles[0]}};
     return newedge;
@@ -583,7 +583,7 @@ bool isCornerOnFace(corner elt, int face)
 }
 
 
-corner defineCorner(cube *self, tile elt){
+corner defineCorner(tile elt){
     adjacentTiles adjtile = getAdjacentTiles(elt);
     corner newcorner = {{elt, adjtile.tiles[0], adjtile.tiles[1]}};
     return newcorner;

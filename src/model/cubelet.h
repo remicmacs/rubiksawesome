@@ -62,7 +62,7 @@ bool isEdge(tile elt);
 /**
  * Define an edge thanks to his adjacent tile
  */
-edge defineEdge(cube *self, tile elt);
+edge defineEdge(tile elt);
 
 /**
  * Print given edge
@@ -87,7 +87,7 @@ typedef struct corner{
 /**
  * Define a corner thanks to his adjacents tiles.
  */
-corner defineCorner(cube *self, tile elt);
+corner defineCorner(tile elt);
 
 /**
  * Print given corner 
