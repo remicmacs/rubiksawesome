@@ -114,3 +114,83 @@ move * head(movequeue * queue, int nb) {
     moves[i] = -1; // Endmark
     return moves;
 }
+
+int sizeOfMoveArray(move * moves) {
+    int nb = 0;
+    move curr = -1;
+
+    while( (int) (curr = *(moves+(nb++))) != -1);
+
+    return nb;
+}
+
+int sizeOfMoveQueue(mvqueue queue) {
+    if (isEmpty(queue)) return 0;
+    int nb = 0;
+    moveLink * curr = queue->head;
+    while(curr != NULL) {
+        nb += 1;
+        curr = curr->next;
+    }
+
+    return nb;
+}
+
+mvqueue toMvQueue(move * moves) {
+    mvqueue queue = initQueue();
+
+    move currmove = -1;
+
+    while((int)(currmove = *(moves++)) != -1){
+        enqueue(queue, currmove);
+    }
+
+    return queue;
+}
+
+move * toMvArray(mvqueue queue) {
+    move * mvArray;
+
+    int size = sizeOfMoveQueue(queue);
+
+    mvArray = (move *) ec_malloc(sizeof(move) * (size+1));
+    moveLink * curr = queue->head;
+    int index = 0;
+    for (; index < size ; index++) {
+        *(mvArray+index) = curr->cmd;
+        curr = curr->next;
+    }
+    *(mvArray+index) = -1;
+    return mvArray;
+}
+
+move * mvCat(move * array1, move * array2) {
+    move * arrayCat;
+    int size1 = sizeOfMoveArray(array1);
+    int size2 = sizeOfMoveArray(array2);
+
+    arrayCat = (move *) ec_malloc(sizeof(move) * (size1+size2-1));
+    int i = 0;
+    for ( ; i < size1 ; i++) {
+        *(arrayCat+i) = *(array1+i);
+    }
+
+    fprintf(stderr, "in mvCat() : first array is added = ");
+    printMoveArray(arrayCat);
+    i-=1;
+    for ( ; i-size1 <= size2 ; i++) {
+        *(arrayCat+i) = *(array2+(i-size1));
+    }
+
+    fprintf(stderr, "in mvCat() : second array is added = ");
+    printMoveArray(arrayCat);
+    return arrayCat;
+}
+
+void printMoveArray(move * moves) {
+    move currmove = -1;
+    while((int)(currmove = *(moves++)) != -1) {
+        fprintf(stderr, "[%s]", mapMoveToCode(currmove));
+    }
+    printf("\n");
+}
