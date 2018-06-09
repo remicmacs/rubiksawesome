@@ -376,12 +376,25 @@ void setCubeColour(colour newColour, cube3d * selectedCube) {
   }
 }
 
+
+void drawCubes(rubikcube * rubikCube) {
+  for (int zIndex = 0; zIndex < 3; zIndex++) {
+    for (int yIndex = 0; yIndex < 3; yIndex++) {
+      for (int xIndex = 0; xIndex < 3; xIndex++) {
+        drawCube(*rubikCube->cubes[xIndex][yIndex][zIndex], false);
+      }
+    }
+  }
+}
+
+
 void drawCube(cube3d drawnCube, bool debug) {
   /** We draw the faces */
   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
     drawFace(drawnCube.faces[faceIndex], debug);
   }
 }
+
 
 void drawFace(face drawnFace, bool debug) {
   colour faceColour;
@@ -434,19 +447,20 @@ void drawFace(face drawnFace, bool debug) {
 }
 
 
-void drawInstruction(instructionDisplay drawnInstruction, bool ccw, bool two) {
-  GLuint textureId;
-  if (ccw && two) {
-    textureId = drawnInstruction.textures.ccwId2;
-  } else if (ccw && !two) {
-    textureId = drawnInstruction.textures.ccwId;
-  } else if (!ccw && two) {
-    textureId = drawnInstruction.textures.id2;
-  } else {
-    textureId = drawnInstruction.textures.id;
+void drawInstructions(instructionDisplay * instructions, int keyShortcut) {
+  for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
+    drawInstruction(instructions[instructionIndex], keyShortcut);
   }
+}
 
-  glBindTexture(GL_TEXTURE_2D, textureId);
+
+void drawInstruction(instructionDisplay drawnInstruction, int keyShortcut) {
+  GLuint textureIds[] = {drawnInstruction.textures.id,
+                         drawnInstruction.textures.id2,
+                         drawnInstruction.textures.ccwId,
+                         drawnInstruction.textures.ccwId2};
+
+  glBindTexture(GL_TEXTURE_2D, textureIds[keyShortcut]);
 
   glColor4ub(255, 255, 255, 255);
 
@@ -474,6 +488,22 @@ void drawInstruction(instructionDisplay drawnInstruction, bool ccw, bool two) {
   }
   glEnd();
   glDisable(GL_TEXTURE_2D);
+}
+
+
+void drawXYZInstruction(textureStore texStore, bool reversed) {
+  if (reversed) {
+    glBindTexture(GL_TEXTURE_2D, texStore.xyzi.id);
+  } else {
+    glBindTexture(GL_TEXTURE_2D, texStore.xyz.id);
+  }
+  glColor3ub(255, 255, 255);
+  glBegin(GL_QUADS);
+  glTexCoord2i(0,0); glVertex2i(20, 590);
+  glTexCoord2i(0,1); glVertex2i(20, 490);
+  glTexCoord2i(1,1); glVertex2i(120, 490);
+  glTexCoord2i(1,0); glVertex2i(120, 590);
+  glEnd();
 }
 
 
@@ -538,6 +568,39 @@ void drawSkybox(GLuint textureId) {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
   glDisable(GL_TEXTURE_CUBE_MAP_ARB);
+}
+
+
+void drawHistory(textureStore texStore, mvstack moveStack) {
+  move * moves = head(moveStack, 13);
+  for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
+    int t = 50;
+    int xOffset = i * 60 + 20;
+    int yOffset = 20;
+    int alpha = 255 - (i * (255 / 13));
+    glColor4ub(255, 255, 255, alpha);
+    glBindTexture(GL_TEXTURE_2D, moveToTexture(texStore, moves[i]).id);
+    glBegin(GL_QUADS);
+    glTexCoord2i(0,1); glVertex2i(xOffset, yOffset);
+    glTexCoord2i(0,0); glVertex2i(xOffset, yOffset + t);
+    glTexCoord2i(1,0); glVertex2i(xOffset + t, yOffset + t);
+    glTexCoord2i(1,1); glVertex2i(xOffset + t, yOffset);
+    glEnd();
+  }
+
+  free(moves);
+}
+
+
+void drawWinning(textureStore texStore) {
+  glBindTexture(GL_TEXTURE_2D, texStore.winner.id);
+  glColor4ub(255, 255, 255, 255);
+  glBegin(GL_QUADS);
+  glTexCoord2i(0,1); glVertex2i(5, 0);
+  glTexCoord2i(0,0); glVertex2i(5, 600);
+  glTexCoord2i(1,0); glVertex2i(795, 600);
+  glTexCoord2i(1,1); glVertex2i(795, 0);
+  glEnd();
 }
 
 

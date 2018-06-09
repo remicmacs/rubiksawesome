@@ -13,7 +13,13 @@ animationStack * generateAnimationStack(Mix_Chunk * sound) {
   returnedStack->animations = NULL;
   returnedStack->next = NULL;
   returnedStack->sound = sound;
+  
   returnedStack->hasStarted = false;
+  returnedStack->isFinished = false;
+
+  returnedStack->start = &start;
+  returnedStack->update = &updateAnimationStack;
+
   return returnedStack;
 }
 
@@ -66,6 +72,17 @@ int animationStackCount(animationStack * animStack) {
     }
   }
   return count;
+}
+
+
+void updateAnimationStack(animationStack * self, rubikcube * rubikCube) {
+  animation * animationsPtr = self->animations;
+  self->isFinished = true;
+  while (animationsPtr != NULL) {
+    animationsPtr->update(animationsPtr, rubikCube);
+    self->isFinished = animationsPtr->isActive ? false : self->isFinished;
+    animationsPtr = animationsPtr->next;
+  }
 }
 
 
@@ -186,17 +203,17 @@ void animateZ(animation * self, rubikcube * rubikCube) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
         for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
           rotateFaceZ(&rubikCube->cubes[xIndex][yIndex][self->sliceIndex]->faces[faceIndex], self->rotationAngle, self->ccw);
-
-          /*
-           * Just for fun, VIBRATIONS !
-           */
-          // if (self->targetStep != 1) {
-          //   float angle = self->currentStep % 2 ? -PI/45 : PI/45;
-          //   rotateFaceX(&rubikCube->cubes[xIndex][yIndex][self->sliceIndex]->faces[faceIndex], angle, self->ccw);
-          // }
         }
       }
     }
     self->currentStep++;
   }
+}
+
+
+void start(animationStack * self, Mix_Chunk * sound) {
+  // Mix_PlayChannel(0, mainView->sndStore.rumbling, 0);
+  // animStackPtr->hasStarted = true;
+  Mix_PlayChannel(0, sound, 0);
+  self->hasStarted = true;
 }

@@ -69,8 +69,9 @@ int main(int argc, char **argv) {
         cubeData->rotate(cubeData, newMove);
         cubeData->print(cubeData);
         addCmdToHistory(moveStack, newMove);
-        if (patternMatches(cubeData, finishedCube))
+        if (patternMatches(cubeData, finishedCube)) {
             mainView.gameWon = true;
+        }
       }
     }
   }

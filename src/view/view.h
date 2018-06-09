@@ -33,6 +33,8 @@
 typedef struct _camera {
   vector3 position;           /**< Position in the cartesian coordinates */
   vector3 angles;             /**< Position in the spherical coordinates */
+  void (* rotate)(struct _camera * self, float zAngle, float yAngle);
+  void (* zoom)(struct _camera * self, bool positive);
 } camera;
 
 
@@ -82,11 +84,27 @@ rubikview generateView();
 
 
 /**
+ * Create and show the help window
+ * @param mainView The pointer to the current view
+ */
+void showHelpWindow(rubikview * mainView);
+
+
+/**
  * Redraw the view and handle events. This function must be called on every
  * frame.
  * @param mainView The structure holding the view
  */
 void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves);
+
+
+void rotateCamera(camera * self, float zAngle, float yAngle);
+
+
+void zoomCamera(camera * self, bool positive);
+
+
+vector3 polarToCartesian(vector3 polar);
 
 
 /**
@@ -144,10 +162,16 @@ void resetView(rubikview * aView);
 
 
 /**
- * Close the window
- *
- * @param mainView - Pointer to the view
+ * Play the winning sequence (set the winning flag to true and launch the
+ * winning sound)
+ * @param mainView Pointer to the view
  */
-void closeWindow(rubikview * mainView);
+void playWinningSequence(rubikview * mainView);
+
+
+/**
+ * Close the window
+ */
+void closeWindow();
 
 #endif

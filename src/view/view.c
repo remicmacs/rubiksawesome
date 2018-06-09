@@ -6,45 +6,64 @@
 #include "view.h"
 
 
-void setSDL() {
-  /*
-   * Initialize SDL
-   */
-  SDL_Init(SDL_INIT_VIDEO);
+static SDL_Keycode konamiCode[] = {SDLK_UP, SDLK_UP, SDLK_DOWN, SDLK_DOWN,
+                                   SDLK_LEFT, SDLK_RIGHT, SDLK_LEFT, SDLK_RIGHT,
+                                   SDLK_b, SDLK_a};
 
-  /*
-   * Enabling SDL multisampling (antialiasing)
-   */
+
+void setSDL() {
+  /** Initialize SDL */
+  if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+    exit(1);
+  }
+
+  /** Enabling SDL multisampling (antialiasing) */
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-  /*
-   * Initialize sound
-   */
+  /** Intialize sound */
   if (Mix_OpenAudio(24000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
     printf("%s", Mix_GetError());
+    exit(2);
   }
   Mix_AllocateChannels(2);
 
-  /*
-   * Initialize TTF
-   */
-  TTF_Init();
+  /** Initialize TTF */
+  if(TTF_Init() == -1) {
+    printf("TTF_Init: %s\n", TTF_GetError());
+    exit(3);
+  }
 
-  /*
-   * Display SDL version
-   */
+  /** Display SDL version */
   SDL_version sdlVersion;
   SDL_VERSION(&sdlVersion);
   printf("SDL version: %d.%d.%d\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
+}
+
+
+/******************************************************************************
+ * GENERATE VIEW ELEMENTS
+ ******************************************************************************/
+
+
+camera generateCamera() {
+  /** Set the camera starting position */
+  camera mainCamera;
+  mainCamera.position = (vector3) {0, 0, 0};
+  mainCamera.angles = (vector3) {8, - 3 * PI / 4, PI / 3};
+  mainCamera.position = polarToCartesian(mainCamera.angles);
+
+  mainCamera.rotate = &rotateCamera;
+  mainCamera.zoom = &zoomCamera;
+
+  return mainCamera;
 }
 
 
@@ -56,23 +75,18 @@ rubikview generateView() {
    *  context to OpenGL
    */
   mainView.mainWindow = SDL_CreateWindow("Rubiksawesome",
-                          SDL_WINDOWPOS_UNDEFINED,
-                          SDL_WINDOWPOS_UNDEFINED,
-                          800, 600,
-                          SDL_WINDOW_OPENGL);
+                                         SDL_WINDOWPOS_UNDEFINED,
+                                         SDL_WINDOWPOS_UNDEFINED,
+                                         800, 600, SDL_WINDOW_OPENGL);
   SDL_CreateRenderer(mainView.mainWindow, -1, 0);
   SDL_GL_CreateContext(mainView.mainWindow);
 
-  /*
-   * Set up of the projection matrix to use perspective
-   */
+  /** Set up of the projection matrix to use perspective */
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(70, (double)800 / 600, 1, 1000);
 
-  /*
-   * Enable depth testing (allows objects to hide each others)
-   */
+  /** Enable depth testing (allows objects to hide each others) */
   glEnable(GL_DEPTH_TEST);
 
   /*
@@ -82,40 +96,26 @@ rubikview generateView() {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-  /*
-   * Enable lighting
-   */
+  /** Enable lighting */
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
-  /*
-   * Enable OpenGL multisampling (antialiasing)
-   */
+  /** Enable OpenGL multisampling (antialiasing) */
   glEnable(GL_MULTISAMPLE);
 
-  /*
-   * Create light components and assign them to GL_LIGHT0
-   */
+  /** Create light components and assign them to GL_LIGHT0 */
   GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
   GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
   GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
   GLfloat position[] = { -1.0f, 0, 0, 1.0f };
-
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
   glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
   glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
+  /** Print OpenGL version */
   printf("OpenGL version: %s\n", glGetString(GL_VERSION));
   fflush(stdout);
-
-  /*
-   * Set the camera starting position
-   */
-  camera mainCamera = {
-    (vector3) {0, 0, 0},
-    (vector3) {8, - 3 * PI / 4, PI / 3}
-  };
 
   /*
    * Create the cube and assign the camera, the rubik's cube and an empty
@@ -123,8 +123,7 @@ rubikview generateView() {
    */
   mainView.texStore = generateTextureStore();
   mainView.sndStore = generateSoundStore();
-
-  mainView.mainCamera = mainCamera;
+  mainView.mainCamera = generateCamera();
   mainView.rubikCube = generateRubikCube();
   mainView.animStack = NULL;
   mainView.gameWon = false;
@@ -140,17 +139,18 @@ rubikview generateView() {
   /*
    * Load the font that will be used for the solve queue
    */
-  mainView.font = TTF_OpenFont("res/MontserratAlternates-Regular.ttf", 48);
-  if(!mainView.font) {
-    printf("TTF_OpenFont: %s\n", TTF_GetError());
-  }
+  // mainView.font = TTF_OpenFont("res/MontserratAlternates-Regular.ttf", 48);
+  // if(!mainView.font) {
+  //   printf("TTF_OpenFont: %s\n", TTF_GetError());
+  // }
 
   /*
    * Generates instructions and add them to the view (hidden by default)
    */
-  enum FaceType facesTypes[6] = {FRONT, RIGHT, TOP, DOWN, BACK, LEFT};
-  for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
-    mainView.instructions[instructionIndex] = generateInstruction(facesTypes[instructionIndex], mainView.texStore);
+  enum FaceType faces[6] = {FRONT, RIGHT, TOP, DOWN, BACK, LEFT};
+  for (int index = 0; index < 6; index++) {
+    mainView.instructions[index] = generateInstruction(faces[index],
+                                                       mainView.texStore);
   }
   mainView.instructionsDisplayed = false;
 
@@ -166,6 +166,27 @@ rubikview generateView() {
 }
 
 
+/******************************************************************************
+ * UPDATES AND OPENINGS
+ ******************************************************************************/
+
+
+void showHelpWindow(rubikview * mainView) {
+  /** Set the flags */
+  mainView->windowToDisplay = false;
+  mainView->windowDisplayed = true;
+
+  /** Destroy the current window if it exists */
+  SDL_DestroyWindow(mainView->solveWindow);
+
+  /** Create the new window */
+  mainView->solveWindow = SDL_CreateWindow("Help",
+                                           SDL_WINDOWPOS_UNDEFINED,
+                                           SDL_WINDOWPOS_UNDEFINED,
+                                           800, 100, 0);
+}
+
+
 void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves) {
   camera * mainCamera = &(mainView->mainCamera);
 
@@ -174,65 +195,53 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * s
    */
   animationStack * animStackPtr = mainView->animStack;
   if (animStackPtr != NULL) {
+
+    /** Start the animation stack if it is not started */
     if (!animStackPtr->hasStarted) {
-      Mix_PlayChannel(0, mainView->sndStore.rumbling, 0);
-      animStackPtr->hasStarted = true;
+      animStackPtr->start(animStackPtr, mainView->sndStore.rumbling);
     }
-    animation * animationsPtr = animStackPtr->animations;
-    bool stackFinished = false;
-    while (animationsPtr != NULL) {
-      animationsPtr->update(animationsPtr, mainView->rubikCube);
-      stackFinished = animationsPtr->isActive;
-      animationsPtr = animationsPtr->next;
-    }
-    if (!stackFinished) {
+
+    /** Update the animation */
+    animStackPtr->update(animStackPtr, mainView->rubikCube);
+
+    /** Remove it if finished */
+    if (animStackPtr->isFinished) {
       removeAnimationStack(&mainView->animStack, animStackPtr);
     }
   }
 
+  /** Show the help window if we previously entered the konami code */
   if (mainView->windowToDisplay) {
-    mainView->windowToDisplay = false;
-    SDL_DestroyWindow(mainView->solveWindow);
-    mainView->windowDisplayed = false;
-    mainView->solveWindow = SDL_CreateWindow("Help",
-                            SDL_WINDOWPOS_UNDEFINED,
-                            SDL_WINDOWPOS_UNDEFINED,
-                            800, 100, 0);
-    mainView->windowDisplayed = true;
+    showHelpWindow(mainView);
   }
 
   SDL_Event event;
   const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+
+  /*
+   * Attribute a score depending on key press, will be used later for
+   * simple parsing
+   * 0: no key combination
+   * 1: left control
+   * 2: left shift
+   * 3: left control + left shift
+   */
+  int keyShortcut = 0;
+  keyShortcut += keystate[SDL_SCANCODE_LSHIFT] ? 2 : 0;
+  keyShortcut += keystate[SDL_SCANCODE_LCTRL] ? 1 : 0;
 
   while (SDL_PollEvent(&event)) {
     switch(event.type)
     {
       case SDL_MOUSEMOTION:
         if (event.type == SDL_MOUSEMOTION && event.motion.state == SDL_BUTTON_LMASK) {
-          mainCamera->angles.y -= event.motion.xrel * 0.01;
-          mainCamera->angles.z -= event.motion.yrel * 0.01;
-
-          if (mainCamera->angles.z < 0) {
-            mainCamera->angles.z = 0.000001;
-          } else if (mainCamera->angles.z > PI) {
-            mainCamera->angles.z = PI - 0.000001;
-          }
+          float zAngle = event.motion.yrel * 0.01;
+          float yAngle = event.motion.xrel * 0.01;
+          mainCamera->rotate(mainCamera, zAngle, yAngle);
         }
         break;
       case SDL_MOUSEWHEEL:
-        if (event.wheel.y > 0) {
-          mainCamera->angles.x -= 0.1;
-          if (mainCamera->angles.x < 4) {
-            mainCamera->angles.x = 4;
-          }
-        }
-
-        if (event.wheel.y < 0) {
-          mainCamera->angles.x += 0.1;
-          if (mainCamera->angles.x > 50) {
-            mainCamera->angles.x = 50;
-          }
-        }
+        mainCamera->zoom(mainCamera, event.wheel.y > 0);
         break;
       case SDL_QUIT:
         closeWindow(mainView);
@@ -250,181 +259,112 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * s
         break;
     }
 
-    int evntSym = event.key.keysym.sym;
-    int * konamiCount = &mainView->konamiCount;
-    if (event.key.type == SDL_KEYDOWN) {
-      if (*konamiCount == 0 && evntSym == SDLK_UP) { (*konamiCount)++; }
-      else if (*konamiCount == 1 && evntSym == SDLK_UP) { (*konamiCount)++; }
-      else if (*konamiCount == 2 && evntSym == SDLK_DOWN) { (*konamiCount)++; }
-      else if (*konamiCount == 3 && evntSym == SDLK_DOWN) { (*konamiCount)++; }
-      else if (*konamiCount == 4 && evntSym == SDLK_LEFT) { (*konamiCount)++; }
-      else if (*konamiCount == 5 && evntSym == SDLK_RIGHT) { (*konamiCount)++; }
-      else if (*konamiCount == 6 && evntSym == SDLK_LEFT) { (*konamiCount)++; }
-      else if (*konamiCount == 7 && evntSym == SDLK_RIGHT) { (*konamiCount)++; }
-      else if (*konamiCount == 8 && evntSym == SDLK_b) { (*konamiCount)++; }
-      else if (*konamiCount == 9 && evntSym == SDLK_a) {
-        printf("KONAMI CODE!\n");
+    bool keyPressed = event.key.type == SDL_KEYDOWN && event.key.repeat == 0;
+
+    if (keyPressed) {
+      int * konamiCount = &mainView->konamiCount;
+
+      /** Konami code state machine. Wow ! Two lines only, for real */
+      if (event.key.keysym.sym == konamiCode[*konamiCount]) (*konamiCount)++;
+      else *konamiCount = 0;
+
+      /** Make a solution request if konami code has been typed */
+      if (*konamiCount == 10) {
         enqueue(moveQueue, SOLVE_PLS);
         mainView->windowToDisplay = true;
         *konamiCount = 0;
       }
-      else {
-        *konamiCount = 0;
-      }
     }
 
-    if (event.key.keysym.sym == SDLK_i && event.key.type == SDL_KEYDOWN) {
+    /** Press I to show the instructions overlay */
+    if (event.key.keysym.sym == SDLK_i && keyPressed) {
       mainView->instructionsDisplayed = !mainView->instructionsDisplayed;
     }
 
-    if (event.key.keysym.sym == SDLK_ESCAPE && event.key.type == SDL_KEYDOWN) {
+    /** Press escape to quit */
+    if (event.key.keysym.sym == SDLK_ESCAPE && keyPressed) {
       closeWindow(mainView);
     }
 
-    if (event.key.keysym.sym == SDLK_F10 && event.key.type == SDL_KEYDOWN) {
+    /** FOR DEBUGGING PURPOSE ONLY : Win/unwin the game */
+    if (event.key.keysym.sym == SDLK_F10 && keyPressed) {
       mainView->gameWon = !mainView->gameWon;
       if (mainView->gameWon) {
-        Mix_PlayChannel(1, mainView->sndStore.clapping, 0);
+        playWinningSequence(mainView);
       }
     }
 
-    if(event.key.keysym.sym == SDLK_F2 \
-            && event.key.type == SDL_KEYDOWN) {
+    /** Press F2 to start a new game */
+    if(event.key.keysym.sym == SDLK_F2 && keyPressed) {
       enqueue(moveQueue, RESTART);
     }
 
+    /*
+     * Check if the game is won. If it is, we won't continue checking the
+     * inputs : we don't want the player to still be able to make moves
+     */
     if (mainView->gameWon) {
       continue;
     }
 
-    move newMove;
+    move newMove = (move)-1;
 
     // DOWN ROTATION
-    if (event.key.keysym.sym == SDLK_d && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = di;
-      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = Di;
-      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = d;
-      } else {
-        newMove = D;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_d && keyPressed) {
+      move moves[] = {D, d, Di, di};
+      newMove = moves[keyShortcut];
     }
 
     // UP ROTATION
-    if (event.key.keysym.sym == SDLK_u && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = ui;
-      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = Ui;
-      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = u;
-      } else {
-        newMove = U;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_u && keyPressed) {
+      move moves[] = {U, u, Ui, ui};
+      newMove = moves[keyShortcut];
     }
 
     // RIGHT ROTATION
-    if (event.key.keysym.sym == SDLK_r && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = ri;
-      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = Ri;
-      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = r;
-      } else {
-        newMove = R;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_r && keyPressed) {
+      move moves[] = {R, r, Ri, ri};
+      newMove = moves[keyShortcut];
     }
 
     // LEFT ROTATION
-    if (event.key.keysym.sym == SDLK_l && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = li;
-      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = Li;
-      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = l;
-      } else {
-        newMove = L;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_l && keyPressed) {
+      move moves[] = {L, l, Li, li};
+      newMove = moves[keyShortcut];
     }
 
     // FRONT ROTATION
-    if (event.key.keysym.sym == SDLK_f && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = fi;
-      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = Fi;
-      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = f;
-      } else {
-        newMove = F;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_f && keyPressed) {
+      move moves[] = {F, f, Fi, fi};
+      newMove = moves[keyShortcut];
     }
 
     // BACK ROTATION
-    if (event.key.keysym.sym == SDLK_b && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = bi;
-      } else if (keystate[SDL_SCANCODE_LSHIFT] && !keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = Bi;
-      } else if (!keystate[SDL_SCANCODE_LSHIFT] && keystate[SDL_SCANCODE_LCTRL]) {
-        newMove = b;
-      } else {
-        newMove = B;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_b && keyPressed) {
+      move moves[] = {B, b, Bi, bi};
+      newMove = moves[keyShortcut];
     }
 
     // X ROTATION
-    if (event.key.keysym.sym == SDLK_x && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT]) {
-        newMove = xi;
-      } else {
-        newMove = x;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_x && keyPressed) {
+      newMove = keystate[SDL_SCANCODE_LSHIFT] ? xi : x;
     }
 
     // Y ROTATION
-    if (event.key.keysym.sym == SDLK_y && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT]) {
-        newMove = yi;
-      } else {
-        newMove = y;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_y && keyPressed) {
+      newMove = keystate[SDL_SCANCODE_LSHIFT] ? yi : y;
     }
 
     // Z ROTATION
-    if (event.key.keysym.sym == SDLK_z && event.key.type == SDL_KEYDOWN) {
-      if (keystate[SDL_SCANCODE_LSHIFT]) {
-        newMove = zi;
-      } else {
-        newMove = z;
-      }
-
-      enqueue(moveQueue, newMove);
+    if (event.key.keysym.sym == SDLK_z && keyPressed) {
+      newMove = keystate[SDL_SCANCODE_LSHIFT] ? zi : z;
     }
 
-    if(event.key.keysym.sym == SDLK_BACKSPACE \
-            && event.key.type == SDL_KEYDOWN) {
+    if(event.key.keysym.sym == SDLK_BACKSPACE && keyPressed) {
       newMove = RETURN;
+    }
+
+    if (newMove != (move)-1) {
       enqueue(moveQueue, newMove);
     }
   }
@@ -435,19 +375,23 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * s
    *
    ****************/
 
+  /** Clear the screen */
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  /*
+   * Set the matrix mode to the model view. The next operations will be applied
+   * on the matrix containing all the vertices and stuff like that
+   */
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  mainCamera->position.x = mainCamera->angles.x * sinf(mainCamera->angles.z) * cosf(mainCamera->angles.y);
-  mainCamera->position.y = mainCamera->angles.x * sinf(mainCamera->angles.z) * sinf(mainCamera->angles.y);
-  mainCamera->position.z = mainCamera->angles.x * cosf(mainCamera->angles.z);
-
+  /** Set the camera position and orientation */
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
+  /** Draw the skybox before anything */
   drawSkybox(mainView->texStore.skybox);
 
+  /** Set the lightings parameters */
   GLfloat light_diffuse[] = {1, 1, 1, 1};
   GLfloat light_specular[] = {0.9, 0.9, 0.9, 1};
 
@@ -457,98 +401,63 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * s
   glMateriali(GL_FRONT, GL_SHININESS, 96);
   glEnable(GL_COLOR_MATERIAL);
 
-  for (int zIndex = 0; zIndex < 3; zIndex++) {
-    for (int yIndex = 0; yIndex < 3; yIndex++) {
-      for (int xIndex = 0; xIndex < 3; xIndex++) {
-        drawCube(*mainView->rubikCube->cubes[xIndex][yIndex][zIndex], false);
-      }
-    }
-  }
-
+  /** Draw the 3D stuffs */
+  drawCubes(mainView->rubikCube);
   if (mainView->instructionsDisplayed) {
-    for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
-      drawInstruction(mainView->instructions[instructionIndex], keystate[SDL_SCANCODE_LSHIFT], keystate[SDL_SCANCODE_LCTRL]);
-    }
+    drawInstructions(mainView->instructions, keyShortcut);
   }
 
+  /*
+   * Set the scene for some 2D:
+   * Disabling lighting and depth testing
+   */
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
   glDepthMask(GL_FALSE);
 
+  /*
+   * We will temporarily add an orthometric matrix to the projection
+   * matrix so that we can draw in 2D. We will pop it back later when we go
+   * back to 3D.
+   */
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-
   gluOrtho2D(0.0, 800, 0.0, 600);
+
+  /*
+   * We push a new model view matrix on top of the existing one to make the
+   * 2D on top of the 3D.
+   */
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
 
+  /** Start drawing in 2D */
   glEnable(GL_TEXTURE_2D);
 
-  /*
-   * History display
-   */
-  move * moves = head(moveStack, 13);
-  for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
-    int t = 50;
-    int xOffset = i * 60 + 20;
-    int yOffset = 20;
-    int alpha = 255 - (i * (255 / 13));
-    glColor4ub(255, 255, 255, alpha);
-    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, moves[i]).id);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,1); glVertex2i(xOffset, yOffset);
-    glTexCoord2i(0,0); glVertex2i(xOffset, yOffset + t);
-    glTexCoord2i(1,0); glVertex2i(xOffset + t, yOffset + t);
-    glTexCoord2i(1,1); glVertex2i(xOffset + t, yOffset);
-    glEnd();
-  }
-
-  free(moves);
-
-  /*
-   * Display xyz instructions
-   */
-  if (keystate[SDL_SCANCODE_LSHIFT]) {
-    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyzi.id);
-  }
-  else {
-    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz.id);
-  }
-  glColor3ub(255, 255, 255);
-  glBegin(GL_QUADS);
-  glTexCoord2i(0,0); glVertex2i(20, 590);
-  glTexCoord2i(0,1); glVertex2i(20, 490);
-  glTexCoord2i(1,1); glVertex2i(120, 490);
-  glTexCoord2i(1,0); glVertex2i(120, 590);
-  glEnd();
-
-  /*
-   * Winning texture
-   */
+  /** Draw history, xyz instruction and the winning creepy guy if needed */
+  drawHistory(mainView->texStore, moveStack);
+  drawXYZInstruction(mainView->texStore, keystate[SDL_SCANCODE_LSHIFT]);
   if (mainView->gameWon) {
-    glBindTexture(GL_TEXTURE_2D, mainView->texStore.winner.id);
-    glColor4ub(255, 255, 255, 255);
-    glBegin(GL_QUADS);
-    glTexCoord2i(0,1); glVertex2i(5, 0);
-    glTexCoord2i(0,0); glVertex2i(5, 600);
-    glTexCoord2i(1,0); glVertex2i(795, 600);
-    glTexCoord2i(1,1); glVertex2i(795, 0);
-    glEnd();
+    drawWinning(mainView->texStore);
   }
 
+  /** Stop drawin in 3D */
   glDisable(GL_TEXTURE_2D);
 
+  /** We pop the projection and modelview matrices we used in 2D */
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
+  /** We reenable the lights and depth testing for 3D */
   glDepthMask(GL_TRUE);
   glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 
+  /** Displaying final screen */
   glFlush();
   SDL_GL_SwapWindow(mainView->mainWindow);
 
@@ -574,6 +483,57 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * s
     SDL_UpdateWindowSurface(mainView->solveWindow);
   }
 }
+
+
+/******************************************************************************
+ * CAMERA CONTROLS
+ ******************************************************************************/
+
+
+void rotateCamera(camera * self, float zAngle, float yAngle) {
+  self->angles.y -= yAngle;
+  self->angles.z -= zAngle;
+
+  /** Limit the z angle so we don't get upside down */
+  if (self->angles.z < 0) {
+    self->angles.z = 0.000001;
+  } else if (self->angles.z > PI) {
+    self->angles.z = PI - 0.000001;
+  }
+
+  self->position = polarToCartesian(self->angles);
+}
+
+
+void zoomCamera(camera * self, bool positive) {
+  if (positive) {
+    self->angles.x -= 0.1;
+
+    /** Limit the near distance to 4 */
+    if (self->angles.x < 4) {
+      self->angles.x = 4;
+    }
+  } else {
+    self->angles.x += 0.1;
+
+    /** Limit the far distance to 50 */
+    if (self->angles.x > 50) {
+      self->angles.x = 50;
+    }
+  }
+
+  self->position = polarToCartesian(self->angles);
+}
+
+
+vector3 polarToCartesian(vector3 polar) {
+  vector3 cartesian;
+  cartesian.x = polar.x * sinf(polar.z) * cosf(polar.y);
+  cartesian.y = polar.x * sinf(polar.z) * sinf(polar.y);
+  cartesian.z = polar.x * cosf(polar.z);
+  return cartesian;
+}
+
 
 /******************************************************************************
  * ROTATING FACES DATA
@@ -889,12 +849,7 @@ soundStore generateSoundStore() {
 
 void resetView(rubikview * aView) {
     // Reset camera
-    // Set the camera starting position
-    camera mainCamera = {
-        (vector3) {0, 0, 0},
-        (vector3) {8, - 3 * PI / 4, PI / 3}
-    };
-    aView->mainCamera = mainCamera;
+    aView->mainCamera = generateCamera();
 
     // Empty the animation stack just to be safe
     aView->animStack = NULL;
@@ -910,8 +865,14 @@ void resetView(rubikview * aView) {
 }
 
 
-void closeWindow(rubikview * mainView) {
-  TTF_CloseFont(mainView->font);
+void playWinningSequence(rubikview * mainView) {
+  mainView->gameWon = true;
+  Mix_PlayChannel(1, mainView->sndStore.clapping, 0);
+}
+
+
+void closeWindow() {
+  //TTF_CloseFont(mainView->font);
   TTF_Quit();
   SDL_Quit();
   exit(0);

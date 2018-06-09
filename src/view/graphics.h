@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../model/cube.h"
+#include "../controller/commandQueue.h"
 
 
 #define PI 3.141592653589793
@@ -237,6 +238,9 @@ instructionDisplay generateInstruction(enum FaceType faceType, textureStore texS
 void setCubeColour(colour newColour, cube3d * selectedCube);
 
 
+void drawCubes(rubikcube * rubikCube);
+
+
 /**
  * Draw a cube on the screen
  * @param drawnCube The cube we will draw
@@ -253,13 +257,19 @@ void drawCube(cube3d drawnCube, bool debug);
 void drawFace(face drawnFace, bool debug);
 
 
+void drawInstructions(instructionDisplay * instructions, int keyShortcut);
+
+
 /**
  * Draw an instruction floating in front of a face
  * @param drawnInstruction The image structure for the instruction's image
  * @param ccw              Is the counterclockiwse modifier active ?
  * @param two              Is the double modifier active ?
  */
-void drawInstruction(instructionDisplay drawnInstruction, bool ccw, bool two);
+void drawInstruction(instructionDisplay drawnInstruction, int keyShortcut);
+
+
+void drawXYZInstruction(textureStore texStore, bool reversed);
 
 
 /**
@@ -267,6 +277,12 @@ void drawInstruction(instructionDisplay drawnInstruction, bool ccw, bool two);
  * @param textureId The ID of the skybox
  */
 void drawSkybox(GLuint textureId);
+
+
+void drawHistory(textureStore texStore, mvstack moveStack);
+
+
+void drawWinning(textureStore texStore);
 
 
 /**
