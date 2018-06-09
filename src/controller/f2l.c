@@ -3,13 +3,10 @@
 bool edgePlaced(cube *self){
 	edge e;
 	char colors[4] ={'g','r','o','b'};
-	debug("edgePlaced");
+	//debug("edgePlaced");
 	for(int i=0; i <4; i++){
 		e = searchWhiteEdge(self,colors[i]);
 		if (correctPositionCross(self,e) == false && ((isEdgeOnFace(e,U) == false || isEdgeOnFace(e,D) == true) || (isEdgeOnFace(e,U) == true || isEdgeOnFace(e,D) == false))) {
-			printEdge(self,e);
-			printf("%d\n",isEdgeOnFace(e,U));
-			debug("teststst");
 			return false;
 		}
 
@@ -19,16 +16,17 @@ bool edgePlaced(cube *self){
 
 
 char *doWhiteCross(cube* self){
-	char *movements = ec_malloc(sizeof(char)*900);
+//	positionCube(self,'g','y');
+	char *movements = ec_malloc(sizeof(char)*200);
 	cube * clone = self->copy(self); //shuffled cube from main
-	debug("start");
+	//	debug("start");
 	edge e;
 	char colors[4] ={'o','b','r','g'};
 
 	while(whiteCrossDone(clone) == false)
 	{
-		debug("On repasse dans whiteCrossDone");
-		debug("On passe dans edgePlaced");
+		//debug("On repasse dans whiteCrossDone");
+		//debug("On passe dans edgePlaced");
 		for(int i=0; i <4; i++){
 			e = searchWhiteEdge(clone, colors[i]);
 			if(getFaceColor(clone,e.tiles[1]) == 'y'){
@@ -53,7 +51,7 @@ char *doWhiteCross(cube* self){
 			}
 			else{
 
-				printEdge(clone,e);
+				//	printEdge(clone,e);
 
 				if(e.tiles[0].col == 2 && e.tiles[1].col == 0){
 					clone->rotate(clone,F);
@@ -68,15 +66,15 @@ char *doWhiteCross(cube* self){
 					strcat(movements, "Fi U F ");
 				}
 				else if((isEdgeOnFace(e,D)) && (clone->cube[U][2][1] != 'w' && clone->cube[F][0][1] != 'w')){
-					debug("else if 2");
-					printCube(clone);
+					//	debug("else if 2");
+					//	printCube(clone);
 					clone->rotate(clone,F2);
 					strcat(movements, "F2 ");
 				}
 
 				else if((isEdgeOnFace(e,D)) && (clone->cube[F][0][1] == 'w' || clone->cube[U][2][1] == 'w')){
-					debug("else if 3");
-					printCube(clone);
+					//	debug("else if 3");
+					//	printCube(clone);
 					while(clone->cube[F][0][1] == 'w' || clone->cube[U][2][1] == 'w'){
 						clone->rotate(clone,U);
 						strcat(movements, "U ");
@@ -85,7 +83,8 @@ char *doWhiteCross(cube* self){
 					strcat(movements, "F2 ");//Case where two edges are on the same column
 				}
 				else{
-					while((clone->cube[F][0][1] == 'w' || clone-> cube[U][2][1] == 'w') && !edgePlaced(clone)){
+					while((clone->cube[F][0][1] == 'w' && clone-> cube[U][2][1] == 'w') && !edgePlaced(clone)){
+						debug("stuck");
 						clone->rotate(clone,Ui);
 						clone->rotate(clone,Ri);
 						clone->rotate(clone,F);
@@ -97,47 +96,47 @@ char *doWhiteCross(cube* self){
 			}
 
 			e = searchWhiteEdge(clone, colors[i]);
-			printEdge(clone,e);
-			printCube(clone);
+			//	printEdge(clone,e);
+			//	printCube(clone);
 		}
 
 		//printCube(clone);
 
-		debug("boucle1");
+		//	debug("boucle1");
 		edge e;
 		char colors[4] ={'o','b','r','g'};
 		for(int i=0; i <4; i++){
 
-			debug("for");
+			//	debug("for");
 			e = searchWhiteEdge(clone, colors[i]);
 			strcat(movements,positionCommand(clone, colors[i], 'y'));
 			positionCube(clone,colors[i],'y');
 			if(isEdgeOnFace(e,U)){
-				debug("if 0");
+				//debug("if 0");
 				while(correctPositionCross(clone, e) == false){
-					debug("boucle 2");
+					//	debug("boucle 2");
 					if(clone->cube[U][2][1] == 'w' && clone->cube[F][0][1] == clone->cube[F][1][1] ){
 						//printCube(clone);
-						debug("if 1");
+						//	debug("if 1");
 						clone->rotate(clone,F2);
 						strcat(movements, "F2 ");
 					}
 					else if(clone->cube[F][0][1] == 'w' && clone->cube[U][2][1] == clone->cube[F][1][1] ){
 
-						debug("if 2");
-						printCube(clone);
+						//	debug("if 2");
+						//	printCube(clone);
 						clone->rotate(clone,Ui);
 						clone->rotate(clone,Ri);
 						clone->rotate(clone,F);
 						clone->rotate(clone,R);
 
 						strcat(movements, "Ui Ri F R ");
-						printCube(clone);
+						//printCube(clone);
 					}
 					else{
 
-						debug("else");
-						printCube(clone);
+						//debug("else");
+						//	printCube(clone);
 						clone->rotate(clone,U);
 						strcat(movements, "U ");
 					}
@@ -145,15 +144,16 @@ char *doWhiteCross(cube* self){
 				}
 				e = searchWhiteEdge(clone, colors[i]);
 			}
-			printCube(clone);
+			//printCube(clone);
 		}
 	}
-	debug("fin");
-	//printCube(clone);
+	//debug("fin");
+	printCube(clone);
 	//sleep(3);
 	//	free(clone);
 	//	free(orient);
-
+	printf("%s\n\n",movements);
+	positionCube(clone,'g','w');
 	return movements;
 }
 
@@ -210,7 +210,7 @@ edge searchWhiteEdge(cube* self, char color){
 
 	tile elt = {F,2,2};
 	whiteEdge  = defineEdge(elt);
-	printEdge(self,whiteEdge);
+	//printEdge(self,whiteEdge);
 	return whiteEdge;
 }
 
@@ -250,7 +250,7 @@ bool correctPositionCross(cube* self, edge elt){
 	}
 	if(inc == 2)
 	{
-		debug("true");
+		//debug("true");
 		return true;
 
 	}
@@ -310,11 +310,12 @@ bool firstLayerDone(cube *self){
 
 bool secondLayerDone(cube *self){
 
-	printCube(self);
+	//printCube(self);
 	cube * clone = self->copy(self);
 	clone = voidCube(clone);
+
 	positionCube(clone,'g','y');
-	printCube(clone);
+	//printCube(clone);
 	move faces[4] = {F,B,R,L};
 	char colors[4] = {'g','b','o','r'};
 	for(int index = 0 ; index < 3 ; index++){
@@ -337,22 +338,24 @@ bool secondLayerDone(cube *self){
 			}
 		}
 	}
-	printCube(clone);
-	printCube(self);
-	printf("pattern %d\n",patternMatches(self,clone));
+	//printCube(clone);
+	//printCube(self);
+	//printf("pattern %d\n",patternMatches(self,clone));
 	bool test = patternMatches(self,clone);
 	return test;
 }
 
 char *orientWhiteCorners(cube *self){
+//positionCube(self,'g','y');
+
 	corner elt = {0};
 	char *whitecross_moves = doWhiteCross(self);
-	char *movements = malloc(sizeof(char)*900);
+	char *movements = malloc(sizeof(char)*400);
 	strcat(movements, whitecross_moves);
 	printCube(self);
+	sleep(2);
 	cube * clone = self->copy(self); //shuffled cube from main
 	move* orient = commandParser(whitecross_moves);
-	//printf("white iiiii: %s\n", whitecross_moves);
 	clone = executeBulkCommand(clone, orient);
 	char corners[4][2] = {{'o','b'},{'b','r'},{'r','g'}, {'g','o'}};
 
@@ -360,8 +363,8 @@ char *orientWhiteCorners(cube *self){
 	while(!firstLayerDone(clone)){
 		for(int i=0; i < 4; i++){
 			elt = searchWhiteCorner(clone, corners[i][0], corners[i][1]);
-			//printf("Colrs : %c %c\n", corners[i][0], corners[i][1]);
-			//printCorner(clone,elt);
+			printf("Colrs : %c %c\n", corners[i][0], corners[i][1]);
+			printCorner(clone,elt);
 			//printCube(clone);
 
 			while(!isCornerOnFace(elt,U)){
@@ -405,8 +408,8 @@ char *orientWhiteCorners(cube *self){
 			}//Moving corner to the top
 
 
-			printCorner(clone,elt);
-			printCube(clone);
+			//printCorner(clone,elt);
+			//printCube(clone);
 			//sleep(2);
 			strcat(movements,positionCommand(clone,corners[i][0],'y'));
 			positionCube(clone,corners[i][0],'y');
@@ -450,7 +453,7 @@ char *orientWhiteCorners(cube *self){
 		}
 	}
 
-	printCube(clone);
+	//printCube(clone);
 	//sleep(3);
 	return movements;
 }
@@ -459,17 +462,19 @@ char *orientWhiteCorners(cube *self){
 
 
 char *placeSecondLayer(cube *self){
+positionCube(self,'g','y');
+
 	char *white_corners = orientWhiteCorners(self);
-	char *movements = ec_malloc(sizeof(char)*900);
+	char *movements = ec_malloc(sizeof(char)*600);
 	strcat(movements, white_corners);
 	cube * clone = self->copy(self); //shuffled cube from main
 	move* orient = commandParser(white_corners);
 	clone = executeBulkCommand(clone, orient);
 	char edges[4][2]= {{'b','r'},{'b','o'},{'g','o'}, {'g','r'}};
 	char colors[2] = {'b','g'};
+char all_colors[4] = {'b','g','r','o'};
+
 	edge elt = {0};
-	positionCube(clone,'g','y');
-	printCube(clone);
 	clone->rotate(clone,U);
 	clone->rotate(clone,R);
 	clone->rotate(clone,Ui);
@@ -479,22 +484,21 @@ char *placeSecondLayer(cube *self){
 	clone->rotate(clone,Fi);
 	clone->rotate(clone,R);
 	strcat(movements, "U R Ui Ri F Ri Fi R "); // Execute one time the right algo to be sure that no edges stay stuck.
-	debug("debloc");
-	printCube(clone);
 
 	while(!secondLayerDone(clone)){
 		for(int faces = 0; faces < 2;faces++){
 			for(int e = 0; e < 4;e++){
+				strcat(movements,positionCommand(clone,colors[faces],'y'));
 				positionCube(clone,colors[faces],'y');	
 				elt = searchEdge(clone, edges[e][0], edges[e][1]);
+				printEdge(clone,elt);
 				if(isEdgeOnFace(elt,U)){
 					while(!isEdgeOnFace(elt,F)){
 						clone->rotate(clone,U);
+						strcat(movements, "U ");
 						elt = searchEdge(clone, edges[e][0], edges[e][1]);
 					}
-					printCube(clone);
 					if( clone->cube[F][0][1] == clone->cube[F][1][1] && clone->cube[U][2][1] == clone->cube[R][1][1] ){
-						debug("cas 1");
 						clone->rotate(clone,U);
 						clone->rotate(clone,R);
 						clone->rotate(clone,Ui);
@@ -504,11 +508,10 @@ char *placeSecondLayer(cube *self){
 						clone->rotate(clone,Fi);
 						clone->rotate(clone,R);
 						strcat(movements, "U R Ui Ri F Ri Fi R ");
-						printCube(clone);
+						//printCube(clone);
 					}
 					else if( clone->cube[F][0][1] == clone->cube[F][1][1] && clone->cube[U][2][1] == clone->cube[L][1][1])
 					{
-						printf("cas n°2\n");
 						clone->rotate(clone,Ui);
 						clone->rotate(clone,Li);
 						clone->rotate(clone,U);
@@ -523,7 +526,6 @@ char *placeSecondLayer(cube *self){
 
 					else if( clone->cube[F][0][1] == clone->cube[L][1][1] && clone->cube[U][2][1] == clone->cube[F][1][1])
 					{
-						printf("cas n°2\n");
 						clone->rotate(clone,Ui);
 						clone->rotate(clone,Li);
 						clone->rotate(clone,U);
@@ -546,7 +548,6 @@ char *placeSecondLayer(cube *self){
 
 					else if( clone->cube[F][0][1] == clone->cube[R][1][1] && clone->cube[U][2][1] == clone->cube[F][1][1])
 					{
-						debug("cas 3");
 						clone->rotate(clone,U);
 						clone->rotate(clone,R);
 						clone->rotate(clone,Ui);
@@ -566,21 +567,18 @@ char *placeSecondLayer(cube *self){
 						clone->rotate(clone,R);
 						strcat(movements, "U R Ui Ri F Ri Fi R ");
 					}
-					
 
 
+				}
+				else{
+					strcat(movements,positionCommand(clone,getColorTile(clone,elt.tiles[0]),'y'));
+					positionCube(clone,getColorTile(clone,elt.tiles[0]),'y');
+					debug("Cube before changed");
 
-				
-			}
-else{
-						debug("else");
-						//There is an reversed edge inserted beetween two centers.
-						for(int i =0; i < 4; i++){
-	char all_colors[4] = {'b','g','r','o'};
-	positionCube(clone,all_colors[i],'y');
-
-
-						if((clone->cube[F][1][2] != clone->cube[F][1][1]) && (clone->cube[F][1][2] == clone->cube[R][1][0])){
+					printCube(clone);
+					//There is an reversed edge inserted beetween two centers.
+					if((clone->cube[F][1][2] != clone->cube[F][1][1])  ){
+							clone->rotate(clone,U); //warning
 							clone->rotate(clone,R);
 							clone->rotate(clone,Ui);
 							clone->rotate(clone,Ri);
@@ -591,9 +589,7 @@ else{
 							strcat(movements, "U R Ui Ri F Ri Fi R ");
 
 						}
-						else if((clone->cube[F][1][0] != clone->cube[F][1][1]) && (clone->cube[F][1][2] == clone->cube[L][1][2])){
-
-					
+						else if((clone->cube[F][1][0] != clone->cube[F][1][1])){
 							printf("cas n°2\n");
 							clone->rotate(clone,Ui);
 							clone->rotate(clone,Li);
@@ -604,21 +600,20 @@ else{
 							clone->rotate(clone,Ui);
 							clone->rotate(clone,Fi);
 							strcat(movements, "Ui Li U L U F Ui Fi ");
-
-
 						}
-						}
+						debug("Cube after changed");
+						printCube(clone);
+					
+				}
 
 
-
-					}
-
-
-			printCube(clone);
+			}
 		}
-	}
 
-}
-return movements;
+	}
+	strcat(movements,positionCommand(clone,'g','y'));
+	positionCube(clone,'g','y');
+
+	return movements;
 }
 

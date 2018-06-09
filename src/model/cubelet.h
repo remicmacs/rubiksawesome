@@ -75,9 +75,10 @@ void printEdge(cube *self, edge elt);
 bool isEdgeOnFace(edge elt, int face);
 
 
-/***************************
+
+/*------------------------------
  * Corner related functions
- ***************************/
+ *------------------------------*/
 
 typedef struct corner{
         tile tiles[3];
@@ -107,9 +108,9 @@ bool isCornerOnFace(corner elt, int face);
 
 
 
-/****************************
+/*------------------------------
  * Misc
- ***************************/
+ *------------------------------*/
 
 /**
  * Get the face(s) adjacent to the given tile
@@ -121,8 +122,10 @@ adjacentFaces getAdjacentFaces(tile elt);
  */
 bool isCenter(tile elt);
 
-
+/**
+ * Return the color of the tile’s face 
+ */
 char getFaceColor(cube *self, tile elt);
-//corner searchCorner(cube *self, char color0, char color1, char color2);
+
 
 #endif

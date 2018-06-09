@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../model/cubelet.h"
-#include "../controller/commandParser.h"
+#include "commandParser.h"
 #include "debugController.h"
 #include "patternComparator.h"
 
@@ -70,12 +70,17 @@ corner searchWhiteCorner(cube* self, char color, char color2);
  */
 bool firstLayerDone(cube *self);
 
-
+/*--------------------------------
+ * Second Layer related functions
+ *-------------------------------*/
 /**
  * Test if white corners are on the UP face and correctly placed beetween the correct faces.
  */
 char *placeSecondLayer(cube *self);
 
-
+/**
+ * Compare actual cube to a finished second layer pattern
+ */
 bool secondLayerDone(cube *self);
+
 #endif
