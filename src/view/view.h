@@ -46,21 +46,23 @@ typedef struct _soundStore {
  * A structure holding all the informations related to the view
  */
 typedef struct _rubikview {
-  camera mainCamera;          /**< The camera in the view */
-  rubikcube * rubikCube;      /**< The Rubik's cube */
-  animationStack * animStack; /**< Animation stack to update them serially */
-  image instructions[6];      /**< An array of images for the instructions */
-  textureStore texStore;      /**< */
-  soundStore sndStore;
-  bool instructionsDisplayed; /**< Set to true to show the instructions */
-  bool gameWon;
-  int konamiCount;
+  camera mainCamera;                  /**< The camera in the view */
+  rubikcube * rubikCube;              /**< The Rubik's cube */
+  animationStack * animStack;         /**< Animation stack to update them
+                                      serially */
+  instructionDisplay instructions[6]; /**< An array of images for the
+                                      instructions */
+  textureStore texStore;              /**< Store for the textures */
+  soundStore sndStore;                /**< Store for the sounds */
+  bool instructionsDisplayed;         /**< True to show the instructions */
+  bool gameWon;                       /**< True if the game is finished */
+  int konamiCount;                    /**< State of the konami code */
   SDL_Window * mainWindow;
   SDL_Window * solveWindow;
   bool windowToDisplay;
   bool windowDisplayed;
   TTF_Font * font;
-  void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
+  void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;
 
@@ -84,7 +86,7 @@ rubikview generateView();
  * frame.
  * @param mainView The structure holding the view
  */
-void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack);
+void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves);
 
 
 /**

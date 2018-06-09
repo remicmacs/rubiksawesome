@@ -29,9 +29,11 @@ int main(int argc, char **argv) {
 
     // Solving sequence
     // mvqueue solveQueue = initQueue();
+    move * winSequence = (move *)malloc(sizeof(move));
+    *winSequence = (move)-1;
 
      while (1) { // Main loop
-    mainView.update(&mainView, moveQueue, moveStack);
+    mainView.update(&mainView, moveQueue, moveStack, winSequence);
 
     if (!isEmpty(moveQueue)) {
       move newMove = dequeue(moveQueue);
@@ -52,7 +54,7 @@ int main(int argc, char **argv) {
         free(initSequence);
         initSequence = initGame(cubeData, &mainView, gameMode, argv);
       } else if (newMove == SOLVE_PLS) {
-          move * winSequence = fakeSolve(initSequence, moveStack);
+          winSequence = fakeSolve(initSequence, moveStack);
 
           // TEMPORARY DISPLAY
           int index = -1;

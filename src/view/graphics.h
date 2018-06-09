@@ -84,20 +84,20 @@ typedef struct _rubikcube {
 } rubikcube;
 
 
-typedef struct _texture {
+typedef struct _instructionTextures {
   GLuint id;        /**< The ID for the base texture */
   GLuint ccwId;     /**< The ID for the inverted texture */
   GLuint id2;       /**< The ID for the double texture */
   GLuint ccwId2;    /**< The ID for the double inverted texture */
-} texture;
+} instructionTextures;
 
 
-typedef struct _image {
-  vector3 corners[4];   /**< The list of corners. Each corner is a vector
-                           representing the position of a vertex */
-  vector3 normal;       /**< The normal vector of the face */
-  texture imageTexture; /**< The texture of the instruction */
-} image;
+typedef struct _instructionDisplay {
+  vector3 corners[4];           /**< The list of corners. Each corner is a
+                                vector representing the position of a vertex */
+  vector3 normal;               /**< The normal vector of the face */
+  instructionTextures textures; /**< The texture of the instruction */
+} instructionDisplay;
 
 
 typedef struct _historyDisplay {
@@ -106,52 +106,58 @@ typedef struct _historyDisplay {
 } historyDisplay;
 
 
+typedef struct _texture {
+  GLuint id;
+  SDL_Surface * surface;
+} texture;
+
+
 typedef struct _textureStore {
-  GLuint up;
-  GLuint upi;
-  GLuint upid;
-  GLuint upd;
+  texture up;
+  texture upi;
+  texture upid;
+  texture upd;
 
-  GLuint down;
-  GLuint downi;
-  GLuint downid;
-  GLuint downd;
+  texture down;
+  texture downi;
+  texture downid;
+  texture downd;
 
-  GLuint front;
-  GLuint fronti;
-  GLuint frontid;
-  GLuint frontd;
+  texture front;
+  texture fronti;
+  texture frontid;
+  texture frontd;
 
-  GLuint back;
-  GLuint backi;
-  GLuint backid;
-  GLuint backd;
+  texture back;
+  texture backi;
+  texture backid;
+  texture backd;
 
-  GLuint right;
-  GLuint righti;
-  GLuint rightid;
-  GLuint rightd;
+  texture right;
+  texture righti;
+  texture rightid;
+  texture rightd;
 
-  GLuint left;
-  GLuint lefti;
-  GLuint leftid;
-  GLuint leftd;
+  texture left;
+  texture lefti;
+  texture leftid;
+  texture leftd;
 
   GLuint skybox;
 
-  GLuint xyz;
-  GLuint xyzi;
+  texture xyz;
+  texture xyzi;
 
-  GLuint x;
-  GLuint xi;
+  texture x;
+  texture xi;
 
-  GLuint y;
-  GLuint yi;
+  texture y;
+  texture yi;
 
-  GLuint z;
-  GLuint zi;
+  texture z;
+  texture zi;
 
-  GLuint winner;
+  texture winner;
 } textureStore;
 
 
@@ -198,7 +204,7 @@ face generateFace(transform cubeTransform, enum FaceType faceType);
  * @param textureId The ID of the texture
  * @param url       The path to the image
  */
-void generateTexture(GLuint * textureId, const char * url);
+void generateTexture(texture * newTexture, const char * url);
 
 
 /**
@@ -220,7 +226,7 @@ textureStore generateTextureStore();
  * @param  faceType The face the instruction is attached to
  * @return          The image structure holding all the textures
  */
-image generateInstruction(enum FaceType faceType, textureStore texStore);
+instructionDisplay generateInstruction(enum FaceType faceType, textureStore texStore);
 
 
 /**
@@ -253,7 +259,7 @@ void drawFace(face drawnFace, bool debug);
  * @param ccw              Is the counterclockiwse modifier active ?
  * @param two              Is the double modifier active ?
  */
-void drawInstruction(image drawnInstruction, bool ccw, bool two);
+void drawInstruction(instructionDisplay drawnInstruction, bool ccw, bool two);
 
 
 /**
@@ -296,7 +302,7 @@ void rotateFaceX(face * currentFace, float angle, bool ccw);
  * @param  command  The move command
  * @return          The ID of the OpenGL's texture
  */
-GLuint moveToTexture(textureStore texStore, move command);
+texture moveToTexture(textureStore texStore, move command);
 
 
 /**

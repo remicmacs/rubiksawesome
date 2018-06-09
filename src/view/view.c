@@ -6,10 +6,6 @@
 #include "view.h"
 
 
-//static SDL_Surface * img;
-//SDL_Surface * solveSurface = NULL;
-
-
 void setSDL() {
   /*
    * Initialize SDL
@@ -170,7 +166,7 @@ rubikview generateView() {
 }
 
 
-void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
+void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves) {
   camera * mainCamera = &(mainView->mainCamera);
 
   /*
@@ -201,7 +197,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     mainView->solveWindow = SDL_CreateWindow("Help",
                             SDL_WINDOWPOS_UNDEFINED,
                             SDL_WINDOWPOS_UNDEFINED,
-                            300, 100, 0);
+                            800, 100, 0);
     mainView->windowDisplayed = true;
   }
 
@@ -500,7 +496,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
     int yOffset = 20;
     int alpha = 255 - (i * (255 / 13));
     glColor4ub(255, 255, 255, alpha);
-    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, moves[i]));
+    glBindTexture(GL_TEXTURE_2D, moveToTexture(mainView->texStore, moves[i]).id);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1); glVertex2i(xOffset, yOffset);
     glTexCoord2i(0,0); glVertex2i(xOffset, yOffset + t);
@@ -515,10 +511,10 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
    * Display xyz instructions
    */
   if (keystate[SDL_SCANCODE_LSHIFT]) {
-    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyzi);
+    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyzi.id);
   }
   else {
-    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz);
+    glBindTexture(GL_TEXTURE_2D, mainView->texStore.xyz.id);
   }
   glColor3ub(255, 255, 255);
   glBegin(GL_QUADS);
@@ -532,7 +528,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
    * Winning texture
    */
   if (mainView->gameWon) {
-    glBindTexture(GL_TEXTURE_2D, mainView->texStore.winner);
+    glBindTexture(GL_TEXTURE_2D, mainView->texStore.winner.id);
     glColor4ub(255, 255, 255, 255);
     glBegin(GL_QUADS);
     glTexCoord2i(0,1); glVertex2i(5, 0);
@@ -563,26 +559,18 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack) {
   if (mainView->windowDisplayed) {
     SDL_Surface * solveSurface = SDL_GetWindowSurface(mainView->solveWindow);
     SDL_FillRect(solveSurface, NULL, SDL_MapRGB(solveSurface->format, 0, 0, 0));
-    move * moves = head(moveStack, 13);
+    //move * moves = head(solveMoves, 13);
+    move * moves = solveMoves;
     for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
-      SDL_Color white = {255, 255, 255, 255};
-      SDL_Surface * text = TTF_RenderText_Blended(mainView->font, mapMoveToCode(moves[i]), white);
       SDL_Rect position;
-      position.x = 10 + (i * 50);
+      position.x = 20 + 70 * i;
       position.y = 20;
-      SDL_BlitSurface(text, NULL, solveSurface, &position);
+      position.h = 50;
+      position.w = 50;
+
+      SDL_BlitScaled(moveToTexture(mainView->texStore, moves[i]).surface, NULL, solveSurface, &position);
     }
 
-    free(moves);
-
-    // int height = 100;
-    // int width = 100;
-    // SDL_Rect texr;
-    // texr.x = 100;
-    // texr.y = 100;
-    // texr.w = width * 2;
-    // texr.h = height * 2;
-    // SDL_BlitSurface(img, &texr, solveSurface, NULL);
     SDL_UpdateWindowSurface(mainView->solveWindow);
   }
 }
