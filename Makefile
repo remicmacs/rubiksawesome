@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -c -Wall -pedantic -Wextra
-LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lGL -lGLU -lm
+LIBS = -lSDL2 -lSDL2_image -lSDL2_mixer -lGL -lGLU -lm
 
 all: rubiksawesome
 

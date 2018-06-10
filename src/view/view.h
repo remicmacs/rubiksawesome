@@ -22,7 +22,7 @@
 #include "../controller/commandQueue.h"
 
 
-#define PI_DENOMINATOR 1080
+#define PI_DENOMINATOR 90
 #define ROTATION_ANGLE (PI / PI_DENOMINATOR)
 #define ANIMATIONS_STEP (PI_DENOMINATOR / 2)
 
@@ -132,6 +132,9 @@ void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw);
  * @param ccw       Set to true for a counterclockwise rotation
  */
 void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw);
+
+
+move getNextMove(SDL_Keycode keysym, int keyShortcut);
 
 
 /**

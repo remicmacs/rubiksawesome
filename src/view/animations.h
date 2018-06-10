@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <SDL2/SDL_mixer.h>
-#include "view.h"
 #include "graphics.h"
 
 
@@ -63,7 +62,7 @@ void removeAnimationStack(animationStack ** animStack, animationStack * toRemove
 int animationStackCount(animationStack * animStack);
 void updateAnimationStack(animationStack * self, rubikcube * rubikCube);
 
-animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw);
+animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw, void (* onFinished)(rubikcube * cube, int sliceIndex, bool ccw));
 void addAnimation(animation ** animations, animation * toAdd);
 void removeAnimation(animation ** animations, animation * toRemove);
 void updateAnimationList(animation ** animations);
