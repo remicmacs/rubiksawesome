@@ -23,5 +23,7 @@ char * orientYellowCorners(cube *self);
 int findYellowPattern(cube *self, char * movements);
 
 void crossAlgorithm(cube *self, char * movements, int nb);
+void leftOLL(cube *self, char *movements, int nb);
 
+void rightOLL(cube *self, char *movements, int nb);
 #endif

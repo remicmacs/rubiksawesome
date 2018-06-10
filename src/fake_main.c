@@ -14,39 +14,23 @@ int main(int argc, char *argv[])
 
 //
 ////
-
-tcube->rotate(tcube,Fi);
-	tcube->rotate(tcube,U);
-	tcube->rotate(tcube,Li);
-	tcube->rotate(tcube,Ri);
-	tcube->rotate(tcube,Fi);
-tcube->rotate(tcube,Bi);
-tcube->rotate(tcube,Bi);
-tcube->rotate(tcube,Li);
-tcube->rotate(tcube,Ui);
-tcube->rotate(tcube,Di);
-
-tcube->rotate(tcube,Li);
-tcube->rotate(tcube,U2);
+move *orient = commandParser("Li Fi Fi Ri Di Li Fi R D2 L2 R2 Fi F2 L2 Di F2 Ri");
+//move *orient = commandParser("Ri Di Li Fi R D2 L2 R2 Fi F2 L2 Di F2 Ri");
+tcube = executeBulkCommand(tcube,orient);
 printCube(tcube);
 //char *movements = orientEdges(tcube);
 //
 //searchCorner(tcube,'g','o','w');
-//char *movements = orientWhiteCorners(tcube);
 char *movements = doWhiteCross(tcube);
-
-//char *movements = placeSecondLayer(tcube);
-//char *movements= doYellowCross(tcube);
-//char *movements = orientYellowCorners(tcube);
-printf("%s\n",movements);
-
-
-move *orient = commandParser(movements);
-cube * clone = tcube->copy(tcube);
+char *movement2s = orientWhiteCorners(tcube);
+char *miovements = placeSecondLayer(tcube);
+char *m2ovements= doYellowCross(tcube);
+char *moveiments = orientYellowCorners(tcube);
+printf("%s\n\n",movements);
+//printf("%s\n\n",movement2s);
+//printf("%s\n\n",miovements);
+//printf("%s\n\n",moveiments);
 printCube(tcube);
-clone = executeBulkCommand(clone,orient);
-debug("Final cube");
-printCube(clone);
 
 
 
