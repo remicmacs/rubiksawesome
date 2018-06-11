@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
           cubeData->rotate(cubeData, newMove);
           cubeData->print(cubeData);
           if (patternMatches(cubeData, finishedCube)) {
-              mainView.gameWon = true;
+              playWinningSequence(&mainView);
           }
       } else {
         if (newMove == RETURN) {
