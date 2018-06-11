@@ -13,16 +13,6 @@
 #include "../model/cube.h"
 #include "../view/view.h"
 #include "commandQueue.h"
-
-/**
- * Cancels the last move in the history
- *
- * @param cubeData - A pointer to the 2D cube data to modifiy
- * @param mainView - A pointer to the 3D cube data to modify
- * @param history - A stack of moves representing the history of moves
- */
-void cancelMove(cube * cubeData, rubikview * mainView, mvstack history);
-
 /**
  * Parse and converts a string of commands in an array of moves
  *

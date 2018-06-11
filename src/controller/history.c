@@ -22,3 +22,10 @@ void clearHistory(mvstack history) {
     if (!history) exitFatal("in addCmdToHistory(), history uninitialized");
     while((int) popCmd(history) != -1);
 }
+
+void cancelMove(cube * cubeData, rubikview * mainView, mvstack history) {
+    move cancelCmd = inverseMove(pop(history));
+    cubeData->rotate(cubeData, cancelCmd);
+    mainView->animate(mainView, cancelCmd, false);
+    return;
+}

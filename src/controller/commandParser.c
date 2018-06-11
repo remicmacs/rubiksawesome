@@ -1,11 +1,5 @@
 #include "commandParser.h"
 
-void cancelMove(cube * cubeData, rubikview * mainView, mvstack history) {
-    move cancelCmd = inverseMove(pop(history));
-    cubeData->rotate(cubeData, cancelCmd);
-    mainView->animate(mainView, cancelCmd, false);
-    return;
-}
 
 move * commandParser(char * str) {
     if (!str) {
