@@ -102,7 +102,6 @@ move * expandCommand(move * moves) {
     int usedMvs = 0;
     move * newMoves = (move *) ec_malloc(sizeof(move) * (allocatedMvs + 1));
     move currMove = -1;
-    move * start = moves;
     while ((int) (currMove = *moves++) != -1) {
         // Memory reallocation if needed
         if (allocatedMvs >= usedMvs - 2) {
@@ -126,7 +125,6 @@ move * expandCommand(move * moves) {
         usedMvs += 1;
     }
     *(newMoves+usedMvs) = -1;
-    free(start);
     return newMoves;
 }
 

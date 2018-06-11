@@ -84,4 +84,29 @@ void freeQueue(movequeue * queue);
  * needed.
  */
 move * head(movequeue * queue, int nb);
+
+/**
+ * Return the size of an array of moves
+ *
+ * The array of moves must be terminated by -1
+ *
+ * @returns the size of the array of moves passed as parameter. An array of move
+ * of size n has n-1 elements in it + the endmark -1
+ */
+int sizeOfMoveArray(move * moves);
+
+/**
+ * Returns the nb of move elements in a mvqueue
+ */
+int sizeOfMoveQueue(mvqueue queue);
+
+/**
+ * Converts an array of moves to a mvqueue
+ */
+mvqueue toMvQueue(move * moves);
+
+move * toMvArray(mvqueue queue);
+
+move * mvCat(move * array1, move * array2);
+void printMoveArray(move * moves);
 #endif
