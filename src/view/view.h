@@ -64,7 +64,7 @@ typedef struct _rubikview {
   bool windowToDisplay;
   bool windowDisplayed;
   TTF_Font * font;
-  void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves);
+  void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue solveMoves);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;
 
@@ -95,7 +95,7 @@ void showHelpWindow(rubikview * mainView);
  * frame.
  * @param mainView The structure holding the view
  */
-void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves);
+void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue solveMoves);
 
 
 void rotateCamera(camera * self, float zAngle, float yAngle);

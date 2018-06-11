@@ -173,7 +173,7 @@ void showHelpWindow(rubikview * mainView) {
 }
 
 
-void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * solveMoves) {
+void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue solveMoves) {
   Uint32 startTime = SDL_GetTicks();
 
   camera * mainCamera = &(mainView->mainCamera);
@@ -418,8 +418,8 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, move * s
   if (mainView->windowDisplayed) {
     SDL_Surface * solveSurface = SDL_GetWindowSurface(mainView->solveWindow);
     SDL_FillRect(solveSurface, NULL, SDL_MapRGB(solveSurface->format, 0, 0, 0));
-    //move * moves = head(solveMoves, 13);
-    move * moves = solveMoves;
+    move * moves = head(solveMoves, 13);
+    //move * moves = solveMoves;
     for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
       SDL_Rect position;
       position.x = 20 + 70 * i;

@@ -41,7 +41,6 @@ rubikcube * generateRubikCube() {
         transform cubeTransform = {
           (vector3) {(float)zIndex, (float)yIndex, (float)xIndex},
           (vector3) {0, 0, 0},
-          (vector3) {0, 0, 0},
           (vector3) {0.48, 0.48, 0.48}
         };
 
@@ -79,6 +78,8 @@ cube3d generateCube(transform cubeTransform) {
 
 face generateFace(transform cubeTransform, enum FaceType faceType) {
   face newFace;
+
+  /** We set the basic : positions of the vertices, color and normal */
   switch(faceType) {
     case TOP:
       newFace = (face) {
@@ -156,38 +157,24 @@ face generateFace(transform cubeTransform, enum FaceType faceType) {
       break;
   }
 
+  /** Get the offset */
   float xOffset = cubeTransform.position.x;
   float yOffset = cubeTransform.position.y;
   float zOffset = cubeTransform.position.z;
 
+  /** Get the scale */
   float xScale = cubeTransform.scale.x;
   float yScale = cubeTransform.scale.y;
   float zScale = cubeTransform.scale.z;
 
+  /** Apply offset and scale to each vertex's position */
   for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
-    float x = newFace.corners[vertexIndex].x;
-    float y = newFace.corners[vertexIndex].y;
-    float z = newFace.corners[vertexIndex].z;
-
-    x = (x * xScale) + xOffset;
-    y = (y * yScale) + yOffset;
-    z = (z * zScale) + zOffset;
-
-    float faceR = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
-    float faceTheta = faceR == 0 ? acos(0) : acos(z / faceR);
-    float facePhi = atan2(y, x);
-
-    faceR += cubeTransform.delta.x;
-    faceTheta += cubeTransform.delta.y;
-    facePhi += cubeTransform.delta.z;
-
-    x = faceR * sin(faceTheta) * cos(facePhi);
-    y = faceR * sin(faceTheta) * sin(facePhi);
-    z = faceR * cos(faceTheta);
-
-    newFace.corners[vertexIndex].x = x;
-    newFace.corners[vertexIndex].y = y;
-    newFace.corners[vertexIndex].z = z;
+    newFace.corners[vertexIndex].x *= xScale;
+    newFace.corners[vertexIndex].x += xOffset;
+    newFace.corners[vertexIndex].y *= yScale;
+    newFace.corners[vertexIndex].y += yOffset;
+    newFace.corners[vertexIndex].z *= zScale;
+    newFace.corners[vertexIndex].z += zOffset;
   }
 
   return newFace;
@@ -196,7 +183,6 @@ face generateFace(transform cubeTransform, enum FaceType faceType) {
 
 void generateTexture(texture * newTexture, const char * url) {
   newTexture->surface = IMG_Load(url);
-  //SDL_Surface * surf = IMG_Load(url);
   glGenTextures(1, &newTexture->id);
   glBindTexture(GL_TEXTURE_2D, newTexture->id);
   int Mode = GL_RGB;
@@ -208,9 +194,6 @@ void generateTexture(texture * newTexture, const char * url) {
                newTexture->surface->pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // newTexture->surface->w = 20;
-  // newTexture->surface->h = 20;
-  //newTexture->surface = SD
 }
 
 

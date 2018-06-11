@@ -62,7 +62,6 @@ typedef struct _face {
  */
 typedef struct _transform {
   vector3 position; /**< The object's position */
-  vector3 delta;    /**< Position's delta */
   vector3 rotation; /**< The object's rotation */
   vector3 scale;    /**< The object's scale */
 } transform;

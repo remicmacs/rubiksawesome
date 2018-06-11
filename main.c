@@ -28,17 +28,18 @@ int main(int argc, char **argv) {
     move * initSequence = initGame(cubeData, &mainView, gameMode, argv);
 
     // Solving sequence
-    // mvqueue solveQueue = initQueue();
+    mvqueue solveQueue = initQueue();
     move * winSequence = (move *)malloc(sizeof(move));
     *winSequence = (move)-1;
 
      while (1) { // Main loop
-    mainView.update(&mainView, moveQueue, moveStack, winSequence);
+    mainView.update(&mainView, moveQueue, moveStack, solveQueue);
 
     if (!isEmpty(moveQueue)) {
       move newMove = dequeue(moveQueue);
       if (newMove == RETURN) {
         if (!isEmpty(moveStack)) {
+          pop(solveQueue);
           cancelMove(cubeData, &mainView, moveStack);
         }
       } else if (newMove == RESTART) {
@@ -54,7 +55,12 @@ int main(int argc, char **argv) {
         free(initSequence);
         initSequence = initGame(cubeData, &mainView, gameMode, argv);
       } else if (newMove == SOLVE_PLS) {
+
+          /*
+           * Fake solver, remove later
+           */
           winSequence = fakeSolve(initSequence, moveStack);
+          solveQueue = toMvQueue(winSequence);
 
           // TEMPORARY DISPLAY
           int index = -1;
@@ -69,6 +75,7 @@ int main(int argc, char **argv) {
         cubeData->rotate(cubeData, newMove);
         cubeData->print(cubeData);
         addCmdToHistory(moveStack, newMove);
+        push(solveQueue, inverseMove(newMove));
         if (patternMatches(cubeData, finishedCube)) {
             mainView.gameWon = true;
         }
