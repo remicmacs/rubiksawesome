@@ -37,47 +37,57 @@ int main(int argc, char **argv) {
 
     if (!isEmpty(moveQueue)) {
       move newMove = dequeue(moveQueue);
-      if (newMove == RETURN) {
-        if (!isEmpty(moveStack)) {
+      if (newMove == *(head(solveQueue, 1))) {
           pop(solveQueue);
-          cancelMove(cubeData, &mainView, moveStack);
-        }
-      } else if (newMove == RESTART) {
-        destroyCube(cubeData);
-        freeQueue(moveQueue);
-        freeQueue(moveStack);
-        resetView(&mainView);
-        moveQueue = initQueue();
-        moveStack = initQueue();
-        cubeData = initCube();
-
-        // Reinitialize the game with the same game mode as at start
-        free(initSequence);
-        initSequence = initGame(cubeData, &mainView, gameMode, argv);
-      } else if (newMove == SOLVE_PLS) {
-
-          /*
-           * Fake solver, remove later
-           */
-          winSequence = fakeSolve(initSequence, moveStack);
-          solveQueue = toMvQueue(winSequence);
-
-          // TEMPORARY DISPLAY
-          int index = -1;
-          move aMove = (move)-1;
-          fprintf(stderr, "Solving sequence : \n");
-          while((int) (aMove = winSequence[++index]) != -1) {
-            fprintf(stderr, "[%s]", mapMoveToCode(aMove));
+          mainView.animate(&mainView, newMove, false);
+          cubeData->rotate(cubeData, newMove);
+          cubeData->print(cubeData);
+          if (patternMatches(cubeData, finishedCube)) {
+              mainView.gameWon = true;
           }
-          fprintf(stderr, "\n");
       } else {
-        mainView.animate(&mainView, newMove, false);
-        cubeData->rotate(cubeData, newMove);
-        cubeData->print(cubeData);
-        addCmdToHistory(moveStack, newMove);
-        push(solveQueue, inverseMove(newMove));
-        if (patternMatches(cubeData, finishedCube)) {
-            mainView.gameWon = true;
+        if (newMove == RETURN) {
+          if (!isEmpty(moveStack)) {
+            pop(solveQueue);
+            cancelMove(cubeData, &mainView, moveStack);
+          }
+        } else if (newMove == RESTART) {
+          destroyCube(cubeData);
+          freeQueue(moveQueue);
+          freeQueue(moveStack);
+          resetView(&mainView);
+          moveQueue = initQueue();
+          moveStack = initQueue();
+          cubeData = initCube();
+
+          // Reinitialize the game with the same game mode as at start
+          free(initSequence);
+          initSequence = initGame(cubeData, &mainView, gameMode, argv);
+        } else if (newMove == SOLVE_PLS) {
+
+            /*
+             * Fake solver, remove later
+             */
+            winSequence = fakeSolve(initSequence, moveStack);
+            solveQueue = toMvQueue(winSequence);
+
+            // TEMPORARY DISPLAY
+            int index = -1;
+            move aMove = (move)-1;
+            fprintf(stderr, "Solving sequence : \n");
+            while((int) (aMove = winSequence[++index]) != -1) {
+              fprintf(stderr, "[%s]", mapMoveToCode(aMove));
+            }
+            fprintf(stderr, "\n");
+        } else {
+          mainView.animate(&mainView, newMove, false);
+          cubeData->rotate(cubeData, newMove);
+          cubeData->print(cubeData);
+          addCmdToHistory(moveStack, newMove);
+          push(solveQueue, inverseMove(newMove));
+          if (patternMatches(cubeData, finishedCube)) {
+              mainView.gameWon = true;
+          }
         }
       }
     }
