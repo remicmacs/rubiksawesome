@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
           addCmdToHistory(moveStack, newMove);
           push(solveQueue, inverseMove(newMove));
           if (patternMatches(cubeData, finishedCube)) {
-              mainView.gameWon = true;
+              playWinningSequence(&mainView);
           }
         }
       }
