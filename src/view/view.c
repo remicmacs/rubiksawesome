@@ -653,17 +653,17 @@ move getNextMove(SDL_Keycode keysym, int keyShortcut) {
 
   // X ROTATION
   if (keysym == SDLK_x) {
-    nextMove = keyShortcut > 2 ? xi : x;
+    nextMove = keyShortcut >= 2 ? xi : x;
   }
 
   // Y ROTATION
   if (keysym == SDLK_y) {
-    nextMove = keyShortcut > 2 ? yi : y;
+    nextMove = keyShortcut >= 2 ? yi : y;
   }
 
   // Z ROTATION
   if (keysym == SDLK_z) {
-    nextMove = keyShortcut > 2 ? zi : z;
+    nextMove = keyShortcut >= 2 ? zi : z;
   }
 
   if(keysym == SDLK_BACKSPACE) {
