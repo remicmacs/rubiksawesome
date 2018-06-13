@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
 //
 ////
-move *orient = commandParser("Li Fi Fi Ri Di Li Fi R D2 L2 R2 Fi F2 L2 Di F2 Ri");
+move *orient = commandParser("R2 Fi F2 L2 Di F2 Ri");
 //move *orient = commandParser("Ri Di Li Fi R D2 L2 R2 Fi F2 L2 Di F2 Ri");
 tcube = executeBulkCommand(tcube,orient);
 printCube(tcube);
@@ -26,6 +26,7 @@ char *movement2s = orientWhiteCorners(tcube);
 char *miovements = placeSecondLayer(tcube);
 char *m2ovements= doYellowCross(tcube);
 char *moveiments = orientYellowCorners(tcube);
+//char *moveimentis = placeEdgesLastLayer(tcube);
 printf("%s\n\n",movements);
 //printf("%s\n\n",movement2s);
 //printf("%s\n\n",miovements);
