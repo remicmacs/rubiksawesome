@@ -45,6 +45,31 @@ move * commandParser(char * str) {
     return moves;
 }
 
+char * commandToString(move * moves) {
+    // Allocation of max memory that could be necessary
+    char * tempCmdStr = (char *) \
+        ec_malloc(sizeof(char) * 4 * sizeOfMoveArray(moves));
+
+    int index = 0;
+    move currMove = -1;
+
+    // Put str endmark
+    *tempCmdStr = '\0';
+
+    while( (int) (currMove = *(moves+index++)) != -1) {
+        strcat(tempCmdStr, mapMoveToCode(currMove));
+        strcat(tempCmdStr, " ");
+    } // Copying in a str all the moves
+
+    // Reallocating the memory needed and freeing the excess memory
+    int length = strlen(tempCmdStr);
+    char * cmdStr = (char *) ec_malloc(sizeof(char) * (length));
+    strncpy(cmdStr, tempCmdStr, length);
+    free(tempCmdStr);
+
+    return cmdStr;
+}
+
 cube * executeBulkCommand(cube * aCube, move * moves) {
     if (moves == NULL || aCube == NULL) {
         return aCube;

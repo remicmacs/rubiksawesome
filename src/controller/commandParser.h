@@ -29,6 +29,16 @@
 move * commandParser(char * str);
 
 /**
+ * Converts an array of moves in a string command
+ *
+ * The string command begins with the first move of the array moves[0]
+ *
+ * @param moves - The array of moves to convert
+ * @returns a string representing the moves sequentially
+ */
+char * commandToString(move * moves);
+
+/**
  * Apply a chain of commands on a given cube.
  * This function takes a list of commands as an array of move. It applies the
  * moves to the cube pointed to by the cube pointer fed as parameter.

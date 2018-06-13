@@ -105,8 +105,35 @@ int sizeOfMoveQueue(mvqueue queue);
  */
 mvqueue toMvQueue(move * moves);
 
+/**
+ * Converts a `mvqueue` to a `move` array.
+ *
+ * @param queue - mvqueue holding the moves to put in the new array
+ * @returns move * - Array of moves terminated by a -1 endmark
+ */
 move * toMvArray(mvqueue queue);
 
+/**
+ * Concatenates two move arrays
+ *
+ * Returns a newly allocated array of moves that is the concatenation of the
+ * two arrays passed as parameters. The first array array1 is placed at the
+ * beginning of the new array.
+ *
+ * The arrays **are not copied on one of the original arrays** as `strcat` would
+ * do with a string. Thus, original arrays' memory should be freed when they are
+ * not of use anymore.
+ *
+ * @param array1 - Array to place at the beginning of the new array
+ * @param array2 - Array to place after the first array
+ * @returns move * - Array of `move` that is the concatenation of the two
+ * original arrays.
+ */
 move * mvCat(move * array1, move * array2);
+
+/**
+ * Helper function to print an array of `move`
+ * @param moves - pointer to the array of moves to display
+ */
 void printMoveArray(move * moves);
 #endif
