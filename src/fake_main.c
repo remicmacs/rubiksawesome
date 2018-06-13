@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "controller/f2l.h"
-
+#include "controller/oll.h"
 #include <time.h>
 
 
@@ -9,21 +9,31 @@ int randBorne(int a,int b);
 int main(int argc, char *argv[])
 {
 
-	cube *tcube;
+	cube *tcube = NULL;
 	tcube = initCube(tcube);
-	printCube(tcube);
 
-		tcube->rotate(tcube,Ri);
-	tcube->rotate(tcube,Li);
-	tcube->rotate(tcube,D2);
-tcube->rotate(tcube,Ri);
-	tcube->rotate(tcube,Bi);
-	tcube->rotate(tcube,F2);
-tcube->rotate(tcube,Li);
-	tcube->rotate(tcube,L2);
+//
+////
+move *orient = commandParser("R2 Fi F2 L2 Di F2 Ri");
+//move *orient = commandParser("Ri Di Li Fi R D2 L2 R2 Fi F2 L2 Di F2 Ri");
+tcube = executeBulkCommand(tcube,orient);
+printCube(tcube);
+//char *movements = orientEdges(tcube);
+//
+//searchCorner(tcube,'g','o','w');
+char *movements = doWhiteCross(tcube);
+char *movement2s = orientWhiteCorners(tcube);
+char *miovements = placeSecondLayer(tcube);
+char *m2ovements= doYellowCross(tcube);
+char *moveiments = orientYellowCorners(tcube);
+//char *moveimentis = placeEdgesLastLayer(tcube);
+printf("%s\n\n",movements);
+//printf("%s\n\n",movement2s);
+//printf("%s\n\n",miovements);
+//printf("%s\n\n",moveiments);
+printCube(tcube);
 
-	orientEdges(tcube);
-	//printf("%s",moves);
+
 
 }
 
