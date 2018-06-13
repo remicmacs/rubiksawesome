@@ -1,12 +1,18 @@
+/**
+ * @file commandParser.h
+ */
+
 #ifndef COMMAND_PARSER_H
 #define COMMAND_PARSER_H
-#include "../model/cube.h"
-#include "utils.h"
-#include "errorController.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include "errorController.h"
+#include "utils.h"
+#include "../model/cube.h"
+#include "../view/view.h"
+#include "commandQueue.h"
 /**
  * Parse and converts a string of commands in an array of moves
  *
@@ -24,7 +30,7 @@ move * commandParser(const char * str);
 
 /**
  * Apply a chain of commands on a given cube.
- * This function takes a list of commands as an array of move. it applies the
+ * This function takes a list of commands as an array of move. It applies the
  * moves to the cube pointed to by the cube pointer fed as parameter.
  *
  * @params aCube pointer to the cube to modify
@@ -35,4 +41,35 @@ move * commandParser(const char * str);
  */
 cube * executeBulkCommand(cube * aCube, move * moves);
 
+/**
+ * Generate a random scramble
+ *
+ * @returns an array of a size n+1 with n included in [16,60] and terminated by
+ * a move == -1
+ */
+move * randomScramble(int sizeMin, int sizeMax);
+
+/**
+ * Scrambles the cube according a given sequence of moves
+ *
+ * @param cubeData - Pointer to the 2D cube data to scramble
+ * @param cubeView - Pointer to the 3D cube data to scramble
+ * @param moves - array of n+1 moves, the last one being the -1 endmark
+ */
+void scrambleCube(
+        cube * cubeData,
+        rubikview * cubeView,
+        move * moves
+        );
+/**
+ * Expands a list with double moves in a list with sequence of two moves
+ *
+ * Given a list of moves {R, Bi2, x}, returns {R, Bi, Bi, x}
+ *
+ * The lists passed as parameters should be terminated by a move == -1, as in
+ * other functions
+ * @param moves - pointer to the list of moves to expand
+ * @returns a list of moves at least the same size of the original list
+ */
+move * expandCommand(move * moves);
 #endif

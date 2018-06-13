@@ -24,16 +24,7 @@
  */
 
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "graphics.h"
-#include "../model/cube.h"
 
 
 rubikcube * generateRubikCube() {
@@ -49,7 +40,6 @@ rubikcube * generateRubikCube() {
       for (int xIndex = -1; xIndex < 2; xIndex++) {
         transform cubeTransform = {
           (vector3) {(float)zIndex, (float)yIndex, (float)xIndex},
-          (vector3) {0, 0, 0},
           (vector3) {0, 0, 0},
           (vector3) {0.48, 0.48, 0.48}
         };
@@ -88,6 +78,8 @@ cube3d generateCube(transform cubeTransform) {
 
 face generateFace(transform cubeTransform, enum FaceType faceType) {
   face newFace;
+
+  /** We set the basic : positions of the vertices, color and normal */
   switch(faceType) {
     case TOP:
       newFace = (face) {
@@ -165,56 +157,43 @@ face generateFace(transform cubeTransform, enum FaceType faceType) {
       break;
   }
 
+  /** Get the offset */
   float xOffset = cubeTransform.position.x;
   float yOffset = cubeTransform.position.y;
   float zOffset = cubeTransform.position.z;
 
+  /** Get the scale */
   float xScale = cubeTransform.scale.x;
   float yScale = cubeTransform.scale.y;
   float zScale = cubeTransform.scale.z;
 
+  /** Apply offset and scale to each vertex's position */
   for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
-    float x = newFace.corners[vertexIndex].x;
-    float y = newFace.corners[vertexIndex].y;
-    float z = newFace.corners[vertexIndex].z;
-
-    x = (x * xScale) + xOffset;
-    y = (y * yScale) + yOffset;
-    z = (z * zScale) + zOffset;
-
-    float faceR = sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
-    float faceTheta = faceR == 0 ? acos(0) : acos(z / faceR);
-    float facePhi = atan2(y, x);
-
-    faceR += cubeTransform.delta.x;
-    faceTheta += cubeTransform.delta.y;
-    facePhi += cubeTransform.delta.z;
-
-    x = faceR * sin(faceTheta) * cos(facePhi);
-    y = faceR * sin(faceTheta) * sin(facePhi);
-    z = faceR * cos(faceTheta);
-
-    newFace.corners[vertexIndex].x = x;
-    newFace.corners[vertexIndex].y = y;
-    newFace.corners[vertexIndex].z = z;
+    newFace.corners[vertexIndex].x *= xScale;
+    newFace.corners[vertexIndex].x += xOffset;
+    newFace.corners[vertexIndex].y *= yScale;
+    newFace.corners[vertexIndex].y += yOffset;
+    newFace.corners[vertexIndex].z *= zScale;
+    newFace.corners[vertexIndex].z += zOffset;
   }
 
   return newFace;
 }
 
 
-void generateTexture(GLuint * textureId, const char * url) {
-  SDL_Surface * surf = IMG_Load(url);
-  glGenTextures(1, textureId);
-  glBindTexture(GL_TEXTURE_2D, *textureId);
-  int Mode = GL_RGBA;
-  if(surf->format->BytesPerPixel == 4) {
+void generateTexture(texture * newTexture, const char * url) {
+  newTexture->surface = IMG_Load(url);
+  glGenTextures(1, &newTexture->id);
+  glBindTexture(GL_TEXTURE_2D, newTexture->id);
+  int Mode = GL_RGB;
+  if(newTexture->surface->format->BytesPerPixel == 4) {
       Mode = GL_RGBA;
   }
-  glTexImage2D(GL_TEXTURE_2D, 0, Mode, surf->w, surf->h, 0, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, surf->pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, Mode, newTexture->surface->w,
+               newTexture->surface->h, 0, GL_ABGR_EXT, GL_UNSIGNED_INT_8_8_8_8,
+               newTexture->surface->pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  SDL_FreeSurface(surf);
 }
 
 
@@ -279,12 +258,26 @@ textureStore generateTextureStore() {
   generateTexture(&texStore.leftd, "res/left2.png");
 
   generateCubemapTexture(&texStore.skybox);
+
+  generateTexture(&texStore.xyz, "res/xyz.png");
+  generateTexture(&texStore.xyzi, "res/xyzi.png");
+
+  generateTexture(&texStore.x, "res/x.png");
+  generateTexture(&texStore.xi, "res/xi.png");
+
+  generateTexture(&texStore.y, "res/y.png");
+  generateTexture(&texStore.yi, "res/yi.png");
+
+  generateTexture(&texStore.z, "res/z.png");
+  generateTexture(&texStore.zi, "res/zi.png");
+
+  generateTexture(&texStore.winner, "res/winner.png");
   return texStore;
 }
 
 
-image generateInstruction(enum FaceType faceType, textureStore texStore) {
-  image newInstruction;
+instructionDisplay generateInstruction(enum FaceType faceType, textureStore texStore) {
+  instructionDisplay newInstruction;
   switch(faceType) {
     case TOP:
       newInstruction.corners[0] = (vector3) {-1, 1, 2.3};
@@ -292,10 +285,10 @@ image generateInstruction(enum FaceType faceType, textureStore texStore) {
       newInstruction.corners[2] = (vector3) {1, -1, 2.3};
       newInstruction.corners[3] = (vector3) {-1, -1, 2.3};
       newInstruction.normal = (vector3) {0, 0, 1};
-      newInstruction.imageTexture.id = texStore.up;
-      newInstruction.imageTexture.ccwId = texStore.upi;
-      newInstruction.imageTexture.ccwId2 = texStore.upid;
-      newInstruction.imageTexture.id2 = texStore.upd;
+      newInstruction.textures.id = texStore.up.id;
+      newInstruction.textures.ccwId = texStore.upi.id;
+      newInstruction.textures.ccwId2 = texStore.upid.id;
+      newInstruction.textures.id2 = texStore.upd.id;
       break;
     case DOWN:
       newInstruction.corners[0] = (vector3) {-1, -1, -2.3};
@@ -303,10 +296,10 @@ image generateInstruction(enum FaceType faceType, textureStore texStore) {
       newInstruction.corners[2] = (vector3) {1, 1, -2.3};
       newInstruction.corners[3] = (vector3) {-1, 1, -2.3};
       newInstruction.normal = (vector3) {0, 0, -1};
-      newInstruction.imageTexture.id = texStore.down;
-      newInstruction.imageTexture.ccwId = texStore.downi;
-      newInstruction.imageTexture.ccwId2 = texStore.downid;
-      newInstruction.imageTexture.id2 = texStore.downd;
+      newInstruction.textures.id = texStore.down.id;
+      newInstruction.textures.ccwId = texStore.downi.id;
+      newInstruction.textures.ccwId2 = texStore.downid.id;
+      newInstruction.textures.id2 = texStore.downd.id;
       break;
     case FRONT:
       newInstruction.corners[0] = (vector3) {-1, -2.3, 1};
@@ -314,10 +307,10 @@ image generateInstruction(enum FaceType faceType, textureStore texStore) {
       newInstruction.corners[2] = (vector3) {1, -2.3, -1};
       newInstruction.corners[3] = (vector3) {-1, -2.3, -1};
       newInstruction.normal = (vector3) {0, -1, 0};
-      newInstruction.imageTexture.id = texStore.front;
-      newInstruction.imageTexture.ccwId = texStore.fronti;
-      newInstruction.imageTexture.ccwId2 = texStore.frontid;
-      newInstruction.imageTexture.id2 = texStore.frontd;
+      newInstruction.textures.id = texStore.front.id;
+      newInstruction.textures.ccwId = texStore.fronti.id;
+      newInstruction.textures.ccwId2 = texStore.frontid.id;
+      newInstruction.textures.id2 = texStore.frontd.id;
       break;
     case BACK:
       newInstruction.corners[0] = (vector3) {1, 2.3, 1};
@@ -325,10 +318,10 @@ image generateInstruction(enum FaceType faceType, textureStore texStore) {
       newInstruction.corners[2] = (vector3) {-1, 2.3, -1};
       newInstruction.corners[3] = (vector3) {1, 2.3, -1};
       newInstruction.normal = (vector3) {0, 1, 0};
-      newInstruction.imageTexture.id = texStore.back;
-      newInstruction.imageTexture.ccwId = texStore.backi;
-      newInstruction.imageTexture.ccwId2 = texStore.backid;
-      newInstruction.imageTexture.id2 = texStore.backd;
+      newInstruction.textures.id = texStore.back.id;
+      newInstruction.textures.ccwId = texStore.backi.id;
+      newInstruction.textures.ccwId2 = texStore.backid.id;
+      newInstruction.textures.id2 = texStore.backd.id;
       break;
     case RIGHT:
       newInstruction.corners[0] = (vector3) {2.3, -1, 1};
@@ -336,10 +329,10 @@ image generateInstruction(enum FaceType faceType, textureStore texStore) {
       newInstruction.corners[2] = (vector3) {2.3, 1, -1};
       newInstruction.corners[3] = (vector3) {2.3, -1, -1};
       newInstruction.normal = (vector3) {1, 0, 0};
-      newInstruction.imageTexture.id = texStore.right;
-      newInstruction.imageTexture.ccwId = texStore.righti;
-      newInstruction.imageTexture.ccwId2 = texStore.rightid;
-      newInstruction.imageTexture.id2 = texStore.rightd;
+      newInstruction.textures.id = texStore.right.id;
+      newInstruction.textures.ccwId = texStore.righti.id;
+      newInstruction.textures.ccwId2 = texStore.rightid.id;
+      newInstruction.textures.id2 = texStore.rightd.id;
       break;
     case LEFT:
       newInstruction.corners[0] = (vector3) {-2.3, 1, 1};
@@ -347,10 +340,10 @@ image generateInstruction(enum FaceType faceType, textureStore texStore) {
       newInstruction.corners[2] = (vector3) {-2.3, -1, -1};
       newInstruction.corners[3] = (vector3) {-2.3, 1, -1};
       newInstruction.normal = (vector3) {-1, 0, 0};
-      newInstruction.imageTexture.id = texStore.left;
-      newInstruction.imageTexture.ccwId = texStore.lefti;
-      newInstruction.imageTexture.ccwId2 = texStore.leftid;
-      newInstruction.imageTexture.id2 = texStore.leftd;
+      newInstruction.textures.id = texStore.left.id;
+      newInstruction.textures.ccwId = texStore.lefti.id;
+      newInstruction.textures.ccwId2 = texStore.leftid.id;
+      newInstruction.textures.id2 = texStore.leftd.id;
       break;
     default:
       break;
@@ -366,12 +359,25 @@ void setCubeColour(colour newColour, cube3d * selectedCube) {
   }
 }
 
+
+void drawCubes(rubikcube * rubikCube) {
+  for (int zIndex = 0; zIndex < 3; zIndex++) {
+    for (int yIndex = 0; yIndex < 3; yIndex++) {
+      for (int xIndex = 0; xIndex < 3; xIndex++) {
+        drawCube(*rubikCube->cubes[xIndex][yIndex][zIndex], false);
+      }
+    }
+  }
+}
+
+
 void drawCube(cube3d drawnCube, bool debug) {
   /** We draw the faces */
   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
     drawFace(drawnCube.faces[faceIndex], debug);
   }
 }
+
 
 void drawFace(face drawnFace, bool debug) {
   colour faceColour;
@@ -388,9 +394,20 @@ void drawFace(face drawnFace, bool debug) {
   /** We set the colour of the vertices */
   glColor3ub(faceColour.r, faceColour.g, faceColour.b);
 
-  glBegin(GL_QUADS);
+  // glBegin(GL_QUADS);
+  // glNormal3f(drawnFace.normal.x, drawnFace.normal.y, drawnFace.normal.z);
+  // for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
+  //   float x = drawnFace.corners[vertexIndex].x;
+  //   float y = drawnFace.corners[vertexIndex].y;
+  //   float z = drawnFace.corners[vertexIndex].z;
+  //
+  //   glVertex3d(x, y, z);
+  // }
+  // glEnd();
+
+  glBegin(GL_TRIANGLES);
   glNormal3f(drawnFace.normal.x, drawnFace.normal.y, drawnFace.normal.z);
-  for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
+  for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
     float x = drawnFace.corners[vertexIndex].x;
     float y = drawnFace.corners[vertexIndex].y;
     float z = drawnFace.corners[vertexIndex].z;
@@ -398,22 +415,35 @@ void drawFace(face drawnFace, bool debug) {
     glVertex3d(x, y, z);
   }
   glEnd();
+
+  int otherCoord[] = {0, 2, 3};
+  glBegin(GL_TRIANGLES);
+  glNormal3f(drawnFace.normal.x, drawnFace.normal.y, drawnFace.normal.z);
+  for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++) {
+    float x = drawnFace.corners[otherCoord[vertexIndex]].x;
+    float y = drawnFace.corners[otherCoord[vertexIndex]].y;
+    float z = drawnFace.corners[otherCoord[vertexIndex]].z;
+
+    glVertex3d(x, y, z);
+  }
+  glEnd();
 }
 
 
-void drawInstruction(image drawnInstruction, bool ccw, bool two) {
-  GLuint textureId;
-  if (ccw && two) {
-    textureId = drawnInstruction.imageTexture.ccwId2;
-  } else if (ccw && !two) {
-    textureId = drawnInstruction.imageTexture.ccwId;
-  } else if (!ccw && two) {
-    textureId = drawnInstruction.imageTexture.id2;
-  } else {
-    textureId = drawnInstruction.imageTexture.id;
+void drawInstructions(instructionDisplay * instructions, int keyShortcut) {
+  for (int instructionIndex = 0; instructionIndex < 6; instructionIndex++) {
+    drawInstruction(instructions[instructionIndex], keyShortcut);
   }
+}
 
-  glBindTexture(GL_TEXTURE_2D, textureId);
+
+void drawInstruction(instructionDisplay drawnInstruction, int keyShortcut) {
+  GLuint textureIds[] = {drawnInstruction.textures.id,
+                         drawnInstruction.textures.id2,
+                         drawnInstruction.textures.ccwId,
+                         drawnInstruction.textures.ccwId2};
+
+  glBindTexture(GL_TEXTURE_2D, textureIds[keyShortcut]);
 
   glColor4ub(255, 255, 255, 255);
 
@@ -441,6 +471,22 @@ void drawInstruction(image drawnInstruction, bool ccw, bool two) {
   }
   glEnd();
   glDisable(GL_TEXTURE_2D);
+}
+
+
+void drawXYZInstruction(textureStore texStore, bool reversed) {
+  if (reversed) {
+    glBindTexture(GL_TEXTURE_2D, texStore.xyzi.id);
+  } else {
+    glBindTexture(GL_TEXTURE_2D, texStore.xyz.id);
+  }
+  glColor3ub(255, 255, 255);
+  glBegin(GL_QUADS);
+  glTexCoord2i(0,0); glVertex2i(20, 590);
+  glTexCoord2i(0,1); glVertex2i(20, 490);
+  glTexCoord2i(1,1); glVertex2i(120, 490);
+  glTexCoord2i(1,0); glVertex2i(120, 590);
+  glEnd();
 }
 
 
@@ -505,6 +551,39 @@ void drawSkybox(GLuint textureId) {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_LIGHTING);
   glDisable(GL_TEXTURE_CUBE_MAP_ARB);
+}
+
+
+void drawHistory(textureStore texStore, mvstack moveStack) {
+  move * moves = head(moveStack, 13);
+  for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
+    int t = 50;
+    int xOffset = i * 60 + 20;
+    int yOffset = 20;
+    int alpha = 255 - (i * (255 / 13));
+    glColor4ub(255, 255, 255, alpha);
+    glBindTexture(GL_TEXTURE_2D, moveToTexture(texStore, moves[i]).id);
+    glBegin(GL_QUADS);
+    glTexCoord2i(0,1); glVertex2i(xOffset, yOffset);
+    glTexCoord2i(0,0); glVertex2i(xOffset, yOffset + t);
+    glTexCoord2i(1,0); glVertex2i(xOffset + t, yOffset + t);
+    glTexCoord2i(1,1); glVertex2i(xOffset + t, yOffset);
+    glEnd();
+  }
+
+  free(moves);
+}
+
+
+void drawWinning(textureStore texStore) {
+  glBindTexture(GL_TEXTURE_2D, texStore.winner.id);
+  glColor4ub(255, 255, 255, 255);
+  glBegin(GL_QUADS);
+  glTexCoord2i(0,1); glVertex2i(5, 0);
+  glTexCoord2i(0,0); glVertex2i(5, 600);
+  glTexCoord2i(1,0); glVertex2i(795, 600);
+  glTexCoord2i(1,1); glVertex2i(795, 0);
+  glEnd();
 }
 
 
@@ -586,86 +665,113 @@ void rotateFaceX(face * currentFace, float angle, bool ccw) {
 }
 
 
-GLuint moveToTexture(textureStore texStore, move command) {
-  GLuint textureId;
+texture moveToTexture(textureStore texStore, move command) {
+  texture returnedTexture;
   switch(command) {
     case U:
-      textureId = texStore.up;
+      returnedTexture = texStore.up;
       break;
     case D:
-      textureId = texStore.down;
+      returnedTexture = texStore.down;
       break;
     case F:
-      textureId = texStore.front;
+      returnedTexture = texStore.front;
       break;
     case B:
-      textureId = texStore.back;
+      returnedTexture = texStore.back;
       break;
     case R:
-      textureId = texStore.right;
+      returnedTexture = texStore.right;
       break;
     case L:
-      textureId = texStore.left;
+      returnedTexture = texStore.left;
       break;
 
     case Ui:
-      textureId = texStore.upi;
+      returnedTexture = texStore.upi;
       break;
     case Di:
-      textureId = texStore.downi;
+      returnedTexture = texStore.downi;
       break;
     case Fi:
-      textureId = texStore.fronti;
+      returnedTexture = texStore.fronti;
       break;
     case Bi:
-      textureId = texStore.backi;
+      returnedTexture = texStore.backi;
       break;
     case Ri:
-      textureId = texStore.righti;
+      returnedTexture = texStore.righti;
       break;
     case Li:
-      textureId = texStore.lefti;
-      break;
-    default:
+      returnedTexture = texStore.lefti;
       break;
 
     case u:
-      textureId = texStore.upd;
+      returnedTexture = texStore.upd;
       break;
     case d:
-      textureId = texStore.downd;
+      returnedTexture = texStore.downd;
       break;
     case f:
-      textureId = texStore.frontd;
+      returnedTexture = texStore.frontd;
       break;
     case b:
-      textureId = texStore.backd;
+      returnedTexture = texStore.backd;
       break;
     case r:
-      textureId = texStore.rightd;
+      returnedTexture = texStore.rightd;
       break;
     case l:
-      textureId = texStore.leftd;
+      returnedTexture = texStore.leftd;
       break;
 
     case ui:
-      textureId = texStore.upid;
+      returnedTexture = texStore.upid;
       break;
     case di:
-      textureId = texStore.downid;
+      returnedTexture = texStore.downid;
       break;
     case fi:
-      textureId = texStore.frontid;
+      returnedTexture = texStore.frontid;
       break;
     case bi:
-      textureId = texStore.backid;
+      returnedTexture = texStore.backid;
       break;
     case ri:
-      textureId = texStore.rightid;
+      returnedTexture = texStore.rightid;
       break;
     case li:
-      textureId = texStore.leftid;
+      returnedTexture = texStore.leftid;
+      break;
+
+    case x:
+      returnedTexture = texStore.x;
+      break;
+    case y:
+      returnedTexture = texStore.y;
+      break;
+    case z:
+      returnedTexture = texStore.z;
+      break;
+
+    case xi:
+      returnedTexture = texStore.xi;
+      break;
+    case yi:
+      returnedTexture = texStore.yi;
+      break;
+    case zi:
+      returnedTexture = texStore.zi;
+      break;
+
+    default:
       break;
   }
-  return textureId;
+  return returnedTexture;
+}
+
+void destroyRubikCube(rubikcube * aCube) {
+    free(aCube->cubes);
+    free(aCube);
+    return;
 }

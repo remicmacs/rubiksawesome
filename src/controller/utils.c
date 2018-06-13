@@ -19,3 +19,10 @@ void * ec_realloc(void * ptr, size_t size) {
 
     return ptr;
 }
+
+void swapInt(int * intA, int * intB){
+    int iTmp;
+    iTmp = *intA;
+    *intA = *intB;
+    *intB = iTmp;
+}

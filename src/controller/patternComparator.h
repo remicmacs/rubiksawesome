@@ -1,5 +1,6 @@
 #ifndef PATTERN_COMPARATOR_H
 #define PATTERN_COMPARATOR_H
+
 #include "../model/cube.h"
 #include "debugController.h"
 

@@ -1,11 +1,31 @@
 #include "cube.h"
 #include "../controller/patternComparator.h"
-#include "../controller/debugController.h"
+#include "../controller/utils.h"
+
+move inverseMove(move aMove) {
+    move inverseMoves[62] = {
+        Fi,Bi,Ri,Li,Ui,Di,
+        fi,bi,ri,li,ui,di,
+        xi,yi,zi,
+        F,B,R,L,U,D,
+        f,b,r,l,u,d,
+        x,y,z,
+        Fi2,Bi2,Ri2,Li2,Ui2,Di2,
+        fi2,bi2,ri2,li2,ui2,di2,
+        xi2,yi2,zi2,
+        F2,B2,R2,L2,U2,D2,
+        f2,b2,r2,l2,u2,d2,
+        x2,y2,z2,
+        RETURN, RESTART
+    };
+
+    return inverseMoves[aMove];
+}
 
 char * mapMoveToCode(move aMove){
     if ((int) aMove == -1)
         return "NONE";
-    char * codes[60] = {
+    char * codes[62] = {
      "F", "B", "R", "L", "U", "D",
      "f", "b", "r", "l", "u", "d",
      "x", "y", "z",
@@ -17,26 +37,44 @@ char * mapMoveToCode(move aMove){
      "x2", "y2", "z2",
      "Fi2", "Bi2", "Ri2", "Li2", "Ui2", "Di2",
      "fi2", "bi2", "ri2", "li2", "ui2", "di2",
-     "xi2", "yi2", "zi2"
+     "xi2", "yi2", "zi2",
+     "RETURN", "RESTART"
     };
 
     return codes[aMove];
 }
 
 move mapCodeToMove(char * moveCode){
-    // 15 base moves for 60 rotations implemented 
+    // 15 base moves for 60 rotations implemented
     //  (double and counter-clockwise)
     char codes[15] = {
         'F', 'B', 'R', 'L', 'U', 'D',
         'f', 'b', 'r', 'l', 'u', 'd',
         'x', 'y', 'z'
     };
-    
+
     if (moveCode == NULL || moveCode[0] == '\0') {
         return -1;
-    }
+    } // Invalid move code, return -1
 
     char moveChar = moveCode[0]; // retrieving first letter
+
+/**
+ * Returns the inverse of the given move
+ *
+ * If a cube is modified this way :
+ * ```C
+ *  move aMove = F;
+ *  cube aCube = initCube();
+ *  aCube->rotate(aMove);
+ *  aCube->rotate(inverseMove(aMove));
+ *  ```
+ *  then the cube shouldn't be modified
+ *
+ *  @param aMove the move to be inversed
+ *  @returns a move being the inverse of aMove
+ */
+move inverseMove(move aMove);
 
     // Mapping letter to base code
     move code = F-1;
@@ -62,7 +100,7 @@ move mapCodeToMove(char * moveCode){
 
 cube * initCube() {
     // Initialization of cube
-    cube * self = (cube *) malloc(sizeof(cube)); // Memory allocation
+    cube * self = (cube *) ec_malloc(sizeof(cube)); // Memory allocation
     self->rotate = &rotate;
     self->copy = &copyCube;
     self->equals = &cubeIsEqual;
@@ -72,9 +110,10 @@ cube * initCube() {
     unsigned char color[6] = {'g','b','r','o','w','y'};
     for (int faceIndex = F ; faceIndex <= D ; faceIndex++){
         unsigned char ** newFace = (unsigned char **) \
-            malloc(sizeof(unsigned char *)*3);    // Face memory allocation
+            ec_malloc(sizeof(unsigned char *)*3);    // Face memory allocation
         for (int index = 0; index < 3 ; index++) {
-            newFace[index] = (unsigned char *) malloc(sizeof(unsigned char)*3);
+            newFace[index] = (unsigned char *) \
+                             ec_malloc(sizeof(unsigned char)*3);
         } // Rows memory allocation
         self->cube[faceIndex] = newFace;
 
@@ -135,7 +174,7 @@ cube * rotateCurrentFace(cube * self, int current){
  * @see rotateCurrentFace()
  */
 cube * rotateCurrentFaceCCLW(cube * self, int current) {
-    char swap[3]; 
+    char swap[3];
     swap[0] = self->cube[current][0][0];
     swap[1] = self->cube[current][0][1];
     swap[2] = self->cube[current][0][2];
@@ -409,6 +448,7 @@ cube * rotatex(cube * self) {
     self->cube[B] = self->cube[U];
     self->cube[U] = faceSwap;
 
+    // Functional programming, for the lolz
     self = rotateCurrentFace(
             rotateCurrentFace(
                 rotateCurrentFace(
@@ -576,7 +616,7 @@ cube * rotate(cube * self, move moveCode) {
 
     cube * (* chosenMoveFn)(cube *);
 
-    // Scary big ass switch statement : chooses correct private function
+    // Scary-ass switch statement : chooses correct private function
     switch(moveCode){
         case(F):
             chosenMoveFn = &rotateF;
@@ -669,12 +709,13 @@ cube * rotate(cube * self, move moveCode) {
             chosenMoveFn = &rotatedi;
             break;
         default:
+            // If you end up here, something is very very wrong
             exitFatal(" in rotate(), no such operation");
             break;
     }
 
     if (doubleMove) {
-        chosenMoveFn(self);
+        chosenMoveFn(self); // One more if the move is double
     }
 
     return chosenMoveFn(self);
@@ -723,28 +764,29 @@ _Bool cubeIsEqual(cube * self, cube * otherCube){
 }
 
 void printCube(cube * self){
+    // Hello, I'm a fprintf statement with issues
     fprintf(stderr, "\n        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
-        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\n", 
-            self->cube[U][0][0],self->cube[U][0][1], self->cube[U][0][2], 
-            self->cube[U][1][0],self->cube[U][1][1], self->cube[U][1][2], 
+        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\n",
+            self->cube[U][0][0],self->cube[U][0][1], self->cube[U][0][2],
+            self->cube[U][1][0],self->cube[U][1][1], self->cube[U][1][2],
             self->cube[U][2][0],self->cube[U][2][1], self->cube[U][2][2],
-            self->cube[L][0][0],self->cube[L][0][1], self->cube[L][0][2], 
+            self->cube[L][0][0],self->cube[L][0][1], self->cube[L][0][2],
             self->cube[F][0][0],self->cube[F][0][1], self->cube[F][0][2],
             self->cube[R][0][0],self->cube[R][0][1], self->cube[R][0][2],
             self->cube[B][0][0],self->cube[B][0][1], self->cube[B][0][2],
-            self->cube[L][1][0],self->cube[L][1][1], self->cube[L][1][2], 
+            self->cube[L][1][0],self->cube[L][1][1], self->cube[L][1][2],
             self->cube[F][1][0],self->cube[F][1][1], self->cube[F][1][2],
             self->cube[R][1][0],self->cube[R][1][1], self->cube[R][1][2],
             self->cube[B][1][0],self->cube[B][1][1], self->cube[B][1][2],
-            self->cube[L][2][0],self->cube[L][2][1], self->cube[L][2][2], 
+            self->cube[L][2][0],self->cube[L][2][1], self->cube[L][2][2],
             self->cube[F][2][0],self->cube[F][2][1], self->cube[F][2][2],
             self->cube[R][2][0],self->cube[R][2][1], self->cube[R][2][2],
             self->cube[B][2][0],self->cube[B][2][1], self->cube[B][2][2],
-            self->cube[D][0][0],self->cube[D][0][1], self->cube[D][0][2], 
-            self->cube[D][1][0],self->cube[D][1][1], self->cube[D][1][2], 
+            self->cube[D][0][0],self->cube[D][0][1], self->cube[D][0][2],
+            self->cube[D][1][0],self->cube[D][1][1], self->cube[D][1][2],
             self->cube[D][2][0],self->cube[D][2][1], self->cube[D][2][2]);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -768,14 +810,13 @@ cube* voidCube(cube *self){
     for (int faceIndex = F ; faceIndex < D+1 ; faceIndex++){
         for (int index = 0 ; index < 3 ; index++){
             for (int jindex = 0 ; jindex < 3 ; jindex++){
-					if(jindex == 1 && index == 1){
-					}
-					else{
-		self->cube[faceIndex][index][jindex] = ' '; 
-					}
+                    if(jindex == 1 && index == 1){
+                    }
+                    else{
+        self->cube[faceIndex][index][jindex] = ' ';
+                    }
             }
         }
     }
       return self;
 }
-

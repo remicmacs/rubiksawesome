@@ -3,16 +3,89 @@
  */
 
 
-#include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include "graphics.h"
-#include "view.h"
 #include "animations.h"
 
 
-animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw) {
+animationStack * generateAnimationStack(Mix_Chunk * sound) {
+  animationStack * returnedStack;
+  returnedStack = (animationStack *)malloc(sizeof(animationStack));
+  returnedStack->animations = NULL;
+  returnedStack->next = NULL;
+  returnedStack->sound = sound;
+
+  returnedStack->hasStarted = false;
+  returnedStack->isFinished = false;
+
+  returnedStack->start = &start;
+  returnedStack->update = &updateAnimationStack;
+
+  return returnedStack;
+}
+
+
+void addAnimationStack(animationStack ** animStack, animationStack * toAdd) {
+  animationStack * currentAnimationStack = *animStack;
+  if (currentAnimationStack == NULL) {
+    *animStack = toAdd;
+  } else {
+    while (currentAnimationStack->next != NULL) {
+      currentAnimationStack = currentAnimationStack->next;
+    }
+    currentAnimationStack->next = toAdd;
+  }
+}
+
+
+void removeAnimationStack(animationStack ** animStack, animationStack * toRemove) {
+  animationStack * currentAnimation = *animStack;
+  if (currentAnimation == toRemove) {
+    if (currentAnimation->next != NULL) {
+      *animStack = currentAnimation->next;
+    }
+    else {
+      *animStack = NULL;
+    }
+    Mix_HaltChannel(0);
+    free(toRemove);
+  }
+  while (currentAnimation != NULL) {
+    if (currentAnimation->next == toRemove) {
+      currentAnimation->next = toRemove->next;
+      updateAnimationList(&toRemove->animations);
+      Mix_HaltChannel(0);
+      free(toRemove);
+      break;
+    }
+    currentAnimation = currentAnimation->next;
+  }
+}
+
+
+int animationStackCount(animationStack * animStack) {
+  int count = 0;
+  if (animStack != NULL) {
+    animationStack * currentAnimationStack = animStack;
+    while (currentAnimationStack != NULL) {
+      count++;
+      currentAnimationStack = currentAnimationStack->next;
+    }
+  }
+  return count;
+}
+
+
+void updateAnimationStack(animationStack * self, rubikcube * rubikCube) {
+  animation * animationsPtr = self->animations;
+  self->isFinished = true;
+  while (animationsPtr != NULL) {
+    animationsPtr->update(animationsPtr, rubikCube);
+    self->isFinished = animationsPtr->isActive ? false : self->isFinished;
+    animationsPtr = animationsPtr->next;
+  }
+}
+
+
+animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float increment, bool ccw, void (* onFinished)(rubikcube * cube, int sliceIndex, bool ccw)) {
   animation * returnedAnimation;
   returnedAnimation = (animation *)malloc(sizeof(animation));
 
@@ -24,6 +97,8 @@ animation * generateAnimation(enum FaceType animatedFace, int sliceIndex, float 
   returnedAnimation->rotationAngle = increment;
   returnedAnimation->next = NULL;
   returnedAnimation->ccw = ccw;
+
+  returnedAnimation->onFinished = onFinished;
 
   switch(animatedFace) {
     case TOP:
@@ -89,7 +164,7 @@ void updateAnimationList(animation ** animations) {
 void animateX(animation * self, rubikcube * rubikCube) {
   if (self->currentStep == self->targetStep) {
     self->isActive = false;
-    rotateDataX(rubikCube, self->sliceIndex, self->ccw);
+    self->onFinished(rubikCube, self->sliceIndex, self->ccw);
   } else {
     for (int xIndex = 0; xIndex < 3; xIndex++) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
@@ -106,7 +181,7 @@ void animateX(animation * self, rubikcube * rubikCube) {
 void animateY(animation * self, rubikcube * rubikCube) {
   if (self->currentStep == self->targetStep) {
     self->isActive = false;
-    rotateDataY(rubikCube, self->sliceIndex, self->ccw);
+    self->onFinished(rubikCube, self->sliceIndex, self->ccw);
   } else {
     for (int xIndex = 0; xIndex < 3; xIndex++) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
@@ -123,7 +198,7 @@ void animateY(animation * self, rubikcube * rubikCube) {
 void animateZ(animation * self, rubikcube * rubikCube) {
   if (self->currentStep == self->targetStep) {
     self->isActive = false;
-    rotateDataZ(rubikCube, self->sliceIndex, self->ccw);
+    self->onFinished(rubikCube, self->sliceIndex, self->ccw);
   } else {
     for (int xIndex = 0; xIndex < 3; xIndex++) {
       for (int yIndex = 0; yIndex < 3; yIndex++) {
@@ -134,4 +209,10 @@ void animateZ(animation * self, rubikcube * rubikCube) {
     }
     self->currentStep++;
   }
+}
+
+
+void start(animationStack * self, Mix_Chunk * sound) {
+  Mix_PlayChannel(0, sound, 0);
+  self->hasStarted = true;
 }

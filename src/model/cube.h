@@ -12,17 +12,35 @@
 typedef enum {
     F,B,R,L,U,D,
     f,b,r,l,u,d,
-    x,y,z,
-    Fi,Bi,Ri,Li,Ui,Di,
+    x,y,z,           // native moves [0-14]
+    Fi,Bi,Ri,Li,Ui,Di, 
     fi,bi,ri,li,ui,di,
-    xi,yi,zi,
+    xi,yi,zi,       // complementary moves [15 - 29]
     F2,B2,R2,L2,U2,D2,
     f2,b2,r2,l2,u2,d2,
     x2,y2,z2,
     Fi2,Bi2,Ri2,Li2,Ui2,Di2,
     fi2,bi2,ri2,li2,ui2,di2,
-    xi2,yi2,zi2
+    xi2,yi2,zi2,     // Double moves [30 - 59]
+    RETURN, RESTART, SOLVE_PLS
 } move;
+
+/**
+ * Returns the inverse of the given move
+ *
+ * If a cube is modified this way :
+ * ```C
+ *  move aMove = F;
+ *  cube aCube = initCube();
+ *  aCube->rotate(aMove);
+ *  aCube->rotate(inverseMove(aMove));
+ *  ```
+ *  then the cube shouldn't be modified
+ *
+ *  @param aMove the move to be inversed
+ *  @returns a move being the inverse of aMove
+ */
+move inverseMove(move aMove);
 
 
 /**
@@ -42,7 +60,7 @@ typedef struct cubeStruct{
  * The function maps a valid string token to all the 60 moves implemented.
  * The token format is the following :
  *  <BASEMOVE>[i][2]
- *  
+ *
  *  BASEMOVE : F|B|R|L|U|D
  *
  *  [i] : counter-clockwise rotation notation
@@ -50,12 +68,22 @@ typedef struct cubeStruct{
  *
  * @param moveCode the string token of the given move
  *
- * @returns a enum move representing the rotation
+ * @returns a enum move representing the rotation, -1 if the code is incorrect
  * @see enum move
  */
 move mapCodeToMove(char * moveCode);
 
-
+/**
+ * Returns a string matching the given move.
+ *
+ * The function maps a valid move variable with a string token describing one of
+ * all the 60 moves implemented.
+ * Useful to print sequences of commands.
+ *
+ * @param aMove the move variable describing a move command
+ * @returns a char * describing by a literal code the corresponding move
+ *  e.g. : F2 => "F2"
+ */
 char * mapMoveToCode(move aMove);
 
 /**
@@ -115,7 +143,7 @@ cube * initCube();
  * Rotates the cube given a string token. Tokens may be longer than 3 chars byt
  *  won't be parsed further than moveCode[2], given mapCodeToMove()
  *  implementation.
- * 
+ *
  *
  * Inputs :
  *   @param self cube to be modified
@@ -163,7 +191,7 @@ cube * copyCube(cube * self);
  * Two cubes are equal if the combination is the same, even if they are not
  * oriented in the same direction.
  *
- * @param aCube Reference cube. Is self when called with 
+ * @param aCube Reference cube. Is self when called with
  *  aCube->equals(aCube, bCube)
  * @param bCube Cube to compare to aCube
  *
