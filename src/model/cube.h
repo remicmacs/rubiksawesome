@@ -197,7 +197,7 @@ cube * copyCube(cube * self);
  *
  * @returns true if cubes are equivalent, false else
  */
-_Bool cubeIsEqual(cube * aCube, cube * bCube);
+bool cubeIsEqual(cube * aCube, cube * bCube);
 
 /**
  * Helper function to print cube map to stderr.

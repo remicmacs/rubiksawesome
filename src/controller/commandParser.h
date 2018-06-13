@@ -26,7 +26,7 @@
  * @returns : a pointer to a move array. NULL if an incorrect command has been
  * found in the str
  */
-move * commandParser(char * str);
+move * commandParser(const char * str);
 
 /**
  * Converts an array of moves in a string command

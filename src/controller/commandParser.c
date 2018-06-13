@@ -1,12 +1,13 @@
 #include "commandParser.h"
 
 
-move * commandParser(char * str) {
+move * commandParser(const char * str) {
     if (!str) {
+	printf("error");
         return NULL;
     } // Check if string exists
 
-    char * strCopy = (char *) ec_malloc(sizeof(char)*strlen(str));
+    char * strCopy = (char *) ec_malloc(sizeof(char)*(strlen(str)+1));
     strncpy(strCopy, str, strlen(str));
 
     // Command tokenization
