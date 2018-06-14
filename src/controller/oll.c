@@ -1,6 +1,5 @@
 #include "oll.h"
 
-
 bool yellowCrossDone(cube *self){
 	cube * clone = self->copy(self);
 	clone = voidCube(clone);
@@ -22,12 +21,9 @@ bool yellowCrossDone(cube *self){
 	return test;
 }
 
-
 bool yellowFaceDone(cube *self){
-
 	cube * clone = self->copy(self);
 	clone = voidCube(clone);
-
 	positionCube(clone,'g','y');
 	move faces[4] = {F,B,R,L};
 	char colors[4] = {'g','b','o','r'};
@@ -47,7 +43,6 @@ bool yellowFaceDone(cube *self){
 }
 
 
-
 void crossAlgorithm(cube *self, char *movements, int nb){
 	for(int n = 0; n < nb; n++){
 		self->rotate(self,F);
@@ -61,7 +56,7 @@ void crossAlgorithm(cube *self, char *movements, int nb){
 }
 
 char * doYellowCross(cube *self){
-	char *movements = ec_malloc(sizeof(char)*10001);
+	char *movements = ec_malloc(sizeof(char)*1000);
 	bool crossDone = yellowCrossDone(self);
 	int pattern = 0;
 	while(!crossDone){
@@ -153,15 +148,12 @@ else if(self->cube[L][0][2] == 'y' && self->cube[R][0][0] == 'y' && self->cube[B
 
 
 		}
-
 		else
 		{
 
 			self->rotate(self,U);
 			strcat(movements,"U ");
 		}
-
-
 	}
 	printCube(self);
 	return movements;
@@ -175,14 +167,10 @@ int findYellowPattern(cube *self, char * movements){
 	int pattern = 0;
 	int rotation = 0;
 	debug("findYellow start");
-
 	printCube(self);
-
 	while(!foundPattern && rotation <= 3){
 		if(self->cube[U][0][1] == 'y' && self->cube[U][1][1] == 'y' && self->cube[U][1][0] == 'y'){
 			printCube(self);
-			//			debug("2");
-			//sleep(2);
 			return 2;	
 		}
 		else if(self->cube[U][1][1] == 'y' && self->cube[U][1][0] == 'y' && self->cube[U][1][2] == 'y'){

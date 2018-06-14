@@ -68,7 +68,8 @@ int main(int argc, char **argv) {
             /*
              * Fake solver, remove later
              */
-            winSequence = fakeSolve(initSequence, moveStack);
+            winSequence = trueSolve(cubeData);
+	    printMoveArray(winSequence);
             solveQueue = toMvQueue(winSequence);
 
             // TEMPORARY DISPLAY

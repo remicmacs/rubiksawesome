@@ -18,7 +18,7 @@ char *placeEdgesLastLayer(cube *self);
 bool isCubeDone(cube *self);
 char *orientCornersLastLayer(cube *self);
 bool isCorrectPosition(cube *self);
-void *inverseEdges(cube *self);
+void *inverseEdges(cube *self, char * movements);
 
 #endif
 

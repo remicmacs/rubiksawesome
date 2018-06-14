@@ -15,7 +15,8 @@ bool edgePlaced(cube *self){
 
 char *doWhiteCross(cube* self){
 	//	positionCube(self,'g','y');
-	char *movements = ec_malloc(sizeof(char)*400);
+	char *movements = ec_malloc(sizeof(char)*500);
+	//	movements = " ";
 	//move * movements = ec_malloc(sizeOf
 	//	debug("start");
 	edge e;
@@ -30,14 +31,24 @@ char *doWhiteCross(cube* self){
 			e = searchWhiteEdge(self, colors[i]);
 			if(getFaceColor(self,e.tiles[1]) == 'y'){
 				strcat(movements,positionCommand(self, getFaceColor(self,e.tiles[0]),'y'));
+				//printf("%s\n",positionCommand(self, getFaceColor(self,e.tiles[0]),'y'));
+				//sleep(3);
+				//strcat(movements,"||| ");
+				//sleep(3);
+				printCube(self);
 				positionCube(self,getFaceColor(self,e.tiles[0]),'y');
+				printCube(self);
+				//sleep(3);
+
 			}
 			else if(getFaceColor(self,e.tiles[1]) == 'w'){
 				strcat(movements,positionCommand(self, getFaceColor(self,e.tiles[0]),'y'));
+				//strcat(movements," ");
 				positionCube(self,getFaceColor(self,e.tiles[0]),'y');
 			}
 			else{
 				strcat(movements,positionCommand(self, getFaceColor(self,e.tiles[1]),'y'));
+				//strcat(movements," ");
 				positionCube(self,getFaceColor(self,e.tiles[1]),'y');
 			}
 			e = searchWhiteEdge(self, colors[i]);
@@ -88,7 +99,9 @@ char *doWhiteCross(cube* self){
 					printEdge(self, e);	
 					printCube(self);
 					if(getColorTile(self,e.tiles[1]) != 'w' && getColorTile(self,e.tiles[1]) != 'y' ){
-						positionCube(self,getColorTile(self,e.tiles[1]),'y');
+												strcat(movements,positionCommand(self, getColorTile(self,e.tiles[1]),'y'));
+positionCube(self,getColorTile(self,e.tiles[1]),'y');
+
 						while(((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[1])) || (self->cube[F][0][1] != getColorTile(self,e.tiles[1])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) && ((getColorTile(self,e.tiles[1]) != self->cube[F][1][1]))) {
 							self->rotate(self,U);
 							e = searchWhiteEdge(self, colors[i]);
@@ -96,14 +109,17 @@ char *doWhiteCross(cube* self){
 
 						}
 						printCube(self);
-self->rotate(self,U);
-					strcat(movements, "U ");
+						self->rotate(self,U);
+						strcat(movements, "U ");
 						debug("caseii 1");
 					}
 					else
 					{
 						debug("case 2");
-						positionCube(self,getColorTile(self,e.tiles[0]),'y');
+												strcat(movements,positionCommand(self, getColorTile(self,e.tiles[0]),'y'));
+positionCube(self,getColorTile(self,e.tiles[0]),'y');
+
+
 						e = searchWhiteEdge(self, colors[i]);
 
 						while((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) {
@@ -151,6 +167,8 @@ self->rotate(self,U);
 			//	debug("for");
 			e = searchWhiteEdge(self, colors[i]);
 			strcat(movements,positionCommand(self, colors[i], 'y'));
+			//strcat(movements," ");
+
 			positionCube(self,colors[i],'y');
 			if(isEdgeOnFace(e,U)){
 				//debug("if 0");
@@ -659,7 +677,7 @@ char *placeSecondLayer(cube *self){
 					}
 					else{
 						self->rotate(self,Ui);
-						}
+					}
 
 				}
 				debug("WTF ? There is no case ?");

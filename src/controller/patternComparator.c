@@ -106,6 +106,9 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
         }
     }
     destroyCube(copy); // Freeing data copy
+    if(command == NULL){
+    command = " ";
+    }
     return command;
 }
 
