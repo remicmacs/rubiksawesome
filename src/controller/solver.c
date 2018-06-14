@@ -65,28 +65,21 @@ move * trueSolve(cube *self){
 cube * work = self->copy(self);
 
 
-
-char *whiteCross = doWhiteCross(work);
-printf("%s\n",whiteCross);
-
-
-move * temp = commandParser(whiteCross);
-//move *whiteCorners = commandParser(orientWhiteCorners(work));
-//move *placeSecond = commandParser(placeSecondLayer(work));
-//move *yellowCross = commandParser(doYellowCross(work));
-//wqmove *yellowCorners = commandParser(orientYellowCorners(work));
-//move *placeEdgesLL = commandParser(placeEdgesLastLayer(work));
-//move *orientCornersLL = commandParser(orientCornersLastLayer(work));
+move * doWhiteCross = commandParser(whiteCross);
+move *whiteCorners = commandParser(orientWhiteCorners(work));
+move *placeSecond = commandParser(placeSecondLayer(work));
+move *yellowCross = commandParser(doYellowCross(work));
+move *yellowCorners = commandParser(orientYellowCorners(work));
+move *placeEdgesLL = commandParser(placeEdgesLastLayer(work));
+move *orientCornersLL = commandParser(orientCornersLastLayer(work));
 
 destroyCube(work);
-//move * temp = mvCat(whiteCross,whiteCorners);
-//temp = mvCat(temp, placeSecond);
-printMoveArray(temp);
-//temp = mvCat(temp, yellowCross);
-//temp = mvCat(temp, yellowCorners);
-//temp = mvCat(temp, placeEdgesLL);
-//temp = mvCat(temp, orientCornersLL);
-//return temp;
+move * temp = mvCat(doWhiteCross,whiteCorners);
+temp = mvCat(temp, placeSecond);
+temp = mvCat(temp, yellowCross);
+temp = mvCat(temp, yellowCorners);
+temp = mvCat(temp, placeEdgesLL);
+temp = mvCat(temp, orientCornersLL);
 return temp;
 
 }

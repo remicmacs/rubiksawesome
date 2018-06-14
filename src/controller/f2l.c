@@ -429,6 +429,9 @@ bool secondLayerDone(cube *self){
 char *orientWhiteCorners(cube *self){
 	corner elt = {0};
 	char *movements = malloc(sizeof(char)*400);
+ *movements = '\0';
+
+
 	char corners[4][2] = {{'o','b'},{'b','r'},{'r','g'}, {'g','o'}};
 	char faceColor;
 	while(!firstLayerDone(self)){
