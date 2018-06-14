@@ -52,7 +52,7 @@ move * initGame(
     // Recovering the scramble sequence
     move * moves;
     if (gameMode == SCRAMBLE_SEQ) {
-        moves = commandParser(argv[2]);
+        moves = expandCommand(commandParser(argv[2]));
     } else if (gameMode == NORMAL) {
         moves = randomScramble(16, 60);
     } else {

@@ -19,7 +19,8 @@ typedef struct movequeue *mvqueue, *mvstack, movequeue, movestack;
  * Initializes queue/stack
  * @returns a pointer to an initialized queue/stack
  */
-movequeue *  initQueue();
+mvqueue  initQueue();
+mvstack initStack();
 
 /**
  * Adds a move to the tail of the queue

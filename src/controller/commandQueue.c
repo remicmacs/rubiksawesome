@@ -31,6 +31,10 @@ movequeue * initQueue() {
     return newQueue;
 }
 
+movestack * initStack() {
+    return initQueue();
+}
+
 movequeue * enqueue(movequeue * queue, move cmd) {
     moveLink * newLink = initMoveLink(cmd);
     if (isEmpty(queue)) {
