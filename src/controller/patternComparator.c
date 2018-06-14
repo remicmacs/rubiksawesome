@@ -78,7 +78,7 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
         }
     } else {
         command = (char *) malloc(sizeof(char));
-        strncpy(command, "",1);
+        *command = '\0';
     } // According to frontFace center position, choose command
 
     *(command+commandSize-1) = '\0'; // adding an endmark for safety's sake
@@ -107,7 +107,7 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
     }
     destroyCube(copy); // Freeing data copy
     if(command == NULL){
-    command = " ";
+    command = "";
     }
     return command;
 }

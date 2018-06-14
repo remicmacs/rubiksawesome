@@ -21,6 +21,7 @@ char *doWhiteCross(cube* self){
 	//	debug("start");
 	edge e;
 	char colors[4] ={'o','b','r','g'};
+    *movements = '\0';
 
 
 	while(whiteCrossDone(self) == false)
@@ -29,8 +30,14 @@ char *doWhiteCross(cube* self){
 		debug("On passe dans edgePlaced");
 		for(int i=0; i <4; i++){
 			e = searchWhiteEdge(self, colors[i]);
+            char * strPosition = NULL;
 			if(getFaceColor(self,e.tiles[1]) == 'y'){
-				strcat(movements,positionCommand(self, getFaceColor(self,e.tiles[0]),'y'));
+                fprintf(stderr, "before call\n");
+                strPosition = positionCommand(self, getFaceColor(self,e.tiles[0]),'y');
+                fprintf(stderr, "after call\n");
+                fprintf(stderr, "in doWhiteCross() 37 : strPosition is [%s]\n", strPosition);
+				strcat(movements, strPosition);
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				//printf("%s\n",positionCommand(self, getFaceColor(self,e.tiles[0]),'y'));
 				//sleep(3);
 				//strcat(movements,"||| ");
@@ -42,12 +49,23 @@ char *doWhiteCross(cube* self){
 
 			}
 			else if(getFaceColor(self,e.tiles[1]) == 'w'){
+                fprintf(stderr, "before call\n");
+                strPosition = positionCommand(self, getFaceColor(self,e.tiles[0]),'y');
+                fprintf(stderr, "after call\n");
+                fprintf(stderr, "in doWhiteCross() 53 : strPosition is [%s]\n", strPosition);
 				strcat(movements,positionCommand(self, getFaceColor(self,e.tiles[0]),'y'));
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				//strcat(movements," ");
 				positionCube(self,getFaceColor(self,e.tiles[0]),'y');
 			}
 			else{
+                fprintf(stderr, "before call\n");
+                strPosition = positionCommand(self, getFaceColor(self,e.tiles[1]),'y');
+                fprintf(stderr, "after call\n");
+
+                fprintf(stderr, "in doWhiteCross() 63 : strPosition is [%s]\n", strPosition);
 				strcat(movements,positionCommand(self, getFaceColor(self,e.tiles[1]),'y'));
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				//strcat(movements," ");
 				positionCube(self,getFaceColor(self,e.tiles[1]),'y');
 			}
@@ -57,6 +75,7 @@ char *doWhiteCross(cube* self){
 					self->rotate(self,F);
 					e = searchWhiteEdge(self, colors[i]);
 					strcat(movements, "F ");
+                    fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				}
 			}
 			else{
@@ -69,6 +88,7 @@ char *doWhiteCross(cube* self){
 					self->rotate(self,U);
 					self->rotate(self,Fi);
 					strcat(movements, "F U Fi ");
+                    fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				}			
 				else if(e.tiles[0].col == 0 && e.tiles[1].col == 2){
 					debug("stuck2");
@@ -77,12 +97,14 @@ char *doWhiteCross(cube* self){
 					self->rotate(self,U);
 					self->rotate(self,F);
 					strcat(movements, "Fi U F ");
+                    fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				}
 				else if((isEdgeOnFace(e,D)) && (self->cube[U][2][1] != 'w' && self->cube[F][0][1] != 'w')){
 					debug("else if 2");
 					printCube(self);
 					self->rotate(self,F2);
 					strcat(movements, "F2 ");
+                    fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				}
 
 				else if((isEdgeOnFace(e,D)) && (self->cube[F][0][1] == 'w' || self->cube[U][2][1] == 'w')){
@@ -91,15 +113,19 @@ char *doWhiteCross(cube* self){
 					while(self->cube[F][0][1] == 'w' || self->cube[U][2][1] == 'w'){
 						self->rotate(self,U);
 						strcat(movements, "U ");
+                    fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 					}
 					self->rotate(self,F2);
 					strcat(movements, "F2 ");//Case where two edges are on the same column
+                    fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 				}
 				else{
 					printEdge(self, e);	
 					printCube(self);
 					if(getColorTile(self,e.tiles[1]) != 'w' && getColorTile(self,e.tiles[1]) != 'y' ){
 												strcat(movements,positionCommand(self, getColorTile(self,e.tiles[1]),'y'));
+                                                
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 positionCube(self,getColorTile(self,e.tiles[1]),'y');
 
 						while(((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[1])) || (self->cube[F][0][1] != getColorTile(self,e.tiles[1])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) && ((getColorTile(self,e.tiles[1]) != self->cube[F][1][1]))) {
@@ -111,12 +137,15 @@ positionCube(self,getColorTile(self,e.tiles[1]),'y');
 						printCube(self);
 						self->rotate(self,U);
 						strcat(movements, "U ");
+
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 						debug("caseii 1");
 					}
 					else
 					{
 						debug("case 2");
 												strcat(movements,positionCommand(self, getColorTile(self,e.tiles[0]),'y'));
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 positionCube(self,getColorTile(self,e.tiles[0]),'y');
 
 
@@ -146,6 +175,7 @@ positionCube(self,getColorTile(self,e.tiles[0]),'y');
 						self->rotate(self,F);
 						self->rotate(self,R);
 						strcat(movements, "Ui Ri F R ");
+                        fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 					}
 
 
@@ -167,6 +197,7 @@ positionCube(self,getColorTile(self,e.tiles[0]),'y');
 			//	debug("for");
 			e = searchWhiteEdge(self, colors[i]);
 			strcat(movements,positionCommand(self, colors[i], 'y'));
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 			//strcat(movements," ");
 
 			positionCube(self,colors[i],'y');
@@ -179,6 +210,7 @@ positionCube(self,getColorTile(self,e.tiles[0]),'y');
 						//	debug("if 1");
 						self->rotate(self,F2);
 						strcat(movements, "F2 ");
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 					}
 					else if(self->cube[F][0][1] == 'w' && self->cube[U][2][1] == self->cube[F][1][1] ){
 
@@ -190,6 +222,7 @@ positionCube(self,getColorTile(self,e.tiles[0]),'y');
 						self->rotate(self,R);
 
 						strcat(movements, "Ui Ri F R ");
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 						//printCube(self);
 					}
 					else{
@@ -198,6 +231,7 @@ positionCube(self,getColorTile(self,e.tiles[0]),'y');
 						//	printCube(self);
 						self->rotate(self,U);
 						strcat(movements, "U ");
+                fprintf(stderr, "after strcat, movements = [%s]\n", movements);
 					}
 					e = searchWhiteEdge(self, colors[i]);
 				}
