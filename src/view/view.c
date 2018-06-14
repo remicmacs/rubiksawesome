@@ -12,13 +12,13 @@ static SDL_Keycode konamiCode[] = {SDLK_UP, SDLK_UP, SDLK_DOWN, SDLK_DOWN,
 
 
 void setSDL() {
-  /** Initialize SDL */
+  /* Initialize SDL */
   if (SDL_Init(SDL_INIT_VIDEO) != 0) {
     SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
     exit(1);
   }
 
-  /** Enabling SDL multisampling (antialiasing) */
+  /* Enabling SDL multisampling (antialiasing) */
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
@@ -28,14 +28,14 @@ void setSDL() {
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
   SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-  /** Intialize sound */
+  /* Intialize sound */
   if (Mix_OpenAudio(24000, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1) {
     printf("%s", Mix_GetError());
     exit(2);
   }
   Mix_AllocateChannels(2);
 
-  /** Display SDL version */
+  /* Display SDL version */
   SDL_version sdlVersion;
   SDL_VERSION(&sdlVersion);
   printf("SDL version: %d.%d.%d\n", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
@@ -48,7 +48,7 @@ void setSDL() {
 
 
 camera generateCamera() {
-  /** Set the camera starting position */
+  /* Set the camera starting position */
   camera mainCamera;
   mainCamera.position = (vector3) {0, 0, 0};
   mainCamera.angles = (vector3) {8, - 3 * PI / 4, PI / 3};
@@ -75,12 +75,12 @@ rubikview generateView() {
   SDL_CreateRenderer(mainView.mainWindow, -1, 0);
   SDL_GL_CreateContext(mainView.mainWindow);
 
-  /** Set up of the projection matrix to use perspective */
+  /* Set up of the projection matrix to use perspective */
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(70, (double)800 / 600, 1, 1000);
 
-  /** Enable depth testing (allows objects to hide each others) */
+  /* Enable depth testing (allows objects to hide each others) */
   glEnable(GL_DEPTH_TEST);
 
   /*
@@ -90,14 +90,14 @@ rubikview generateView() {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
-  /** Enable lighting */
+  /*Enable lighting */
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
 
-  /** Enable OpenGL multisampling (antialiasing) */
+  /* Enable OpenGL multisampling (antialiasing) */
   glEnable(GL_MULTISAMPLE);
 
-  /** Create light components and assign them to GL_LIGHT0 */
+  /* Create light components and assign them to GL_LIGHT0 */
   GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
   GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
   GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
@@ -107,7 +107,7 @@ rubikview generateView() {
   glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
   glLightfv(GL_LIGHT0, GL_POSITION, position);
 
-  /** Print OpenGL version */
+  /* Print OpenGL version */
   printf("OpenGL version: %s\n", glGetString(GL_VERSION));
   fflush(stdout);
 
@@ -158,14 +158,14 @@ rubikview generateView() {
 
 
 void showHelpWindow(rubikview * mainView) {
-  /** Set the flags */
+  /* Set the flags */
   mainView->windowToDisplay = false;
   mainView->windowDisplayed = true;
 
-  /** Destroy the current window if it exists */
+  /* Destroy the current window if it exists */
   SDL_DestroyWindow(mainView->solveWindow);
 
-  /** Create the new window */
+  /* Create the new window */
   mainView->solveWindow = SDL_CreateWindow("Help",
                                            SDL_WINDOWPOS_UNDEFINED,
                                            SDL_WINDOWPOS_UNDEFINED,
@@ -186,21 +186,21 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   if (animStackPtr != NULL) {
     imageChanged = true;
 
-    /** Start the animation stack if it is not started */
+    /* Start the animation stack if it is not started */
     if (!animStackPtr->hasStarted) {
       animStackPtr->start(animStackPtr, mainView->sndStore.rumbling);
     }
 
-    /** Update the animation */
+    /* Update the animation */
     animStackPtr->update(animStackPtr, mainView->rubikCube);
 
-    /** Remove it if finished */
+    /* Remove it if finished */
     if (animStackPtr->isFinished) {
       removeAnimationStack(&mainView->animStack, animStackPtr);
     }
   }
 
-  /** Show the help window if we previously entered the konami code */
+  /* Show the help window if we previously entered the konami code */
   if (mainView->windowToDisplay) {
     showHelpWindow(mainView);
     imageChanged = true;
@@ -257,13 +257,13 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
     if (keyPressed) {
       int * konamiCount = &mainView->konamiCount;
 
-      /** Konami code state machine. Wow ! Two lines only, for real */
+      /* Konami code state machine. Wow ! Two lines only, for real */
       // if (event.key.keysym.sym == konamiCode[*konamiCount]) (*konamiCount)++;
       // else *konamiCount = 0;
-      /** Okay, this one is one line */
+      /* Okay, here is a oneliner */
       *konamiCount += event.key.keysym.sym == konamiCode[*konamiCount] ? 1 : -*konamiCount;
 
-      /** Make a solution request if konami code has been typed */
+      /* Make a solution request if konami code has been typed */
       if (*konamiCount == 10) {
         enqueue(moveQueue, SOLVE_PLS);
         mainView->windowToDisplay = true;
@@ -272,18 +272,18 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       }
     }
 
-    /** Press I to show the instructions overlay */
+    /*Press I to show the instructions overlay */
     if (event.key.keysym.sym == SDLK_i && keyPressed) {
       mainView->instructionsDisplayed = !mainView->instructionsDisplayed;
       imageChanged = true;
     }
 
-    /** Press escape to quit */
+    /*Press escape to quit */
     if (event.key.keysym.sym == SDLK_ESCAPE && keyPressed) {
       closeWindow();
     }
 
-    /** FOR DEBUGGING PURPOSE ONLY : Win/unwin the game */
+    /*FOR DEBUGGING PURPOSE ONLY : Win/unwin the game */
     if (event.key.keysym.sym == SDLK_F10 && keyPressed) {
       mainView->gameWon = !mainView->gameWon;
       if (mainView->gameWon) {
@@ -292,7 +292,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       imageChanged = true;
     }
 
-    /** Press F2 to start a new game */
+    /*Press F2 to start a new game */
     if(event.key.keysym.sym == SDLK_F2 && keyPressed) {
       enqueue(moveQueue, RESTART);
     }
@@ -305,7 +305,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       continue;
     }
 
-    /** Make a move request in case a key has been pressed */
+    /*Make a move request in case a key has been pressed */
     if (keyPressed) {
       move newMove = getNextMove(event.key.keysym.sym, keyShortcut);
       if (newMove != (move)-1) {
@@ -325,7 +325,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
     }
   }
 
-  /** Clear the screen */
+  /*Clear the screen */
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /*
@@ -335,13 +335,13 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  /** Set the camera position and orientation */
+  /*Set the camera position and orientation */
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
-  /** Draw the skybox before anything */
+  /*Draw the skybox before anything */
   drawSkybox(mainView->texStore.skybox);
 
-  /** Set the lightings parameters */
+  /*Set the lightings parameters */
   GLfloat light_diffuse[] = {1, 1, 1, 1};
   GLfloat light_specular[] = {0.9, 0.9, 0.9, 1};
 
@@ -351,7 +351,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   glMateriali(GL_FRONT, GL_SHININESS, 96);
   glEnable(GL_COLOR_MATERIAL);
 
-  /** Draw the 3D stuffs */
+  /*Draw the 3D stuffs */
   drawCubes(mainView->rubikCube);
   if (mainView->instructionsDisplayed) {
     drawInstructions(mainView->instructions, keyShortcut);
@@ -383,31 +383,31 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   glPushMatrix();
   glLoadIdentity();
 
-  /** Start drawing in 2D */
+  /*Start drawing in 2D */
   glEnable(GL_TEXTURE_2D);
 
-  /** Draw history, xyz instruction and the winning creepy guy if needed */
+  /*Draw history, xyz instruction and the winning creepy guy if needed */
   drawHistory(mainView->texStore, moveStack);
   drawXYZInstruction(mainView->texStore, keystate[SDL_SCANCODE_LSHIFT]);
   if (mainView->gameWon) {
     drawWinning(mainView->texStore);
   }
 
-  /** Stop drawin in 3D */
+  /*Stop drawin in 3D */
   glDisable(GL_TEXTURE_2D);
 
-  /** We pop the projection and modelview matrices we used in 2D */
+  /*We pop the projection and modelview matrices we used in 2D */
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
-  /** We reenable the lights and depth testing for 3D */
+  /*We reenable the lights and depth testing for 3D */
   glDepthMask(GL_TRUE);
   glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 
-  /** Displaying final screen */
+  /*Displaying final screen */
   glFlush();
   SDL_GL_SwapWindow(mainView->mainWindow);
 
@@ -418,9 +418,8 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   if (mainView->windowDisplayed) {
     SDL_Surface * solveSurface = SDL_GetWindowSurface(mainView->solveWindow);
     SDL_FillRect(solveSurface, NULL, SDL_MapRGB(solveSurface->format, 0, 0, 0));
-    move * moves = head(solveMoves, 13);
-    //move * moves = solveMoves;
-    for (int i = 0; i < 13 && (int)moves[i] != -1; i++) {
+    move * moves = head(solveMoves, 11);
+    for (int i = 0; i < 11 && (int)moves[i] != -1; i++) {
       SDL_Rect position;
       position.x = 20 + 70 * i;
       position.y = 20;
@@ -449,7 +448,7 @@ void rotateCamera(camera * self, float zAngle, float yAngle) {
   self->angles.y -= yAngle;
   self->angles.z -= zAngle;
 
-  /** Limit the z angle so we don't get upside down */
+  /*Limit the z angle so we don't get upside down */
   if (self->angles.z < 0) {
     self->angles.z = 0.000001;
   } else if (self->angles.z > PI) {
@@ -464,14 +463,14 @@ void zoomCamera(camera * self, bool positive) {
   if (positive) {
     self->angles.x -= 0.1;
 
-    /** Limit the near distance to 4 */
+    /*Limit the near distance to 4 */
     if (self->angles.x < 4) {
       self->angles.x = 4;
     }
   } else {
     self->angles.x += 0.1;
 
-    /** Limit the far distance to 50 */
+    /*Limit the far distance to 50 */
     if (self->angles.x > 50) {
       self->angles.x = 50;
     }
@@ -615,57 +614,58 @@ void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw) {
 move getNextMove(SDL_Keycode keysym, int keyShortcut) {
   move nextMove = (move)-1;
 
-  // DOWN ROTATION
+  /* Rotate the down face */
   if (keysym == SDLK_d) {
     move moves[] = {D, d, Di, di};
     nextMove = moves[keyShortcut];
   }
 
-  // UP ROTATION
+  /* Rotate the up face */
   if (keysym == SDLK_u) {
     move moves[] = {U, u, Ui, ui};
     nextMove = moves[keyShortcut];
   }
 
-  // RIGHT ROTATION
+  /* Rotate the right face */
   if (keysym == SDLK_r) {
     move moves[] = {R, r, Ri, ri};
     nextMove = moves[keyShortcut];
   }
 
-  // LEFT ROTATION
+  /* Rotate the left face */
   if (keysym == SDLK_l) {
     move moves[] = {L, l, Li, li};
     nextMove = moves[keyShortcut];
   }
 
-  // FRONT ROTATION
+  /* Rotate the front face */
   if (keysym == SDLK_f) {
     move moves[] = {F, f, Fi, fi};
     nextMove = moves[keyShortcut];
   }
 
-  // BACK ROTATION
+  /* Rotate the back face */
   if (keysym == SDLK_b) {
     move moves[] = {B, b, Bi, bi};
     nextMove = moves[keyShortcut];
   }
 
-  // X ROTATION
+  /* Rotate the cube around the x axis */
   if (keysym == SDLK_x) {
     nextMove = keyShortcut >= 2 ? xi : x;
   }
 
-  // Y ROTATION
+  /* Rotate the cube around the y axis */
   if (keysym == SDLK_y) {
     nextMove = keyShortcut >= 2 ? yi : y;
   }
 
-  // Z ROTATION
+  /* Rotate the cube around the z axis */
   if (keysym == SDLK_z) {
     nextMove = keyShortcut >= 2 ? zi : z;
   }
 
+  /* Cancel previous move */
   if(keysym == SDLK_BACKSPACE) {
     nextMove = RETURN;
   }
@@ -676,181 +676,242 @@ move getNextMove(SDL_Keycode keysym, int keyShortcut) {
 
 void parseOrder(rubikview * mainView, move order, bool fast) {
   animation * newAnimation;
+
+  /*
+   * Generate an animation stack that will hold all the animations.
+   * We'll add an animation for each slice that need to be animated.
+   */
   animationStack * newAnimStack = generateAnimationStack(mainView->sndStore.rumbling);
+
+  /* Make it instantaneous if fast is true */
   float rotationAngle = fast ? PI / 2 : ROTATION_ANGLE;
   switch (order) {
     case U:
-      newAnimation = generateAnimation(TOP, 2, rotationAngle, true, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case D:
-      newAnimation = generateAnimation(DOWN, 0, rotationAngle, false, &rotateDataZ);
+      newAnimation = generateAnimation(DOWN, 0, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case R:
-      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case L:
-      newAnimation = generateAnimation(LEFT, 0, rotationAngle, false, &rotateDataX);
+      newAnimation = generateAnimation(LEFT, 0, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case F:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case B:
-      newAnimation = generateAnimation(BACK, 2, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(BACK, 2, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case Ui:
-      newAnimation = generateAnimation(TOP, 2, rotationAngle, false, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Di:
-      newAnimation = generateAnimation(DOWN, 0, rotationAngle, true, &rotateDataZ);
+      newAnimation = generateAnimation(DOWN, 0, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Ri:
-      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Li:
-      newAnimation = generateAnimation(LEFT, 0, rotationAngle, true, &rotateDataX);
+      newAnimation = generateAnimation(LEFT, 0, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Fi:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case Bi:
-      newAnimation = generateAnimation(BACK, 2, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(BACK, 2, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case u:
-      newAnimation = generateAnimation(TOP, 2, rotationAngle, true, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(TOP, 1, rotationAngle, true, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 1, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case d:
-      newAnimation = generateAnimation(DOWN, 0, rotationAngle, false, &rotateDataZ);
+      newAnimation = generateAnimation(DOWN, 0, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(DOWN, 1, rotationAngle, false, &rotateDataZ);
+      newAnimation = generateAnimation(DOWN, 1, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case r:
-      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, true, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case l:
-      newAnimation = generateAnimation(LEFT, 0, rotationAngle, false, &rotateDataX);
+      newAnimation = generateAnimation(LEFT, 0, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(LEFT, 1, rotationAngle, false, &rotateDataX);
+      newAnimation = generateAnimation(LEFT, 1, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case f:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 1, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case b:
-      newAnimation = generateAnimation(BACK, 2, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(BACK, 2, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(BACK, 1, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(BACK, 1, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case ui:
-      newAnimation = generateAnimation(TOP, 2, rotationAngle, false, rotateDataZ);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(TOP, 1, rotationAngle, false, rotateDataZ);
+      newAnimation = generateAnimation(TOP, 1, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case di:
-      newAnimation = generateAnimation(DOWN, 0, rotationAngle, true, rotateDataZ);
+      newAnimation = generateAnimation(DOWN, 0, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(DOWN, 1, rotationAngle, true, rotateDataZ);
+      newAnimation = generateAnimation(DOWN, 1, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case ri:
-      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false, rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, false, rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case li:
-      newAnimation = generateAnimation(LEFT, 0, rotationAngle, true, rotateDataX);
+      newAnimation = generateAnimation(LEFT, 0, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(LEFT, 1, rotationAngle, true, rotateDataX);
+      newAnimation = generateAnimation(LEFT, 1, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case fi:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 1, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case bi:
-      newAnimation = generateAnimation(BACK, 2, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(BACK, 2, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(BACK, 1, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(BACK, 1, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case x:
-      newAnimation = generateAnimation(RIGHT, 0, rotationAngle, true, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 0, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, true, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, true,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case xi:
-      newAnimation = generateAnimation(RIGHT, 0, rotationAngle, false, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 0, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 2, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, false, &rotateDataX);
+      newAnimation = generateAnimation(RIGHT, 1, rotationAngle, false,
+                                       &rotateDataX);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case y:
-      newAnimation = generateAnimation(TOP, 0, rotationAngle, true, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 0, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(TOP, 2, rotationAngle, true, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(TOP, 1, rotationAngle, true, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 1, rotationAngle, true,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case yi:
-      newAnimation = generateAnimation(TOP, 0, rotationAngle, false, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 0, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(TOP, 2, rotationAngle, false, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 2, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(TOP, 1, rotationAngle, false, &rotateDataZ);
+      newAnimation = generateAnimation(TOP, 1, rotationAngle, false,
+                                       &rotateDataZ);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
     case z:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 2, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 2, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 1, rotationAngle, false, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, false,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
     case zi:
-      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 0, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 2, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 2, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
-      newAnimation = generateAnimation(FRONT, 1, rotationAngle, true, &rotateDataY);
+      newAnimation = generateAnimation(FRONT, 1, rotationAngle, true,
+                                       &rotateDataY);
       addAnimation(&newAnimStack->animations, newAnimation);
       break;
 
@@ -862,6 +923,7 @@ void parseOrder(rubikview * mainView, move order, bool fast) {
 
 
 soundStore generateSoundStore() {
+  /* Uses SDL_Mixer to load the sounds */
   soundStore sndStore;
   sndStore.rumbling = Mix_LoadWAV("res/sounds/rumble.wav");
   sndStore.clapping = Mix_LoadWAV("res/sounds/clapping.wav");
@@ -870,14 +932,16 @@ soundStore generateSoundStore() {
 
 
 void resetView(rubikview * aView) {
-    // Reset camera
+    /* Reset camera */
     aView->mainCamera = generateCamera();
 
-    // Empty the animation stack just to be safe
+    /* Empty the animation stack just to be safe */
     aView->animStack = NULL;
 
-    // Frees the rubikCube
-    // Overkill, just to show off that we planned to free the allocated mem
+    /*
+     *  Frees the rubikCube
+     *  Overkill, just to show off that we planned to free the allocated mem
+     */
     destroyRubikCube(aView->rubikCube);
     aView->rubikCube = generateRubikCube();
     aView->gameWon = false;
@@ -888,6 +952,7 @@ void resetView(rubikview * aView) {
 
 
 void playWinningSequence(rubikview * mainView) {
+  /* Set the flag to true and start the winning sound (clapping) */
   mainView->gameWon = true;
   Mix_PlayChannel(1, mainView->sndStore.clapping, 0);
 }

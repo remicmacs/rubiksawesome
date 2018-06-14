@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
             "/_/_/_/\\/\\/\\ \n"
             "\\_\\_\\_\\/\\/\\/ \n"
             " \\_\\_\\_\\/\\/ \n"
-            "  \\_\\_\\_\\/ WELCOME TO RUBIKSAWESOME !!!\n");
+            "  \\_\\_\\_\\/ \nWELCOME TO RUBIKSAWESOME !!!\n");
     mode gameMode = argParsing(argc, argv); // Identify game mode
 
     // Initializing data and graphic environment

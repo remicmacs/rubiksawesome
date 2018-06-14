@@ -6,12 +6,11 @@
 
 void displayUsage()
 {
-    printf("Welcome in Rubiksawesome !!\n");
     printf("Usage is :\n\t./rubiksawesome [-option [scramble str]]\n");
     printf("Options are\n\t-S [scramble str] : scramble the cube to a randomly"
             " generated scramble (default behavior)\n\t\tor to a scramble"
             " sequence passed as a double quote delimited string\n");
-    printf("\t-C : start the came with a completed Rubik's Cube yours to"
+    printf("\t-C : start the game with a completed Rubik's Cube yours to"
             " scramble\n");
 }
 
@@ -57,11 +56,9 @@ move * initGame(
         moves = randomScramble(16, 60);
     } else {
         moves = (move *) ec_malloc(sizeof(move));
-        moves[0] = -1;
+        moves[0] = (move)-1;
     } // If the mode is with a completed cube, scramble sequence is empty
 
     scrambleCube(cubeData, mainView, moves);
     return moves;
 }
-
-

@@ -15,7 +15,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
 #include "graphics.h"
 #include "animations.h"
 #include "../model/cube.h"
@@ -68,8 +67,6 @@ typedef struct _rubikview {
                                       the help window */
   bool windowDisplayed;               /**< Flag to indicate that the help
                                       display has been displayed */
-  TTF_Font * font;                    /**< A pointer to the font engine (may
-                                      be removed) */
   void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue solveMoves);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;

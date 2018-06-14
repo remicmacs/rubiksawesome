@@ -31,7 +31,7 @@ rubikcube * generateRubikCube() {
   rubikcube * rubikCube;
   rubikCube = (rubikcube *) malloc(sizeof(rubikcube));
 
-  /** AATMYNTA (Always Allocate The Memory You Need To Allocate) */
+  /* AATMYNTA (Always Allocate The Memory You Need To Allocate) */
   cube3d **** cubes = (cube3d ****) malloc(3 * sizeof(cube3d ***));
   for (int zIndex = -1; zIndex < 2; zIndex++) {
     cube3d *** yCubes = (cube3d ***) malloc(3 * sizeof(cube3d **));
@@ -59,7 +59,7 @@ rubikcube * generateRubikCube() {
 
 cube3d generateCube(transform cubeTransform) {
 
-  /** We build the cube by giving it the faces and the transform structure */
+  /* We build the cube by giving it the faces and the transform structure */
   cube3d mainCube = {
     {
       generateFace(cubeTransform, TOP),
@@ -79,7 +79,7 @@ cube3d generateCube(transform cubeTransform) {
 face generateFace(transform cubeTransform, enum FaceType faceType) {
   face newFace;
 
-  /** We set the basic : positions of the vertices, color and normal */
+  /* We set the basic : positions of the vertices, color and normal */
   switch(faceType) {
     case TOP:
       newFace = (face) {
@@ -157,17 +157,17 @@ face generateFace(transform cubeTransform, enum FaceType faceType) {
       break;
   }
 
-  /** Get the offset */
+  /* Get the offset */
   float xOffset = cubeTransform.position.x;
   float yOffset = cubeTransform.position.y;
   float zOffset = cubeTransform.position.z;
 
-  /** Get the scale */
+  /* Get the scale */
   float xScale = cubeTransform.scale.x;
   float yScale = cubeTransform.scale.y;
   float zScale = cubeTransform.scale.z;
 
-  /** Apply offset and scale to each vertex's position */
+  /* Apply offset and scale to each vertex's position */
   for (int vertexIndex = 0; vertexIndex < 4; vertexIndex++) {
     newFace.corners[vertexIndex].x *= xScale;
     newFace.corners[vertexIndex].x += xOffset;
@@ -353,7 +353,7 @@ instructionDisplay generateInstruction(enum FaceType faceType, textureStore texS
 
 
 void setCubeColour(colour newColour, cube3d * selectedCube) {
-  /** We just change the colour of every faces */
+  /* We just change the colour of every faces */
   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
     selectedCube->faces[faceIndex].faceColour = newColour;
   }
@@ -372,7 +372,7 @@ void drawCubes(rubikcube * rubikCube) {
 
 
 void drawCube(cube3d drawnCube, bool debug) {
-  /** We draw the faces */
+  /* We draw the faces */
   for (int faceIndex = 0; faceIndex < 6; faceIndex++) {
     drawFace(drawnCube.faces[faceIndex], debug);
   }
@@ -391,7 +391,7 @@ void drawFace(face drawnFace, bool debug) {
     faceColour = drawnFace.faceColour;
   }
 
-  /** We set the colour of the vertices */
+  /* We set the colour of the vertices */
   glColor3ub(faceColour.r, faceColour.g, faceColour.b);
 
   // glBegin(GL_QUADS);
