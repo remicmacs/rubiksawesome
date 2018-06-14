@@ -1,41 +1,43 @@
 # TODO
 * Define coding guidelines
 * Choose linter and use pre-commit hook (**Rémi**)
-*  ~~~Set up GitLab server (**Alex**)~~~
-* ~~~Choose graphical engine/library (**Rodolphe**)~~~
-* ~~~Define data structure representing RCube's **state** (**Rémi**)~~~
-* ~~~Create model for 3D representation (**Rodolphe**)~~~
-* ~~~Find website for cube manipulation (**Alex**)~~~
-* ~~~Define file structure hierarchy (folders `src`, `build`, `test`)~~~
-* ~~~Create bulk string command parser~~~
+* ~~Set up GitLab server (**Alex**)~~
+* ~~Choose graphical engine/library (**Rodolphe**)~~
+* ~~Define data structure representing RCube's **state** (**Rémi**)~~
+* ~~Create model for 3D representation (**Rodolphe**)~~
+* ~~Find website for cube manipulation (**Alex**)~~
+* ~~Define file structure hierarchy (folders `src`, `build`, `test`)~~
+* ~~Create bulk string command parser~~
 
 ## Main controller
-* ~~~Setup~~~
- * ~~~3D Cube visualisation~~~
- * ~~~Models initialization~~~
- * ~~~User input interface setup~~~
- * ~~~Return to main loop~~~
+
+* ~~Setup~~
+ * ~~3D Cube visualisation~~
+ * ~~Models initialization~~
+ * ~~User input interface setup~~
+ * ~~Return to main loop~~
 * Main loop?
- * ~~~User input acquisition via SDL~~~
- * ~~~Command dispatch to controller (dripping down)~~~
- * ~~~Command dispatch to view (Bubbling up)~~~
- * ~~~Store command to history~~~
- * ~~~~Move positionCube from model to controller~~~~
+ * ~~User input acquisition via SDL~~
+ * ~~Command dispatch to controller (dripping down)~~
+ * ~~Command dispatch to view (Bubbling up)~~
+ * ~~Store command to history~~
+ * ~~Move positionCube from model to controller~~
 
 ## Data manipulation
-* ~~~Rotations~~~
- * F
- * B
- * R
- * L
- * U
- * D
- * x
- * y
- * z
-* ~~~Rotation modifiers~~~
- * Counter-clockwise
- * Double (only in model)
+
+* ~~Rotations~~
+ * ~~F~~
+ * ~~B~~
+ * ~~R~~
+ * ~~L~~
+ * ~~U~~
+ * ~~D~~
+ * ~~x~~
+ * ~~y~~
+ * ~~z~~
+* ~~Rotation modifiers~~
+ * ~~Counter-clockwise~~
+ * ~~Double~~
 
 ## Documentation
 * Tools justifications
@@ -60,5 +62,5 @@
  * Why a queue for communication
 
 ## Tools
-* ~~~Makefile~~~
-* ~~~.gitignore~~~
+* ~~Makefile~~
+* ~~.gitignore~~

@@ -2,11 +2,13 @@
 
 
 move * commandParser(const char * str) {
-    if (!str) {
-	printf("error");
-        return NULL;
+    if (!str || *(str) == '\0') {
+        move * nothing = (move *) ec_malloc(sizeof(move));
+        *nothing = -1;
+        return nothing;
     } // Check if string exists
 
+    // Making a copy of str
     char * strCopy = (char *) ec_malloc(sizeof(char)*(strlen(str)+1));
     strncpy(strCopy, str, strlen(str));
 
@@ -28,19 +30,9 @@ move * commandParser(const char * str) {
     int index;
     for (index = 0 ; index < tokenNb-1 ; index++) {
         move currentMove = mapCodeToMove(tokens[index]);
-        if ((int) currentMove == -1) {
-            free(moves);
-            return NULL;
-        }
         moves[index] = currentMove;
     }
-
     moves[index] = -1; // Endmark for move array
-
-    if ((int) moves[0] == -1) {
-        free(moves);
-        return NULL;
-    } // If no move is parsed,
 
     free(tokens);
     return moves;

@@ -38,7 +38,8 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
         exitFatal("in positionCommand(), the two faces have to be different");
     } // Exit condition if function not properly invoked
 
-    char * command = NULL;
+    char * command = "";
+    bool firstMove = false;
     cube * copy = aCube->copy(aCube); // Copying data
     int commandSize = 0;
 
@@ -50,6 +51,7 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
     while(copy->cube[++frontPos][1][1] != frontFace); 
 
     if (frontPos != F) {
+        firstMove = !firstMove;
         commandSize = 4;
         command = (char *) malloc(sizeof(char)*commandSize);
         switch(frontPos) {
@@ -74,13 +76,18 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
                 copy->rotate(copy, x2);
                 break;
         }
+    } else {
+        command = (char *) malloc(sizeof(char));
+        strncpy(command, "",1);
     } // According to frontFace center position, choose command
 
-    // Fixing up center position : only one axis has to be solved
+    *(command+commandSize-1) = '\0'; // adding an endmark for safety's sake
+
+        // Fixing up center position : only one axis has to be solved
     // 4 positions are possible, with only one valid
     int upPos = R - 1;
     while(copy->cube[++upPos][1][1] != upFace);
-    if (upFace != U) {
+    if (upPos != U) {
         commandSize += 4;
         command = (char *) realloc(command, sizeof(char) * commandSize);
         switch(upPos) {
@@ -100,6 +107,12 @@ char * positionCommand(cube * aCube, char frontFace, char upFace) {
     }
     destroyCube(copy); // Freeing data copy
     return command;
+}
+
+move * positionCmd(cube * aCube, char frontFace, char upFace) {
+    char * cmd = positionCommand(aCube, frontFace, upFace);
+    move * moves = commandParser(cmd);
+    return moves;
 }
 
 cube * positionCube(cube * aCube, char frontFace, char upFace) {

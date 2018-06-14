@@ -1,15 +1,22 @@
 # Rubiksawesome
-ISEN C Project
-Rémi B.
-Rodolphe H.
-Alexandre T.
+
+[![Works on my machine](https://img.shields.io/badge/Works-on%20my%20machine-green.svg)](https://shields.io/)
+[![ISEN approved](https://img.shields.io/badge/ISEN-approved-green.svg)](https://shields.io/)
+[![Made in C](https://img.shields.io/badge/Made%20in-C-1f425f.svg)](https://shields.io/)
+[![Gluten free](https://img.shields.io/badge/Gluten-free-1f425f.svg)](https://shields.io/)
+[![License CRAPL](https://img.shields.io/badge/License-CRAPL-blue.svg)](https://shields.io/)
+
+<img align="right" src="docs/img/rubiks-cube.png" alt="drawing" width="128px"/>
 
 
-![Logo](docs/img/rubiks-cube.svg)
+Contributors:
+* Rémi B.
+* Rodolphe H.
+* Alexandre T.
 
 > Our whole life is solving puzzles.
 >
-> _<div style="text-align: right"> Erno Rubik </div>_
+> _<div style="text-align: right" width="200px"> [Erno Rubik] </div>_
 
 
 ## Intro
@@ -63,17 +70,20 @@ Key | Function
 `X` | Rotate the cube around X axis
 `Y` | Rotate the cube around Y axis
 `Z` | Rotate the cube around Z axis
+`F2` | Start a new game
+&#8679;&#8679;&#8681;&#8681;&#8678; &#8680;&#8678; &#8680;`B` `A` | Ask for help
+`Esc` | Exit
 
 ## Requirements
 
 Rubiksawesome needs:
 
 ```
-SDL version: 1.2.15
+SDL version: 2.0.8
 OpenGL version: 3.0
 ```
 
-and can be compiled using `gcc` on a GNU/Linux system. 
+and can be compiled using `gcc` on a GNU/Linux system.
 **Windows is not supported, nor it ever will be**.
 
 For documentation generation, `doxygen` is required.
@@ -119,9 +129,13 @@ Options are
 
 ## Documentation
 [`MODEL.md`](MODEL.md) : Description of data model.
+
 [`CONTROLLER.md`](CONTROLLER.md) : Core logic description
+
 [`VIEW.md`](VIEW.md) : 3D display, GUI and main user interface presentation
+
 [`RESOURCES.md`](RESOURCES.md) : Sources of inspiration.
+
 [`TODOs.md`](TODOs.md) : What is done and thus not yet accomplished.
 
 ### File structure

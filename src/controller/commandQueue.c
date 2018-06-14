@@ -105,6 +105,10 @@ void freeQueue(movequeue * queue) {
     free(queue);
 }
 
+void freeStack(movestack * stack) {
+    freeQueue(stack);
+}
+
 move * head(movequeue * queue, int nb) {
     move * moves = (move *) ec_malloc(sizeof(move)*(nb+1));
 
