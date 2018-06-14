@@ -3,6 +3,7 @@
 
 #include "../model/cube.h"
 #include "debugController.h"
+#include "commandParser.h"
 
 /**
  * Compare a cube with a given pattern to see if there is a match

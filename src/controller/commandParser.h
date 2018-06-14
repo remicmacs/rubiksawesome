@@ -24,7 +24,7 @@
  *  [cube.h](../model/cube.h) file @see move
  *
  * @returns : a pointer to a move array. NULL if an incorrect command has been
- * found in the str
+ * found in the str, {-1} if the command string was empty
  */
 move * commandParser(const char * str);
 
