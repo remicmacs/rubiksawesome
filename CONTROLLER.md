@@ -36,7 +36,9 @@ The scrambling functions are composed of one function generating a random sequen
 ### `commandQueue.c`
 This file is a library to manage linked list of `move` as FIFO queues or LIFO stacks.
 
-![A linked list](/home/remi/rubiksawesome/docs/img/linkedlist.png)
+![A linked list](docs/img/linkedlist.png)
+
+
 
 The linked list is made of pointers to `moveLink`, a structure holding the value and the pointer to the next link.
 The type manipulated to manage the queue is, however, a `mvqueue`, initialized with `initQueue()` and provided with a public interface to manipulate the data structure. Our objective was to have a queue system that would be easily manipulated.
@@ -63,32 +65,19 @@ To use the LIFO interface, one should declare and initialize a `mvstack` and use
 
 To use the FIFO interface one should declare and initialize a `mvqueue` and use `enqueue()` and `dequeue()` functions.
 
+Both can use the `isEmpty()` function. The `freeQueue()` and `freeStack()` functions are available to dispose of the data structure when no more wanted. 	 
 
+Some functions where created with the purpose of simplifying `move` arrays manipulation like `mvCat` which provides a similar functionality as `strcat` for strings. However, we did not made the choice of  concatenating arrays directly on the original array, like in the standard string library. We chose to create a new array of moves being the concatenation of the two passed as arguments. 
 
-Some functions where created with the purpose of simplifying `move` arrays
-manipulation like `mvCat` which provides a similar functionality as `strcat` for
-strings. However, we did not made the choice of concatenating arrays in place
-like in the standard string library. We chose to create a new array of moves
-being the concatenation of the two passed as arguments. This choice has been
-made, even if it can cause memory leaks if the developer forgets to free the two
-original arrays when he does not need them anymore. This design choice has been
-made because it was safer than hiding the freeing mechanism in this situation.
-That could lead to segfaults and other problems. Furthermore, computers have way
-more RAM today than in the time when the C standard library was first written,
-so we can allow more memory usage for a little game as this one. If the
-developers are as careful in their use of this function as they are with
-standard allocation, there should be no problem.
+With this choice, bad memory management can cause memory leaks if the developer forgets to free the two original arrays when he does not need them anymore. This design choice has been made to facilitate the memory allocation needed to concatenate two arrays. We thought it was safer to have the memory allocation simplified, hidden and secured even if leaks could happen. Computers have way more RAM today than in the time when the C standard library was first written, so we can allow more memory usage for a little game as this one. If the developers are as careful in their use of this function as they are with standard allocation, there should be no problem.
+
 In the general public interface for a queue of `move` however, there is no need
 for the developer to be aware of mechanisms such as allocation and unallocation of memory. These operations are always the same and there is no ambiguity when someone wants to add or remove an object from the queue. The memory allocation and freeing are therefore masked to the user.
 
 ### `history.c`
-This file holds the logic of the history functionality : how a value is store,
-how it is removed, how to recover the last n moves from it, etc.
+This file holds the logic of the history functionality : how a value is stored, how it is removed.
 It uses mainly the functions of `commandQueue.c`
 
 ### `patternComparator.c`
-This is the file holding the logic to compare cubes between them. Some cubelets
-can be set to `' '`, thus creating a pattern comparator.
-This functionality is at the core of the algorithm solving logic, and to the
-control of the state of the game data. For instance it is used to know if the
-player has beaten the game.
+This is the file holding the logic to compare cubes between them. Some cubelets can be set to `' '` to ignore the value of the cubelet,  thus creating a pattern comparator.
+This functionality is at the core of the algorithm solving logic, and to the control of the state of the game data. For instance it is used to know if the player has beaten the game.
