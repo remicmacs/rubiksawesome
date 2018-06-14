@@ -36,7 +36,9 @@ The scrambling functions are composed of one function generating a random sequen
 ### `commandQueue.c`
 This file is a library to manage linked list of `move` as FIFO queues or LIFO stacks.
 
-![A linked list](/home/remi/rubiksawesome/docs/img/linkedlist.png)
+![A linked list](docs/img/linkedlist.png)
+
+
 
 The linked list is made of pointers to `moveLink`, a structure holding the value and the pointer to the next link.
 The type manipulated to manage the queue is, however, a `mvqueue`, initialized with `initQueue()` and provided with a public interface to manipulate the data structure. Our objective was to have a queue system that would be easily manipulated.
