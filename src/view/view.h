@@ -38,9 +38,12 @@ typedef struct _camera {
 } camera;
 
 
+/**
+ * A structure holding every pointers to the sounds
+ */
 typedef struct _soundStore {
-  Mix_Chunk * rumbling;
-  Mix_Chunk * clapping;
+  Mix_Chunk * rumbling;   /**< Rumbling sound when the slices are moving */
+  Mix_Chunk * clapping;   /**< Clapping sound for the end */
 } soundStore;
 
 
@@ -59,11 +62,14 @@ typedef struct _rubikview {
   bool instructionsDisplayed;         /**< True to show the instructions */
   bool gameWon;                       /**< True if the game is finished */
   int konamiCount;                    /**< State of the konami code */
-  SDL_Window * mainWindow;
-  SDL_Window * solveWindow;
-  bool windowToDisplay;
-  bool windowDisplayed;
-  TTF_Font * font;
+  SDL_Window * mainWindow;            /**< A pointer to the main window */
+  SDL_Window * solveWindow;           /**< A pointer to the help window */
+  bool windowToDisplay;               /**< Flag to indicate the need to display
+                                      the help window */
+  bool windowDisplayed;               /**< Flag to indicate that the help
+                                      display has been displayed */
+  TTF_Font * font;                    /**< A pointer to the font engine (may
+                                      be removed) */
   void (* update)(struct _rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue solveMoves);
   void (* animate)(struct _rubikview * self, move order, bool fast);
 } rubikview;
@@ -93,14 +99,28 @@ void showHelpWindow(rubikview * mainView);
 /**
  * Redraw the view and handle events. This function must be called on every
  * frame.
- * @param mainView The structure holding the view
+ * @param mainView   The structure holding the view
+ * @param moveQueue  A list of the moves that need to be animated
+ * @param moveStack  A list of moves that has been done (history)
+ * @param solveMoves A list of moves that can solve the cube (for the help)
  */
 void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue solveMoves);
 
 
+/**
+ * Rotate the camera around the phi and theta angle
+ * @param self   The camera itself
+ * @param zAngle The theta angle
+ * @param yAngle The phi angle
+ */
 void rotateCamera(camera * self, float zAngle, float yAngle);
 
 
+/**
+ * Zoom the camera (step by step)
+ * @param self     The camera itself
+ * @param positive True if you want to zoom out
+ */
 void zoomCamera(camera * self, bool positive);
 
 
@@ -134,6 +154,12 @@ void rotateDataY(rubikcube * rubikCube, int yIndex, bool ccw);
 void rotateDataZ(rubikcube * rubikCube, int zIndex, bool ccw);
 
 
+/**
+ * Return a move depending on the pressed keys
+ * @param  keysym      The pressed key
+ * @param  keyShortcut An int representing the state of the Shift and Ctrl keys
+ * @return             A move
+ */
 move getNextMove(SDL_Keycode keysym, int keyShortcut);
 
 

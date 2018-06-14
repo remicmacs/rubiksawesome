@@ -84,6 +84,9 @@ typedef struct _rubikcube {
 } rubikcube;
 
 
+/**
+ * A structure holding the ids of the OpenGL's textures for the instructions
+ */
 typedef struct _instructionTextures {
   GLuint id;        /**< The ID for the base texture */
   GLuint ccwId;     /**< The ID for the inverted texture */
@@ -92,6 +95,9 @@ typedef struct _instructionTextures {
 } instructionTextures;
 
 
+/**
+ * A structure for the quad on which the instructions textures are displayed
+ */
 typedef struct _instructionDisplay {
   vector3 corners[4];           /**< The list of corners. Each corner is a
                                 vector representing the position of a vertex */
@@ -100,64 +106,73 @@ typedef struct _instructionDisplay {
 } instructionDisplay;
 
 
+/**
+ * A structure for the quad on which each history's element is displayed
+ */
 typedef struct _historyDisplay {
-  GLuint id;
-  vector3 corners[4];
+  GLuint id;            /**< The id of the OpenGL's texture */
+  vector3 corners[4];   /**< The list of corners */
 } historyDisplay;
 
 
+/**
+ * A structure holding the OpenGL's id and SDL's surface for a texture
+ */
 typedef struct _texture {
-  GLuint id;
-  SDL_Surface * surface;
+  GLuint id;              /**< Id of the OpenGL's texture */
+  SDL_Surface * surface;  /**< The SDL surface of the texture */
 } texture;
 
 
+/**
+ * A structure holding all the textures
+ */
 typedef struct _textureStore {
-  texture up;
-  texture upi;
-  texture upid;
-  texture upd;
+  texture up;         /**< The U instruction */
+  texture upi;        /**< The Ui instruction */
+  texture upid;       /**< The ui instruction */
+  texture upd;        /**< The u instruction */
 
-  texture down;
-  texture downi;
-  texture downid;
-  texture downd;
+  texture down;       /**< The D instruction */
+  texture downi;      /**< The Di instruction */
+  texture downid;     /**< The di instruction */
+  texture downd;      /**< The d instruction */
 
-  texture front;
-  texture fronti;
-  texture frontid;
-  texture frontd;
+  texture front;      /**< The F instruction */
+  texture fronti;     /**< The Fi instruction */
+  texture frontid;    /**< The fi instruction */
+  texture frontd;     /**< The f instruction */
 
-  texture back;
-  texture backi;
-  texture backid;
-  texture backd;
+  texture back;       /**< The B instruction */
+  texture backi;      /**< The Bi instruction */
+  texture backid;     /**< The bi instruction */
+  texture backd;      /**< The b instruction */
 
-  texture right;
-  texture righti;
-  texture rightid;
-  texture rightd;
+  texture right;      /**< The R instruction */
+  texture righti;     /**< The Ri instruction */
+  texture rightid;    /**< The ri instruction */
+  texture rightd;     /**< The r instruction */
 
-  texture left;
-  texture lefti;
-  texture leftid;
-  texture leftd;
+  texture left;       /**< The L instruction */
+  texture lefti;      /**< The Li instruction */
+  texture leftid;     /**< The li instruction */
+  texture leftd;      /**< The l instruction */
 
-  GLuint skybox;
+  GLuint skybox;      /**< The skybox's texture */
 
-  texture xyz;
-  texture xyzi;
+  texture xyz;        /**< The XYZ instruction */
+  texture xyzi;       /**< The XYZi instruction */
 
-  texture x;
-  texture xi;
+  texture x;          /**< The X instruction */
+  texture xi;         /**< The Xi instruction */
 
-  texture y;
-  texture yi;
+  texture y;          /**< The Y instruction */
+  texture yi;         /**< The Yi instruction */
 
-  texture z;
-  texture zi;
+  texture z;          /**< The Z instruction */
+  texture zi;         /**< The Zi instruction */
 
-  texture winner;
+  texture winner;     /**< The picture displayed on winning */
 } textureStore;
 
 
@@ -237,6 +252,10 @@ instructionDisplay generateInstruction(enum FaceType faceType, textureStore texS
 void setCubeColour(colour newColour, cube3d * selectedCube);
 
 
+/**
+ * Draw the cubes of a Rubik's cube
+ * @param rubikCube The Rubik's cube to display
+ */
 void drawCubes(rubikcube * rubikCube);
 
 
@@ -256,6 +275,11 @@ void drawCube(cube3d drawnCube, bool debug);
 void drawFace(face drawnFace, bool debug);
 
 
+/**
+ * Draw the instructions
+ * @param instructions A list of instructions to display
+ * @param keyShortcut  An int representing the states of Shift and Ctrl
+ */
 void drawInstructions(instructionDisplay * instructions, int keyShortcut);
 
 
@@ -268,6 +292,11 @@ void drawInstructions(instructionDisplay * instructions, int keyShortcut);
 void drawInstruction(instructionDisplay drawnInstruction, int keyShortcut);
 
 
+/**
+ * Draw the XYZ or XYZi instruction
+ * @param texStore The texture store to use
+ * @param reversed True to show XYZi
+ */
 void drawXYZInstruction(textureStore texStore, bool reversed);
 
 
@@ -278,9 +307,18 @@ void drawXYZInstruction(textureStore texStore, bool reversed);
 void drawSkybox(GLuint textureId);
 
 
+/**
+ * Draw the history
+ * @param texStore  The texture store to use
+ * @param moveStack A list of moves to display
+ */
 void drawHistory(textureStore texStore, mvstack moveStack);
 
 
+/**
+ * Draw the winning screen
+ * @param texStore The texture store to use
+ */
 void drawWinning(textureStore texStore);
 
 
