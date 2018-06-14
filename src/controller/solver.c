@@ -61,4 +61,23 @@ move * fakeSolve(move * initSequence, mvstack history) {
     return solvesequence;
 }
 
+move * trueSolve(cube *self){
+cube * work = self->copy(self);
 
+move *whiteCross = commandParser(doWhiteCross(tcube));
+move *orientWhiteCorners = commandParser(orientWhiteCorners(work));
+move *placeSecond = commandParser(placeSecondLayer(work));
+move *yellowCross = commandParser(doYellowCross(work));
+move *orientYellowCorners = commandParser(orientYellowCorners(work));
+move *placeEdgesLL = commandParser(placeEdgesLastLayer(work));
+move *orientCornersLL = commandParser(orientCornersLastLayer(work));
+
+destroyCube(work);
+move * temp = mvCat(whiteCross,orientWhiteCorners);
+temp = mvCat(temp, placeSecond);
+//temp = mvCat(temp, yellowCross);
+//temp = mvCat(temp, orientYellowCorners);
+//temp = mvCat(temp, placeEdgesLL);
+//temp = mvCat(temp, orientCornersLL);
+return temp;
+}

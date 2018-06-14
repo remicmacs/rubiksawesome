@@ -89,16 +89,16 @@ char *doWhiteCross(cube* self){
 					printCube(self);
 					if(getColorTile(self,e.tiles[1]) != 'w' && getColorTile(self,e.tiles[1]) != 'y' ){
 						positionCube(self,getColorTile(self,e.tiles[1]),'y');
-						while(((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[1])) || (self->cube[F][0][1] != getColorTile(self,e.tiles[1])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[0])) )&& ((getColorTile(self,e.tiles[1]) != self->cube[F][1][1]  ) )) {
-
+						while(((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[1])) || (self->cube[F][0][1] != getColorTile(self,e.tiles[1])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) && ((getColorTile(self,e.tiles[1]) != self->cube[F][1][1]))) {
 							self->rotate(self,U);
 							e = searchWhiteEdge(self, colors[i]);
 							printCube(self);
 
 						}
 						printCube(self);
-
-						debug("case 1");
+self->rotate(self,U);
+					strcat(movements, "U ");
+						debug("caseii 1");
 					}
 					else
 					{
@@ -375,22 +375,15 @@ bool secondLayerDone(cube *self){
 }
 
 char *orientWhiteCorners(cube *self){
-	//positionCube(self,'g','y');
-
 	corner elt = {0};
 	char *movements = malloc(sizeof(char)*400);
-	printCube(self);
-	//sleep(2);
 	char corners[4][2] = {{'o','b'},{'b','r'},{'r','g'}, {'g','o'}};
-
 	char faceColor;
 	while(!firstLayerDone(self)){
 		for(int i=0; i < 4; i++){
 			elt = searchWhiteCorner(self, corners[i][0], corners[i][1]);
-			printf("Colrs : %c %c\n", corners[i][0], corners[i][1]);
+			//printf("Colors : %c %c\n", corners[i][0], corners[i][1]);
 			printCorner(self,elt);
-			//printCube(self);
-
 			while(!isCornerOnFace(elt,U)){
 				if(getFaceColor(self,elt.tiles[1]) != 'w' && getFaceColor(self,elt.tiles[1]) != 'y' ){
 					faceColor = getFaceColor(self,elt.tiles[1]);
@@ -467,9 +460,7 @@ char *orientWhiteCorners(cube *self){
 			elt = searchWhiteCorner(self, corners[i][0], corners[i][1]);
 		}
 	}
-
 	printCube(self);
-	//sleep(3)
 	return movements;
 }
 
@@ -577,6 +568,7 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,R);
 						strcat(movements, "U R Ui Ri F Ri Fi R U R Ui Ri F Ri Fi R ");
 					}
+
 				}	
 
 				if(isEdgeOnFace(elt,R) && isEdgeOnFace(elt,F)){
@@ -639,7 +631,6 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Fi);
 						self->rotate(self,Ui);
 						self->rotate(self,Ui);
-
 						strcat(movements, "Ui Li U L U F Ui Fi Ui Ui");
 						self->rotate(self,U);
 						self->rotate(self,R);
@@ -666,6 +657,9 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Ui);
 						strcat(movements, "U R Ui Ri F Ri Fi R ");
 					}
+					else{
+						self->rotate(self,Ui);
+						}
 
 				}
 				debug("WTF ? There is no case ?");
