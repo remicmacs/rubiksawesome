@@ -1,12 +1,10 @@
 # Model
 The data model implemented in the program makes the distinction between the
-color of the faces and the position of the cublets.
+color of the faces and the position of the cublets in 3D space.
 
 ## cube.c
-The file `cube.c` implements a pattern mapping of the colors of the **54
-faces**. The data structure is a list of the **six faces** each composed of **9
-cublets faces**.
-This data model is inherently in 2 dimensions, just as an open die pattern
+The file `cube.c` implements a pattern mapping of the colors of the **54 faces** . The data structure is a list of the **six faces** each composed of **9 cublets faces**.
+This data model is inherently in 2 dimensions, just as an opened die pattern.
 
 ![Mapping](docs/cube.svg.png)
 
@@ -44,10 +42,7 @@ Some special moves are also integrated for user interaction
 * `SOLVE_PLS` resolves the cube automatically
 
 ### Data structure
-The data structure of the cube implements an object-oriented-programming-like
-data encapsulation. It carries its interface within itself.  The data is in the 
-`cube` data structure and should only modified _via_ the function pointers
-attached.
+The data structure of the cube implements an object-oriented-programming-like data encapsulation. It carries its interface within itself.  The data is in the `cube` data structure and should only modified _via_ the function pointers attached.
 
 #### Public interface
 The interface functions available are
@@ -56,9 +51,7 @@ The interface functions available are
 * `equals` : to perform a comparison of two cube models
 * `print` : to display the cube in the console
 
-This interface should be enough for data manipulation. All data modification
-should be operated _via_ `rotate` to ensure the modification is performed
-correctly.
+This interface should be enough for data manipulation. All data modification should be operated _via_ `rotate` to ensure the modification is performed correctly.
 The unnecessary logic of data manipulation is hidden in the `.c` file.
 
 For comparison, the cubes are compared after being redressed in the same
