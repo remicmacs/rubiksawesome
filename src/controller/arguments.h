@@ -6,6 +6,8 @@
 #define ARGUMENTS_H
 
 #include <time.h>
+#include <string.h>
+#include <limits.h>
 #include <unistd.h>
 #include "../view/view.h"
 #include "commandParser.h"

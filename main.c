@@ -7,7 +7,6 @@
 #include "src/controller/patternComparator.h"
 
 int main(int argc, char **argv) {
-    srand(time(NULL));                      // Seeding random command
     printf( "    _ _ _\n"
             "  /_/_/_/\\ \n"
             " /_/_/_/\\/\\\n"
@@ -65,11 +64,11 @@ int main(int argc, char **argv) {
           initSequence = initGame(cubeData, &mainView, gameMode, argv);
         } else if (newMove == SOLVE_PLS) {
 
-            /*
-             * Fake solver, remove later
-             */
+            /* Let's call the solver */
             winSequence = trueSolve(cubeData);
-	    printMoveArray(winSequence);
+            printf("Cube solved: \n");
+	          printMoveArray(winSequence);
+            /* We store it in a queue for the view */
             solveQueue = toMvQueue(winSequence);
 
             // TEMPORARY DISPLAY
@@ -94,6 +93,6 @@ int main(int argc, char **argv) {
     }
   }
 
-  closeWindow(&mainView);
+  closeWindow();
   return 0;
 }

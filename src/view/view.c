@@ -283,6 +283,15 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       closeWindow();
     }
 
+    /*FOR DEBUGGING PURPOSE ONLY : solve the game automatically */
+    if (event.key.keysym.sym == SDLK_F12 && keyPressed && mainView->windowDisplayed) {
+      move * moves = toMvArray(solveMoves);
+      for (int i = 0; (int)moves[i] != -1; i++) {
+        enqueue(moveQueue, moves[i]);
+      }
+      imageChanged = true;
+    }
+
     /*FOR DEBUGGING PURPOSE ONLY : Win/unwin the game */
     if (event.key.keysym.sym == SDLK_F10 && keyPressed) {
       mainView->gameWon = !mainView->gameWon;

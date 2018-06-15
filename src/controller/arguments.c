@@ -12,10 +12,23 @@ void displayUsage()
             " sequence passed as a double quote delimited string\n");
     printf("\t-C : start the game with a completed Rubik's Cube yours to"
             " scramble\n");
+    printf("\t-s [seed] : A seed for the scrambling, between 0 "
+            "and 2147483647\n");
 }
 
 mode argParsing(int argc, char ** argv)
 {
+    unsigned int seed = time(NULL);
+    if (argc == 3 && (strcmp(argv[1], "-s") == 0)) {
+        char * next;
+        seed = strtol(argv[2], &next, 10) % INT_MAX;
+        srand(seed);
+        printf("Seed is: %d\n", seed);
+        return NORMAL;
+    }
+    srand(seed);
+    printf("Seed is: %d\n", seed);
+
     if (argc < 2) return NORMAL;
     if (argc > 3) {
         displayUsage();
@@ -34,8 +47,9 @@ mode argParsing(int argc, char ** argv)
             displayUsage();
             exit(1);
         }
-    return gameMode;
+        return gameMode;
    }
+
     displayUsage();
     exit(1);
     return gameMode;
