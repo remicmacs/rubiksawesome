@@ -65,7 +65,7 @@ move * trueSolve(cube *self){
 cube * work = self->copy(self);
 
 
-move * doWhiteCross = commandParser(whiteCross);
+move *whiteCross = commandParser(doWhiteCross(work));
 move *whiteCorners = commandParser(orientWhiteCorners(work));
 move *placeSecond = commandParser(placeSecondLayer(work));
 move *yellowCross = commandParser(doYellowCross(work));
@@ -74,7 +74,7 @@ move *placeEdgesLL = commandParser(placeEdgesLastLayer(work));
 move *orientCornersLL = commandParser(orientCornersLastLayer(work));
 
 destroyCube(work);
-move * temp = mvCat(doWhiteCross,whiteCorners);
+move * temp = mvCat(whiteCross,whiteCorners);
 temp = mvCat(temp, placeSecond);
 temp = mvCat(temp, yellowCross);
 temp = mvCat(temp, yellowCorners);
