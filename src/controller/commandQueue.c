@@ -183,15 +183,11 @@ move * mvCat(move * array1, move * array2) {
         *(arrayCat+i) = *(array1+i);
     }
 
-    fprintf(stderr, "in mvCat() : first array is added = ");
-    printMoveArray(arrayCat);
     i-=1;
     for ( ; i-size1 <= size2 ; i++) {
         *(arrayCat+i) = *(array2+(i-size1));
     }
 
-    fprintf(stderr, "in mvCat() : second array is added = ");
-    printMoveArray(arrayCat);
     return arrayCat;
 }
 

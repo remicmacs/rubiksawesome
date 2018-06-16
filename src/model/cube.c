@@ -764,6 +764,23 @@ _Bool cubeIsEqual(cube * self, cube * otherCube){
 }
 
 void printCube(cube * self){
+    //debug("Entering printCube()");
+    if (self == NULL)
+        fprintf(stderr, "self Null pointer\n");
+    if (self->cube == NULL)
+        fprintf(stderr, "self->cube Null pointer\n");
+
+    for (int i = 0 ; i < 6 ; i++) {
+        if(self->cube[i] == NULL)
+            fprintf(stderr, "Face is NULL\n");
+        for(int j = 0 ; j < 3 ; j++) {
+            if (self->cube[i][j] == NULL)
+                fprintf(stderr, "Line is NULL\n");
+        }
+    }
+
+
+
     // Hello, I'm a fprintf statement with issues
     fprintf(stderr, "\n        |%c|%c|%c|\n        |%c|%c|%c|\n        |%c|%c|%c|\n\
  |%c|%c|%c||%c|%c|%c||%c|%c|%c||%c|%c|%c|\n\
@@ -788,6 +805,8 @@ void printCube(cube * self){
             self->cube[D][0][0],self->cube[D][0][1], self->cube[D][0][2],
             self->cube[D][1][0],self->cube[D][1][1], self->cube[D][1][2],
             self->cube[D][2][0],self->cube[D][2][1], self->cube[D][2][2]);
+            fflush(stderr);
+            fflush(stdout);
 }
 //////////////////////////////////////////////////////////////////////////////
 
