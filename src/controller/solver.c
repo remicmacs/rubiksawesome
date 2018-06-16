@@ -69,29 +69,43 @@ move * trueSolve(cube *self){
     move *whiteCross = commandParser(whiteCrossStr);
     free(whiteCrossStr);
 
-    fprintf(stderr, "return from doWhiteCross(), cube is :");
-    printCube(work);
     if ( goal->equals(goal, work)) {
         return expandCommand(whiteCross);
     }
 
-    return expandCommand(whiteCross);
+    //return expandCommand(whiteCross);
 
-    /*
+    fprintf(stderr, "After doWhiteCross(), so far so good\n");
+    move * disp = whiteCross;
+    printMoveArray(disp);
+    printCube(work);
+    
     char * whiteCornersStr = orientWhiteCorners(work);
     move * whiteCorners = commandParser(whiteCornersStr);
     free(whiteCornersStr);
+    move * tempdisp = disp;
+    disp = mvCat(whiteCorners, whiteCorners);
+    free(tempdisp);
+    fprintf(stderr, "After orientWhiteCorners(), so far so good\n");
+    printMoveArray(disp);
+    printCube(work);
     char * placeSecondStr = placeSecondLayer(work);
     move * placeSecond = commandParser(placeSecondStr);
     free(placeSecondStr);
-
-    move * disp = mvCat(whiteCorners, placeSecond);
+    tempdisp = disp;
+    disp = mvCat(whiteCorners, placeSecond);
+    free(tempdisp);
+    fprintf(stderr, "After placeSecondLayer(), so far so good\n");
     printMoveArray(disp);
+    printCube(work);
 
     char * yellowCrossStr = doYellowCross(work);
     move * yellowCross = commandParser(yellowCrossStr);
     free(yellowCrossStr);
-    disp = mvCat(disp, placeSecond);
+    tempdisp = disp;
+    disp = mvCat(disp, yellowCross);
+    free(tempdisp);
+    fprintf(stderr, "After doYellowCross(), so far so good\n");
     printMoveArray(disp);
     printCube(work);
 
@@ -99,14 +113,35 @@ move * trueSolve(cube *self){
     move * yellowCorners = commandParser(yellowCornersStr);
     free(yellowCornersStr);
 
+    tempdisp = disp;
+    disp = mvCat(disp, yellowCorners);
+    free(tempdisp);
+    fprintf(stderr, "After orientYellowCorners(), so far so good\n");
+    printMoveArray(disp);
+    printCube(work);
+
     char * placeEdgesLLStr = placeEdgesLastLayer(work);
     move * placeEdgesLL = commandParser(placeEdgesLLStr);
     free(placeEdgesLLStr);
+    tempdisp = disp;
+    disp = mvCat(disp, placeEdgesLL);
+    free(tempdisp);
+    fprintf(stderr, "After placeEdgesLastLayer(), so far so good\n");
+    printMoveArray(disp);
+    printCube(work);
 
     char * orientCornersLLStr = orientCornersLastLayer(work);
     move * orientCornersLL = commandParser(orientCornersLLStr);
     free(orientCornersLLStr);
-
+    
+    tempdisp = disp;
+    disp = mvCat(disp, orientCornersLL);
+    free(tempdisp);
+    fprintf(stderr, "After orientCornersLastLayer(), so far so good\n");
+    printMoveArray(disp);
+    printCube(work);
+    
+    /*
     destroyCube(work);
     move * temp = mvCat(whiteCross,whiteCorners);
     free(whiteCross);
@@ -121,7 +156,8 @@ move * trueSolve(cube *self){
     free(placeEdgesLL);
     temp = mvCat(temp, orientCornersLL);
     free(orientCornersLL);
+    */
 
-    return expandCommand(temp); */
+    return expandCommand(disp);
 
 }

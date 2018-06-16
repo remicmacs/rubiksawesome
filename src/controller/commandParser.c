@@ -117,7 +117,7 @@ move * expandCommand(move * moves) {
     move currMove = -1;
     while ((int) (currMove = *moves++) != -1) {
         // Memory reallocation if needed
-        if (allocatedMvs <= usedMvs + 2) {
+        if (allocatedMvs <= usedMvs +2) {
             allocatedMvs *= 2;
             newMoves = (move *) ec_realloc(
                     newMoves,

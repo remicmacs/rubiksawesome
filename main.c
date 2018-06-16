@@ -68,19 +68,13 @@ int main(int argc, char **argv) {
             /* Let's call the solver */
             //winSequence = expandCommand(fakeSolve(initSequence, moveStack));
             winSequence = trueSolve(cubeData);
-            printf("Cube solved: \n");
-              printMoveArray(winSequence);
             /* We store it in a queue for the view */
             solveQueue = toMvQueue(winSequence);
 
             // TEMPORARY DISPLAY
-            int index = -1;
-            move aMove = (move)-1;
             fprintf(stderr, "Solving sequence : \n");
-            while((int) (aMove = winSequence[++index]) != -1) {
-              fprintf(stderr, "[%s]", mapMoveToCode(aMove));
-            }
-            fprintf(stderr, "\n");
+            printQueue(solveQueue);
+
         } else {
           mainView.animate(&mainView, newMove, false);
           cubeData->rotate(cubeData, newMove);

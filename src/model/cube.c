@@ -759,6 +759,7 @@ _Bool cubeIsEqual(cube * self, cube * otherCube){
     // Destroying copies
     destroyCube(aCube);
     destroyCube(bCube);
+    debug("Not an equals pb");
 
     return true;
 }
