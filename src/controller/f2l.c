@@ -719,6 +719,8 @@ char *placeSecondLayer(cube *self){
 				}
 				debug("WTF ? There is no case ?");
 				printCube(self);
+                // TEMPORARY TEST @TODO : FIX
+                return movements;
 			}
 		}
 
