@@ -112,17 +112,18 @@ move * expandCommand(move * moves) {
     if (!moves) exitFatal("in expandCommand(), list of moves should not be NULL");
     int allocatedMvs = 2;
     int usedMvs = 0;
+
     move * newMoves = (move *) ec_malloc(sizeof(move) * (allocatedMvs + 1));
     move currMove = -1;
     while ((int) (currMove = *moves++) != -1) {
         // Memory reallocation if needed
-        if (allocatedMvs >= usedMvs - 2) {
+        if (allocatedMvs <= usedMvs - 2) {
             allocatedMvs *= 2;
             newMoves = (move *) ec_realloc(
                     newMoves,
                     sizeof(move) * (allocatedMvs + 1)
                     );
-        }
+    }
 
         // Copy of moves
         if ((int) currMove < 30) {

@@ -62,24 +62,66 @@ move * fakeSolve(move * initSequence, mvstack history) {
 }
 
 move * trueSolve(cube *self){
-cube * work = self->copy(self);
+    cube * goal = initCube();
+    cube * work = self->copy(self);
 
+    char * whiteCrossStr = doWhiteCross(work);
+    move *whiteCross = commandParser(whiteCrossStr);
+    free(whiteCrossStr);
 
-move *whiteCross = commandParser(doWhiteCross(work));
-move *whiteCorners = commandParser(orientWhiteCorners(work));
-move *placeSecond = commandParser(placeSecondLayer(work));
-move *yellowCross = commandParser(doYellowCross(work));
-move *yellowCorners = commandParser(orientYellowCorners(work));
-move *placeEdgesLL = commandParser(placeEdgesLastLayer(work));
-move *orientCornersLL = commandParser(orientCornersLastLayer(work));
+    fprintf(stderr, "return from doWhiteCross(), cube is :");
+    printCube(work);
+    if ( goal->equals(goal, work)) {
+        return expandCommand(whiteCross);
+    }
 
-destroyCube(work);
-move * temp = mvCat(whiteCross,whiteCorners);
-temp = mvCat(temp, placeSecond);
-temp = mvCat(temp, yellowCross);
-temp = mvCat(temp, yellowCorners);
-temp = mvCat(temp, placeEdgesLL);
-temp = mvCat(temp, orientCornersLL);
-return expandCommand(temp);
+    return expandCommand(whiteCross);
+
+    /*
+    char * whiteCornersStr = orientWhiteCorners(work);
+    move * whiteCorners = commandParser(whiteCornersStr);
+    free(whiteCornersStr);
+    char * placeSecondStr = placeSecondLayer(work);
+    move * placeSecond = commandParser(placeSecondStr);
+    free(placeSecondStr);
+
+    move * disp = mvCat(whiteCorners, placeSecond);
+    printMoveArray(disp);
+
+    char * yellowCrossStr = doYellowCross(work);
+    move * yellowCross = commandParser(yellowCrossStr);
+    free(yellowCrossStr);
+    disp = mvCat(disp, placeSecond);
+    printMoveArray(disp);
+    printCube(work);
+
+    char * yellowCornersStr = orientYellowCorners(work);
+    move * yellowCorners = commandParser(yellowCornersStr);
+    free(yellowCornersStr);
+
+    char * placeEdgesLLStr = placeEdgesLastLayer(work);
+    move * placeEdgesLL = commandParser(placeEdgesLLStr);
+    free(placeEdgesLLStr);
+
+    char * orientCornersLLStr = orientCornersLastLayer(work);
+    move * orientCornersLL = commandParser(orientCornersLLStr);
+    free(orientCornersLLStr);
+
+    destroyCube(work);
+    move * temp = mvCat(whiteCross,whiteCorners);
+    free(whiteCross);
+    free(whiteCorners);
+    temp = mvCat(temp, placeSecond);
+    free(placeSecond);
+    temp = mvCat(temp, yellowCross);
+    free(yellowCross);
+    temp = mvCat(temp, yellowCorners);
+    free(yellowCorners);
+    temp = mvCat(temp, placeEdgesLL);
+    free(placeEdgesLL);
+    temp = mvCat(temp, orientCornersLL);
+    free(orientCornersLL);
+
+    return expandCommand(temp); */
 
 }
