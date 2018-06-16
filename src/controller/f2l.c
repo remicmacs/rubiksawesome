@@ -37,14 +37,7 @@ char *doWhiteCross(cube* self){
 			if(getFaceColor(self,e.tiles[1]) == 'y'){
 				strPosition = positionCommand(self, getFaceColor(self,e.tiles[0]),'y');
 				strcat(movements, strPosition);
-				//sleep(3);
-				//strcat(movements,"||| ");
-				//sleep(3);
-				//printCube(self);
 				positionCube(self,getFaceColor(self,e.tiles[0]),'y');
-				//printCube(self);
-				//sleep(3);
-
 			}
 			else if(getFaceColor(self,e.tiles[1]) == 'w'){
 				strPosition = positionCommand(self, getFaceColor(self,e.tiles[0]),'y');
@@ -54,7 +47,6 @@ char *doWhiteCross(cube* self){
 			}
 			else{
 				strPosition = positionCommand(self, getFaceColor(self,e.tiles[1]),'y');
-
 				strcat(movements,positionCommand(self, getFaceColor(self,e.tiles[1]),'y'));
 				//strcat(movements," ");
 				positionCube(self,getFaceColor(self,e.tiles[1]),'y');
@@ -63,8 +55,9 @@ char *doWhiteCross(cube* self){
 			if(ifPair(self,e,e.tiles[1].face)){
 				while(correctPositionCross(self,e)==false){
 					self->rotate(self,F);
-					e = searchWhiteEdge(self, colors[i]);
 					strcat(movements, "F ");
+					e = searchWhiteEdge(self, colors[i]);
+
 				}
 			} else {
 				debug("So far so good line 71");
@@ -72,124 +65,105 @@ char *doWhiteCross(cube* self){
 				debug("Before printing cube");
 				//printCube(self);
 				if(e.tiles[0].col == 2 && e.tiles[1].col == 0) {
-					debug("stuck1\n");
 					debug("Debug printing cube");
 					printCube(self);
-
 					self->rotate(self,F);
 					self->rotate(self,U);
 					self->rotate(self,Fi);
-
-					debug("Before testing movements");
-					if (movements == NULL)
-						printf("Null\n");
-					fprintf(stderr, "[%s]\n", movements);
-					fprintf(stderr, "After fprintf, before strcat\n");
+//					debug("Before testing movements");
+//					if (movements == NULL)
+//						printf("Null\n");
+//					fprintf(stderr, "[%s]\n", movements);
+//					fprintf(stderr, "After fprintf, before strcat\n");
 					strcat(movements, "F U Fi ");
-				} else if (e.tiles[0].col == 0 && e.tiles[1].col == 2) {
+
+				} 
+				else if (e.tiles[0].col == 0 && e.tiles[1].col == 2) {
 					debug("stuck2\n");
 					debug("Debug printing cube");
 					printCube(self);
-
 					self->rotate(self,Fi);
 					self->rotate(self,U);
 					self->rotate(self,F);
-
-					debug("Before testing movements");
-					if (movements == NULL)
-						printf("Null\n");
-
-					fprintf(stderr, "before strcat %s\n", movements);
+//
+//					debug("Before testing movements");
+//					if (movements == NULL)
+//						printf("Null\n");
+//					fprintf(stderr, "before strcat %s\n", movements);
 					strcat(movements, "Fi U F ");
-				} else if(
-						(isEdgeOnFace(e,D)) 
-						&& (self->cube[U][2][1] != 'w' 
-							&& self->cube[F][0][1] != 'w'
-						   )
-					 ){
+				} 
+				else if((isEdgeOnFace(e,D)) \
+						&& (self->cube[U][2][1] != 'w' \
+							&& self->cube[F][0][1] != 'w'))
+				{
 					debug("else if 2\n");
 					fprintf(stderr, "Cube is :\n");
 					printCube(self);
 					fprintf(stderr, "\n");
 					self->rotate(self,F2);
-					if (movements == NULL)
-						printf("Null\n");
+//					if (movements == NULL)
+//						printf("Null\n");
+//					fprintf(stderr, "[%s]\n", movements);
+					strcat(movements, "F F ");
 					fprintf(stderr, "[%s]\n", movements);
-					strcat(movements, "F2 ");
-					fprintf(stderr, "[%s]\n", movements);
-				} else if(
-						(isEdgeOnFace(e,D)) 
-						&& (
-							self->cube[F][0][1] == 'w' 
-							|| self->cube[U][2][1] == 'w')
-					 ){
-					debug("else if 3\n");
-					printCube(self);
+				} else if((isEdgeOnFace(e,D)) \
+						&& (self->cube[F][0][1] == 'w' \
+							|| self->cube[U][2][1] == 'w'))
+				{
+					//printCube(self);
 					while(self->cube[F][0][1] == 'w' || self->cube[U][2][1] == 'w'){
 						self->rotate(self,U);
 						strcat(movements, "U ");
 					}
 					self->rotate(self,F2);
-					strcat(movements, "F2 ");//Case where two edges are on the same column
+					strcat(movements, "F F ");//Case where two edges are on the same column
 				} else {
 					debug("This is else\n");
 					// printEdge(self, e);
 					// printCube(self);
 
-					if(
-							getColorTile(self,e.tiles[1]) != 'w' 
-							&& getColorTile(self,e.tiles[1]) != 'y' 
-					  ){
-						char color = getColorTile(self,e.tiles[1]);
-						char * str = positionCommand(self, color,'y');
-						fprintf(stderr, "movements : [%s]\n", movements);
-						fprintf(stderr, "str : [%s]\n", str);
-						fprintf(stderr, "color :[%c]\n", color);
-
-						strcat(movements, str);
+					if(getColorTile(self,e.tiles[1]) != 'w' \
+							&& getColorTile(self,e.tiles[1]) != 'y' )
+					{
+						//char color = getColorTile(self,e.tiles[1]);
+						//char * str = positionCommand(self, color,'y');
+						//fprintf(stderr, "movements : [%s]\n", movements);
+						//fprintf(stderr, "str : [%s]\n", str);
+						//fprintf(stderr, "color :[%c]\n", color);
+						//strcat(movements, str);
 						fprintf(stderr, "[%s]\n", movements);
-
+						strPosition = positionCommand(self,getColorTile(self,e.tiles[1]),'y');
+						strcat(movements, strPosition);
 						positionCube(self,getColorTile(self,e.tiles[1]),'y');
-
-						while(((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[1])) || (self->cube[F][0][1] != getColorTile(self,e.tiles[1])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) && ((getColorTile(self,e.tiles[1]) != self->cube[F][1][1]))) {
+						while(((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) \
+									&& (self->cube[U][2][1] != getColorTile(self,e.tiles[1])) \
+									||  (self->cube[F][0][1] != getColorTile(self,e.tiles[1])) \
+									&& (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) \
+								&& ((getColorTile(self,e.tiles[1]) != self->cube[F][1][1]))) {
 							self->rotate(self,U);
+							strcat(movements, "U ");
 							e = searchWhiteEdge(self, colors[i]);
-							printCube(self);
-
 						}
-						printCube(self);
 						self->rotate(self,U);
 						strcat(movements, "U ");
-
-						debug("caseii 1");
 					}
 					else
 					{
-						debug("case 2");
 						strcat(movements,positionCommand(self, getColorTile(self,e.tiles[0]),'y'));
 						positionCube(self,getColorTile(self,e.tiles[0]),'y');
-
-
 						e = searchWhiteEdge(self, colors[i]);
-
-						while((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) && (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) {
-
+						while((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) \
+								&& (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) {
 							self->rotate(self,U);
+							strcat(movements, "U ");
 							e = searchWhiteEdge(self, colors[i]);
-
 						}
 
-
 					}
-
-					printCube(self);
-					//sleep(2);
 					while((self->cube[F][0][1] == 'w' \
 								|| self-> cube[U][2][1] == 'w') \
 							&& !edgePlaced(self)){
-						debug("stuck");
 						e = searchWhiteEdge(self, colors[i]);
-						printEdge(self,e);
 						self->rotate(self,Ui);
 						self->rotate(self,Ri);
 						self->rotate(self,F);
@@ -199,49 +173,30 @@ char *doWhiteCross(cube* self){
 				}
 			}
 			e = searchWhiteEdge(self, colors[i]);
-			//  printEdge(self,e);
-			//  printCube(self);
 		}
 
-		//printCube(self);
-
-		//  debug("boucle1");
 		edge e;
 		char colors[4] ={'o','b','r','g'};
 		for(int i=0; i <4; i++){
-
-			//  debug("for");
 			e = searchWhiteEdge(self, colors[i]);
 			strcat(movements,positionCommand(self, colors[i], 'y'));
-			//strcat(movements," ");
-
 			positionCube(self,colors[i],'y');
 			if(isEdgeOnFace(e,U)){
-				//debug("if 0");
 				while(correctPositionCross(self, e) == false){
-					//  debug("boucle 2");
-					if(self->cube[U][2][1] == 'w' && self->cube[F][0][1] == self->cube[F][1][1] ){
-						//printCube(self);
-						//  debug("if 1");
+					if(self->cube[U][2][1] == 'w' \
+							&& self->cube[F][0][1] == self->cube[F][1][1] ){
 						self->rotate(self,F2);
 						strcat(movements, "F2 ");
 					}
-					else if(self->cube[F][0][1] == 'w' && self->cube[U][2][1] == self->cube[F][1][1] ){
-
-						//  debug("if 2");
-						//  printCube(self);
+					else if(self->cube[F][0][1] == 'w' \
+							&& self->cube[U][2][1] == self->cube[F][1][1] ){
 						self->rotate(self,Ui);
 						self->rotate(self,Ri);
 						self->rotate(self,F);
 						self->rotate(self,R);
-
 						strcat(movements, "Ui Ri F R ");
-						//printCube(self);
 					}
 					else{
-
-						//debug("else");
-						//  printCube(self);
 						self->rotate(self,U);
 						strcat(movements, "U ");
 					}
@@ -249,16 +204,9 @@ char *doWhiteCross(cube* self){
 				}
 				e = searchWhiteEdge(self, colors[i]);
 			}
-			//printCube(self);
 		}
 	}
-	//debug("fin");
-	//printCube(self);
-	//sleep(3);
-	//  free(self);
-	//  free(orient);
-
-	//  positionCube(self,'g','w');
+	printf("My movements : %s",movements);
 	return movements;
 }
 

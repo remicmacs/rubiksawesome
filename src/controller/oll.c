@@ -113,7 +113,9 @@ char * orientYellowCorners(cube *self){
     char *movements = ec_malloc(sizeof(char)*100001);
     printCube(self);
     while(!yellowFaceDone(self)){
-        if(self->cube[F][0][0] == 'y' && self->cube[L][0][0] == 'y' && self->cube[R][0][0] == 'y' )
+        if(self->cube[F][0][0] == 'y' \
+			&& self->cube[L][0][0] == 'y'\
+		       	&& self->cube[R][0][0] == 'y' )
         {
             rightOLL(self,movements,1);
         }
@@ -123,27 +125,42 @@ char * orientYellowCorners(cube *self){
         {
             leftOLL(self,movements,1);
         }
-        else if(self->cube[R][0][2] == 'y' && self->cube[R][0][0] == 'y' && self->cube[U][2][0] == 'y' && self->cube[U][0][0] == 'y'  )
+        else if(self->cube[R][0][2] == 'y' \
+			&& self->cube[R][0][0] == 'y' \
+			&& self->cube[U][2][0] == 'y' \
+			&& self->cube[U][0][0] == 'y'  )
         {
             rightOLL(self,movements,1);
             leftOLL(self,movements,1);
         }
-        else if(self->cube[F][0][2] == 'y' && self->cube[B][0][0] == 'y' && self->cube[U][2][0] == 'y' && self->cube[U][0][0] == 'y'  )
+        else if(self->cube[F][0][2] == 'y' \
+			&& self->cube[B][0][0] == 'y' \
+			&& self->cube[U][2][0] == 'y' \
+		     	&& self->cube[U][0][0] == 'y'  )
         {
             rightOLL(self,movements,1);
             leftOLL(self,movements,1);
             rightOLL(self,movements,1);
             leftOLL(self,movements,1);
         }
-        else if(self->cube[U][0][0] == 'y' && self->cube[U][2][2] == 'y' && self->cube[L][0][2] == 'y' && self->cube[B][0][0] == 'y'  )
+        else if(self->cube[U][0][0] == 'y' \
+			&& self->cube[U][2][2] == 'y' \
+			&& self->cube[L][0][2] == 'y' \
+			&& self->cube[B][0][0] == 'y'  )
         {
             leftOLL(self,movements,1);
         }
-        else if(self->cube[F][0][0] == 'y' && self->cube[F][0][2] == 'y' && self->cube[B][0][2] == 'y' && self->cube[B][0][0] == 'y'  )
+        else if(self->cube[F][0][0] == 'y' \
+			&& self->cube[F][0][2] == 'y' \
+		       	&& self->cube[B][0][2] == 'y' \
+			&& self->cube[B][0][0] == 'y'  )
         {
             rightOLL(self,movements,2);
         }
-else if(self->cube[L][0][2] == 'y' && self->cube[R][0][0] == 'y' && self->cube[B][0][2] == 'y' && self->cube[B][0][0] == 'y'  )
+else if(self->cube[L][0][2] == 'y' \
+		&& self->cube[R][0][0] == 'y' \
+		&& self->cube[B][0][2] == 'y' \
+		&& self->cube[B][0][0] == 'y'  )
         {   
             rightOLL(self,movements,1);
             self->rotate(self,U);
@@ -165,13 +182,14 @@ else if(self->cube[L][0][2] == 'y' && self->cube[R][0][0] == 'y' && self->cube[B
 
 
 int findYellowPattern(cube *self, char * movements){
+strcat(movements,positionCommand(self, 'g', 'y'));
     positionCube(self,'g','y');
-    // bool foundPattern = false;
+    bool foundPattern = false;
     int pattern = 1;
     int rotation = 0;
     debug("findYellowPattern() start");
     // printCube(self);
-    while(/*!foundPattern &&*/ rotation <= 3) {
+    while(!foundPattern && rotation <= 3) {
         if(
             self->cube[U][0][1] == 'y'
             && self->cube[U][1][1] == 'y'
@@ -191,9 +209,9 @@ int findYellowPattern(cube *self, char * movements){
         strcat(movements,"U ");
         rotation++;
     }
-    /*if(!foundPattern){
+    if(!foundPattern){
         return 1;
-    }*/
+    }
     debug("findYellowPattern(), return 1");
     return pattern;
 }
