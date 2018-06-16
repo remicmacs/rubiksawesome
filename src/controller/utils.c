@@ -12,6 +12,8 @@ void * ec_malloc(size_t size) {
 }
 
 void * ec_realloc(void * ptr, size_t size) {
+    if (!ptr)
+        exitFatal("in ec_realloc(), original pointer is NULL");
     ptr = realloc(ptr, size);
 
     if (!ptr)

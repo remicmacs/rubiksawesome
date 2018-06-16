@@ -300,6 +300,13 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       }
       imageChanged = true;
     }
+    
+    /*FOR DEBUGGING PURPOSE ONLY :solve  the game */
+    if (event.key.keysym.sym == SDLK_F11 && keyPressed) {
+        enqueue(moveQueue, SOLVE_PLS);
+        mainView->windowToDisplay = true;
+        imageChanged = true;
+    }
 
     /*Press F2 to start a new game */
     if(event.key.keysym.sym == SDLK_F2 && keyPressed) {

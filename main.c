@@ -7,7 +7,7 @@
 #include "src/controller/patternComparator.h"
 
 int main(int argc, char **argv) {
-    srand(0);                      // Seeding random command
+    srand(1529166728);                      // Seeding random command
     printf( "    _ _ _\n"
             "  /_/_/_/\\ \n"
             " /_/_/_/\\/\\\n"
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
             /* Let's call the solver */
             winSequence = trueSolve(cubeData);
             printf("Cube solved: \n");
-	          printMoveArray(winSequence);
+              printMoveArray(winSequence);
             /* We store it in a queue for the view */
             solveQueue = toMvQueue(winSequence);
 
