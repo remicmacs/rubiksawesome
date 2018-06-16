@@ -740,7 +740,6 @@ _Bool cubeIsEqual(cube * self, cube * otherCube){
     // Copying data to avoid modification
     cube * aCube = copyCube(self);
     cube * bCube = copyCube(otherCube);
-
     redressCube(aCube);
     redressCube(bCube);
 
@@ -759,7 +758,6 @@ _Bool cubeIsEqual(cube * self, cube * otherCube){
     // Destroying copies
     destroyCube(aCube);
     destroyCube(bCube);
-    debug("Not an equals pb");
 
     return true;
 }
