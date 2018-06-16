@@ -7,6 +7,7 @@
 #include "src/controller/patternComparator.h"
 
 int main(int argc, char **argv) {
+    srand(0);                      // Seeding random command
     printf( "    _ _ _\n"
             "  /_/_/_/\\ \n"
             " /_/_/_/\\/\\\n"

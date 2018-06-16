@@ -80,6 +80,6 @@ temp = mvCat(temp, yellowCross);
 temp = mvCat(temp, yellowCorners);
 temp = mvCat(temp, placeEdgesLL);
 temp = mvCat(temp, orientCornersLL);
-return temp;
+return expandCommand(temp);
 
 }
