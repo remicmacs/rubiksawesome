@@ -626,6 +626,8 @@ char *placeSecondLayer(cube *self){
 
 						self->rotate(self,Ui);
 						strcat(movements, "Ui ");
+elt = searchEdge(self, edges[e][0], edges[e][1]);
+
 					}
 
 				}
@@ -666,8 +668,8 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,F);
 						self->rotate(self,Ui);
 						self->rotate(self,Fi);
-						self->rotate(self,Ui);
-						strcat(movements, "Ui Li U L U F Ui Fi Ui ");
+						self->rotate(self,U2);
+						strcat(movements, "Ui Li U L U F Ui Fi U2 ");
 					}
 									else
 					{
@@ -680,6 +682,8 @@ char *placeSecondLayer(cube *self){
 				{
 					self->rotate(self,Ui);
 					strcat(movements, "Ui ");
+elt = searchEdge(self, edges[e][0], edges[e][1]);
+
 				}
 
 				debug("WTF ? There is no case ?");
