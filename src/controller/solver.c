@@ -66,21 +66,22 @@ move * trueSolve(cube *self){
 	cube * work = self->copy(self);
 
 	char * whiteCrossStr = doWhiteCross(work);
-	move *whiteCross = commandParser(whiteCrossStr);
-	free(whiteCrossStr);
-
-	if ( goal->equals(goal, work)) {
-		return expandCommand(whiteCross);
-	}
-
-	//return expandCommand(whiteCross);
-
-	fprintf(stderr, "After doWhiteCross(), so far so good\n");
-	move * disp = whiteCross;
-	printMoveArray(disp);
-	printCube(work);
-
-//	char * whiteCornersStr = orientWhiteCorners(work);
+//	move *whiteCross = commandParser(whiteCrossStr);
+//	free(whiteCrossStr);
+//
+////	if ( goal->equals(goal, work)) {
+////		return expandCommand(whiteCross);
+////	}
+////
+//	//return expandCommand(whiteCross);
+//
+//	fprintf(stderr, "After doWhiteCross(), so far so good\n");
+//	move * disp = whiteCross;
+//	printMoveArray(disp);
+//	printCube(work);
+//
+	char * whiteCornersStr = orientWhiteCorners(work);
+	strcat(whiteCrossStr,whiteCornersStr);
 //	move * whiteCorners = commandParser(whiteCornersStr);
 //	free(whiteCornersStr);
 //	move * tempdisp = disp;
@@ -89,7 +90,10 @@ move * trueSolve(cube *self){
 //	fprintf(stderr, "After orientWhiteCorners(), so far so good\n");
 //	printMoveArray(disp);
 //	printCube(work);
-//	char * placeSecondStr = placeSecondLayer(work);
+	char * placeSecondStr = placeSecondLayer(work);
+	strcat(whiteCrossStr,placeSecondStr);
+move * disp = commandParser(whiteCrossStr);
+
 //	move * placeSecond = commandParser(placeSecondStr);
 //	free(placeSecondStr);
 //	tempdisp = disp;

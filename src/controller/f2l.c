@@ -206,7 +206,6 @@ char *doWhiteCross(cube* self){
 			}
 		}
 	}
-	printf("My movements : %s",movements);
 	return movements;
 }
 
@@ -391,15 +390,11 @@ char *orientWhiteCorners(cube *self){
 	corner elt = {0};
 	char *movements = ec_malloc(sizeof(char)*400);
 	*movements = '\0';
-
-
 	char corners[4][2] = {{'o','b'},{'b','r'},{'r','g'}, {'g','o'}};
 	char faceColor;
 	while(!firstLayerDone(self)){
 		for(int i=0; i < 4; i++){
 			elt = searchWhiteCorner(self, corners[i][0], corners[i][1]);
-			//printf("Colors : %c %c\n", corners[i][0], corners[i][1]);
-			printCorner(self,elt);
 			while(!isCornerOnFace(elt,U)){
 				if(getFaceColor(self,elt.tiles[1]) != 'w' && getFaceColor(self,elt.tiles[1]) != 'y' ){
 					faceColor = getFaceColor(self,elt.tiles[1]);
@@ -415,28 +410,21 @@ char *orientWhiteCorners(cube *self){
 				//printf("face color %c\n",faceColor);
 				strcat(movements,positionCommand(self,faceColor,'y'));
 				positionCube(self,faceColor,'y');
-
 				elt = searchWhiteCorner(self, corners[i][0], corners[i][1]);
-
 				if(isCornerOnFace(elt,R)){
-
 					self->rotate(self,R);
 					self->rotate(self,U);
 					self->rotate(self,Ri);
 					strcat(movements, "R U Ri ");}
 				else{
-
 					self->rotate(self,Li);
 					self->rotate(self,Ui);
 					self->rotate(self,L);
 					strcat(movements, "Li Ui L ");
-
 				}
 				elt = searchWhiteCorner(self, corners[i][0], corners[i][1]);
 
 			}//Moving corner to the top
-
-
 			strcat(movements,positionCommand(self,corners[i][0],'y'));
 			positionCube(self,corners[i][0],'y');
 			elt = searchWhiteCorner(self, corners[i][0], corners[i][1]);
@@ -506,23 +494,15 @@ char *placeSecondLayer(cube *self){
 				strcat(movements,positionCommand(self,colors[faces],'y'));
 				positionCube(self,colors[faces],'y');   
 				elt = searchEdge(self, edges[e][0], edges[e][1]);
-				debug("Hello darkness my old friend, I’m broken down again");
-				if (goal->equals(goal, self))
-					return movements;
-
-				//printEdge(self,elt);
-				//printCube(self);
 				if(isEdgeOnFace(elt,U)){
-					debug("Stuck");
 					while(!isEdgeOnFace(elt,F)){
 						self->rotate(self,U);
 						strcat(movements, "U ");
 						elt = searchEdge(self, edges[e][0], edges[e][1]);
-					} if (
-							self->cube[F][0][1] == self->cube[F][1][1] 
-							&& self->cube[U][2][1] == self->cube[R][1][1] 
-					     ){
-
+					} 
+					if (self->cube[F][0][1] == self->cube[F][1][1] \
+							&& self->cube[U][2][1] == self->cube[R][1][1] )
+					{
 						self->rotate(self,U);
 						self->rotate(self,R);
 						self->rotate(self,Ui);
@@ -532,12 +512,10 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Fi);
 						self->rotate(self,R);
 						strcat(movements, "U R Ui Ri F Ri Fi R ");
-						//printCube(self);
-
-					} else if (
-							self->cube[F][0][1] == self->cube[F][1][1] 
-							&& self->cube[U][2][1] == self->cube[L][1][1]
-						  ){
+					}
+				       	else if (self->cube[F][0][1] == self->cube[F][1][1] \
+							&& self->cube[U][2][1] == self->cube[L][1][1])
+					{
 						self->rotate(self,Ui);
 						self->rotate(self,Li);
 						self->rotate(self,U);
@@ -548,10 +526,10 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Fi);
 						strcat(movements, "Ui Li U L U F Ui Fi ");
 
-					} else if (
-							self->cube[F][0][1] == self->cube[L][1][1] 
-							&& self->cube[U][2][1] == self->cube[F][1][1]
-						  ) {
+					} 
+					else if (self->cube[F][0][1] == self->cube[L][1][1] \ 
+							&& self->cube[U][2][1] == self->cube[F][1][1])
+					{
 						self->rotate(self,Ui);
 						self->rotate(self,Li);
 						self->rotate(self,U);
@@ -569,8 +547,10 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Ui);
 						self->rotate(self,Fi);
 						strcat(movements, "Ui Li U L U F Ui Fi Ui Li U L U F Ui Fi ");
-					} else if( self->cube[F][0][1] == self->cube[R][1][1] 
-							&& self->cube[U][2][1] == self->cube[F][1][1]) {
+					}
+				       	else if( self->cube[F][0][1] == self->cube[R][1][1] \
+							&& self->cube[U][2][1] == self->cube[F][1][1]) 
+					{
 						self->rotate(self,U);
 						self->rotate(self,R);
 						self->rotate(self,Ui);
@@ -589,19 +569,12 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,R);
 						strcat(movements, "U R Ui Ri F Ri Fi R U R Ui Ri F Ri Fi R ");
 					}
-					if (goal->equals(goal, self))
-						return movements;
-				}
+								}
 
 				if(isEdgeOnFace(elt,R) && isEdgeOnFace(elt,F)){
-					debug("R. Right");
-					printEdge(self,elt);
-
-
 					if( self->cube[F][1][1] == self->cube[R][1][0] \
 							&& self->cube[R][1][1] == self->cube[F][1][2])
 					{
-
 						self->rotate(self,U);
 						self->rotate(self,R);
 						self->rotate(self,Ui);
@@ -635,14 +608,16 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Fi);
 						self->rotate(self,R);
 						self->rotate(self,U2);
-						strcat(movements, "R Ui Ri F Ri Ri R U2 ");
+						strcat(movements, "R Ui Ri F Ri Fi R U2 ");
 					}
-
+					else
+					{
+						self->rotate(self,Ui);
+						strcat(movements, "Ui ");
+					}
 
 				}
 				else if(isEdgeOnFace(elt,L) && isEdgeOnFace(elt,F)){
-					debug("R. Left");
-
 					if( self->cube[F][1][1] == self->cube[L][1][2] \
 							&& self->cube[F][1][0] == self->cube[L][1][1])
 					{
@@ -656,7 +631,6 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Fi);
 						self->rotate(self,Ui);
 						self->rotate(self,Ui);
-						strcat(movements, "Ui Li U L U F Ui Fi Ui Ui");
 						self->rotate(self,U);
 						self->rotate(self,R);
 						self->rotate(self,Ui);
@@ -666,7 +640,7 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Fi);
 						self->rotate(self,R);
 						self->rotate(self,U2);
-						strcat(movements, "U R Ui Ri F Ri Fi R U2 ");
+						strcat(movements, "Ui Li U L U F Ui Fi Ui Ui U R Ui Ri F Ri Fi R U2 ");
 
 					}
 					else if( (self->cube[F][1][0] != 'y' \
@@ -685,17 +659,15 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Ui);
 						strcat(movements, "Ui Li U L U F Ui Fi Ui ");
 					}
-					else{
+					else
+					{
 						self->rotate(self,Ui);
 						strcat(movements, "Ui ");
 					}
 
 				}
 				debug("WTF ? There is no case ?");
-				if (goal->equals(goal, self))
-					return movements;
-				// printCube(self);
-				// return movements;
+					
 			}
 		}
 
