@@ -17,34 +17,42 @@ int main(int argc, char **argv) {
             "  \\_\\_\\_\\/ \nWELCOME TO RUBIKSAWESOME !!!\n");
     mode gameMode = argParsing(argc, argv); // Identify game mode
 
-    // Initializing data and graphic environment
+    /* Initializing data and graphic environment */
     setSDL();
     rubikview mainView = generateView();
     mvqueue moveQueue = initQueue();
     mvstack moveStack = initQueue();
     cube * cubeData = initCube();
     cube * finishedCube = initCube();
-    // Scramble (or not) and saving init sequence for dev purposes
+
+    /* Scramble (or not) and saving init sequence for dev purposes */
     move * initSequence = initGame(cubeData, &mainView, gameMode, argv);
 
-    // Solving sequence
+    /* Solving sequence */
     mvqueue solveQueue = initQueue();
     move * winSequence = (move *)malloc(sizeof(move));
     *winSequence = (move)-1;
 
-     while (1) { // Main loop
+    /*
+     * Main loop
+     * Updates the view and take action depending on the move returned
+     */
+    while (1) {
     mainView.update(&mainView, moveQueue, moveStack, solveQueue);
+
+    if (patternMatches(cubeData, finishedCube)
+        && mainView.animStack == NULL
+        && !mainView.gameWon) {
+        playWinningSequence(&mainView);
+    }
 
     if (!isEmpty(moveQueue)) {
       move newMove = dequeue(moveQueue);
       if (newMove == *(head(solveQueue, 1))) {
           pop(solveQueue);
-          mainView.animate(&mainView, newMove, false);
+          mainView.animate(&mainView, newMove, true);
           cubeData->rotate(cubeData, newMove);
           cubeData->print(cubeData);
-          if (patternMatches(cubeData, finishedCube)) {
-              playWinningSequence(&mainView);
-          }
       } else {
         if (newMove == RETURN) {
           if (!isEmpty(moveStack)) {
