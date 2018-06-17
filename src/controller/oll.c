@@ -36,8 +36,6 @@ bool yellowFaceDone(cube *self){
             }
         }
     }
-    printCube(self);
-    printCube(clone);
     bool test = patternMatches(self,clone);
     return test;
 }
@@ -57,6 +55,8 @@ void crossAlgorithm(cube *self, char *movements, int nb){
 
 char * doYellowCross(cube *self){
     char *movements = ec_malloc(sizeof(char)*1000);
+    *movements = '\0';
+
     bool crossDone = yellowCrossDone(self);
     int tries = 0;
     int pattern = 0;
@@ -110,8 +110,8 @@ void leftOLL(cube *self, char *movements, int nb){
 
 
 char * orientYellowCorners(cube *self){
-    char *movements = ec_malloc(sizeof(char)*100001);
-    printCube(self);
+    char *movements = ec_malloc(sizeof(char)*1001);
+	*movements = '\0';
     while(!yellowFaceDone(self)){
         if(self->cube[F][0][0] == 'y' \
 			&& self->cube[L][0][0] == 'y'\
@@ -157,7 +157,7 @@ char * orientYellowCorners(cube *self){
         {
             rightOLL(self,movements,2);
         }
-else if(self->cube[L][0][2] == 'y' \
+	else if(self->cube[L][0][2] == 'y' \
 		&& self->cube[R][0][0] == 'y' \
 		&& self->cube[B][0][2] == 'y' \
 		&& self->cube[B][0][0] == 'y'  )
@@ -165,12 +165,9 @@ else if(self->cube[L][0][2] == 'y' \
             rightOLL(self,movements,1);
             self->rotate(self,U);
             rightOLL(self,movements,1);
-
-
         }
         else
         {
-
             self->rotate(self,U);
             strcat(movements,"U ");
         }

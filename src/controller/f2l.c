@@ -473,6 +473,7 @@ char *orientWhiteCorners(cube *self){
 
 char *placeSecondLayer(cube *self){
 	char *movements = ec_malloc(sizeof(char)*600);
+	*movements = '\0';
 	char edges[4][2]= {{'b','r'},{'b','o'},{'g','o'}, {'g','r'}};
 	char colors[2] = {'b','g'};
 	char all_colors[4] = {'b','g','r','o'};
@@ -571,7 +572,7 @@ char *placeSecondLayer(cube *self){
 					}
 								}
 
-				if(isEdgeOnFace(elt,R) && isEdgeOnFace(elt,F)){
+				else if(isEdgeOnFace(elt,R) && isEdgeOnFace(elt,F)){
 					if( self->cube[F][1][1] == self->cube[R][1][0] \
 							&& self->cube[R][1][1] == self->cube[F][1][2])
 					{
@@ -610,14 +611,31 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,U2);
 						strcat(movements, "R Ui Ri F Ri Fi R U2 ");
 					}
+					else if( (self->cube[F][1][2] == 'y' \
+								|| self->cube[R][1][0] == 'y') \
+							&& (self->cube[F][1][1] != self->cube[F][1][2] \
+								&& self->cube[R][1][1] != self->cube[R][1][0]))
+					{
+						self->rotate(self,R);
+						self->rotate(self,Ui);
+						self->rotate(self,Ri);
+						self->rotate(self,F);
+						self->rotate(self,Ri);
+						self->rotate(self,Fi);
+						self->rotate(self,R);
+						self->rotate(self,Ui);
+						strcat(movements, "R Ui Ri F Ri Fi R Ui ");
+					}
+
 					else
 					{
+
 						self->rotate(self,Ui);
 						strcat(movements, "Ui ");
 					}
 
 				}
-				else if(isEdgeOnFace(elt,L) && isEdgeOnFace(elt,F)){
+				else if(isEdgeOnFace(elt,L) && isEdgeOnFace(elt,F) && self->cube[F][1][0] ){
 					if( self->cube[F][1][1] == self->cube[L][1][2] \
 							&& self->cube[F][1][0] == self->cube[L][1][1])
 					{
@@ -659,6 +677,25 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Ui);
 						strcat(movements, "Ui Li U L U F Ui Fi Ui ");
 					}
+					else if( (self->cube[F][1][0] == 'y' \
+								|| self->cube[L][1][2] == 'y') \
+							&& (self->cube[F][1][1] != self->cube[F][1][0] \
+								&& self->cube[L][1][1] != self->cube[L][1][2]))
+					{
+						self->rotate(self,Ui);
+						self->rotate(self,Li);
+						self->rotate(self,U);
+						self->rotate(self,L);
+						self->rotate(self,U);
+						self->rotate(self,F);
+						self->rotate(self,Ui);
+						self->rotate(self,Fi);
+						self->rotate(self,Ui);
+self->rotate(self,Ui);
+
+						strcat(movements, "Ui Li U L U F Ui Fi Ui Ui ");
+					}
+
 					else
 					{
 						self->rotate(self,Ui);
@@ -666,6 +703,12 @@ char *placeSecondLayer(cube *self){
 					}
 
 				}
+				else
+					{
+						self->rotate(self,Ui);
+						strcat(movements, "Ui ");
+					}
+
 				debug("WTF ? There is no case ?");
 					
 			}

@@ -90,9 +90,9 @@ void *inverseEdges(cube *self, char *movements)
 
 char *placeEdgesLastLayer(cube *self){
 	char *movements = ec_malloc(sizeof(char)*600);
-	positionCube(self,'g','y');
 	strcat(movements,positionCommand(self,'g','y'));
-	strcat(movements, " ");
+	positionCube(self,'g','y');
+
 	while(self->cube[F][0][1] != 'g'){
 		self->rotate(self,U);
 		strcat(movements,"U ");
@@ -112,14 +112,13 @@ char *placeEdgesLastLayer(cube *self){
 			self->rotate(self,U);
 			self->rotate(self,R);
 			self->rotate(self,R);
-			strcat(movements, "Ri U Ri Ui Ri Ui Ri U R U R U R R ");
+			strcat(movements, "Ri U Ri Ui Ri Ui Ri U R U R R ");
 		}
 		if(self->cube[L][0][1] == 'o' && self->cube[R][0][1] == 'r'){
 			inverseEdges(self, movements);
 		}
 	}
 	printCube(self);
-	debug("Edges Yellow error");
 	return movements;	
 }
 
@@ -152,6 +151,7 @@ char *orientCornersLastLayer(cube *self){
 	while(!isLastLayerDone(self)){
 		for(int i=0; i<4; i++){
 		self->rotate(self,U);
+		strcat(movements,"U ");
 		if((self->cube[F][0][1] == self->cube[F][0][1]) && (self->cube[L][0][2] == self->cube[L][0][1])){
 			self->rotate(self,Ri);
 			self->rotate(self,F);

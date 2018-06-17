@@ -92,7 +92,6 @@ move * trueSolve(cube *self){
 //	printCube(work);
 	char * placeSecondStr = placeSecondLayer(work);
 	strcat(whiteCrossStr,placeSecondStr);
-move * disp = commandParser(whiteCrossStr);
 
 //	move * placeSecond = commandParser(placeSecondStr);
 //	free(placeSecondStr);
@@ -103,7 +102,9 @@ move * disp = commandParser(whiteCrossStr);
 //	printMoveArray(disp);
 //	printCube(work);
 
-//	char * yellowCrossStr = doYellowCross(work);
+	char * yellowCrossStr = doYellowCross(work);
+strcat(whiteCrossStr,yellowCrossStr);
+
 //	move * yellowCross = commandParser(yellowCrossStr);
 //	free(yellowCrossStr);
 //	tempdisp = disp;
@@ -113,7 +114,9 @@ move * disp = commandParser(whiteCrossStr);
 //	printMoveArray(disp);
 //	printCube(work);
 //
-//	char * yellowCornersStr = orientYellowCorners(work);
+	char * yellowCornersStr = orientYellowCorners(work);
+strcat(whiteCrossStr, yellowCornersStr);
+
 //	move * yellowCorners = commandParser(yellowCornersStr);
 //	free(yellowCornersStr);
 //
@@ -124,7 +127,8 @@ move * disp = commandParser(whiteCrossStr);
 //	printMoveArray(disp);
 //	printCube(work);
 //
-//	char * placeEdgesLLStr = placeEdgesLastLayer(work);
+	char * placeEdgesLLStr = placeEdgesLastLayer(work);
+strcat(whiteCrossStr, placeEdgesLLStr);
 //	move * placeEdgesLL = commandParser(placeEdgesLLStr);
 //	free(placeEdgesLLStr);
 //	tempdisp = disp;
@@ -134,8 +138,11 @@ move * disp = commandParser(whiteCrossStr);
 //	printMoveArray(disp);
 //	printCube(work);
 //
-//	char * orientCornersLLStr = orientCornersLastLayer(work);
+//char * orientCornersLLStr = orientCornersLastLayer(work);
+//strcat(whiteCrossStr, orientCornersLLStr);
 //	move * orientCornersLL = commandParser(orientCornersLLStr);
+//
+move * disp = commandParser(whiteCrossStr);
 //	free(orientCornersLLStr);
 //
 //	tempdisp = disp;
