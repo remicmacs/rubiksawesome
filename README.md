@@ -128,27 +128,11 @@ Options are
 
 
 ## Documentation
-[`MODEL.md`](MODEL.md) : Description of data model.
+[`MODEL.md`](docs/MODEL.md) : Description of data model.
 
-[`CONTROLLER.md`](CONTROLLER.md) : Core logic description
+[`CONTROLLER.md`](docs/CONTROLLER.md) : Core logic description
 
-[`VIEW.md`](VIEW.md) : 3D display, GUI and main user interface presentation
+[`VIEW.md`](docs/VIEW.md) : 3D display, GUI and main user interface presentation
 
-[`RESOURCES.md`](RESOURCES.md) : Sources of inspiration.
+[`PROJECT.md`](docs/PROJECT.md) : Project planning and organization.
 
-[`TODOs.md`](TODOs.md) : What is done and thus not yet accomplished.
-
-### File structure
-> /  
-> |  
-> |-- src/  
-> |     |  
-> |     |-- model/  
-> |     |-- view/  
-> |     |-- controller/  
-> |     |-- main.c  
-> |     |-- main.h  
-> |  
-> |-- build/  
-> |-- docs/  
->

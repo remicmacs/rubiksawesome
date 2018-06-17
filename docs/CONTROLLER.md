@@ -24,7 +24,7 @@ There is a single function in it at the moment called `exitFatal()`. This functi
 
 A simplified version of the Jessica Fridrich algorithm was implemented. This algorithm is divided into three successive steps. The cube is oriented to have yellow side on the top and white side on the bottom, a side being represented by it central piece.
 
-![Fridrich's algorithm](docs/img/fridrich.png)
+![Fridrich's algorithm](img/fridrich.png)
 
 
 
@@ -64,7 +64,7 @@ The scrambling functions are composed of one function generating a random sequen
 ### `commandQueue.c`
 This file is a library to manage linked list of `move` as FIFO queues or LIFO stacks.
 
-![A linked list](docs/img/linkedlist.png)
+![A linked list](img/linkedlist.png)
 
 
 
@@ -83,11 +83,11 @@ Aliases to `movequeue *` and `movestack *` are declared `mvqueue` and `mvstack` 
 
 Once initialized, the data structure can be either use in a **LIFO manner** :
 
-![LIFO Stack](docs/img/LIFO.png)
+![LIFO Stack](img/LIFO.png)
 
 or in a **FIFO manner** :
 
-![FIFO queue](docs/img/FIFO.png)
+![FIFO queue](img/FIFO.png)
 
 To use the LIFO interface, one should declare and initialize a `mvstack` and use `push()` and `pop()` functions.
 

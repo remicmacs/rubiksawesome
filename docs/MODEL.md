@@ -6,7 +6,7 @@ color of the faces and the position of the cublets in 3D space.
 The file `cube.c` implements a pattern mapping of the colors of the **54 faces** . The data structure is a list of the **six faces** each composed of **9 cublets faces**.
 This data model is inherently in 2 dimensions, just as an opened die pattern.
 
-![Mapping](docs/cube.svg.png)
+![Mapping](img/cube.png)
 
 When displayed by the program, the cube looks like this :
 ```
@@ -82,9 +82,9 @@ The cubelet.c implement a mapping of each cubelet from the Rubik’s Cube. The c
 - corners, formed by three tiles
 
 A tile is define by three informations, its row, its column and its face.
-The centers are defined easily cause they are the only element which are not moving. In the cube matrix, they always appear at cube[FACE][1][1] position.
+The centers are defined easily cause they are the only element which are not moving. In the cube matrix, they always appear at cube\[FACE\]\[1\]\[1\] position.
 In order to define an edge, there is a need to know which is the tile located on the other side corresponding the present tile position.
-And to define a corners, the two adjacents tiles have to be found corresponding to the present tile position.
+And to define a corners, the two adjacent tiles have to be found corresponding to the present tile position.
 
 For all these elements, a display function was implemented to make them appear on a void cube pattern. 
 
