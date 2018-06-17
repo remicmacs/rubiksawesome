@@ -72,6 +72,24 @@ nothing.
 ## positionCommand, positionCube
 Theses functions helps the logic in cube orientation 
 
-
 ## Other data structure
 3D mapping of pointers to 3D cubes.
+
+## cubelet.c
+The cubelet.c implement a mapping of each cubelet from the Rubik’s Cube. The cube is composed of 27 elements, which are :
+- centers, formed by one tile
+- edges, formed by two tiles
+- corners, formed by three tiles
+
+A tile is define by three informations, its row, its column and its face.
+The centers are defined easily cause they are the only element which are not moving. In the cube matrix, they always appear at cube[FACE][1][1] position.
+In order to define an edge, there is a need to know which is the tile located on the other side corresponding the present tile position.
+And to define a corners, the two adjacents tiles have to be found corresponding to the present tile position.
+
+For all these elements, a display function was implemented to make them appear on a void cube pattern. 
+
+Thus, these functions allow the solving algorithm to find and to track a element in order to know the correct sequence to apply.
+
+
+
+

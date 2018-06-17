@@ -38,18 +38,28 @@ void crossAlgorithm(cube *self, char * movements, int nb);
  */
 char * doYellowCross(cube *self);
 
+/*
+ * Yellow edges related functions
+ */
+
 /**
  * Check if the top face is enterely yellow.
  */
 bool yellowFaceDone(cube *self);
 
 /**
- * 
+ * Solve the yellow face of the cube by orienting each corners 
  */
 char * orientYellowCorners(cube *self);
 
+/**
+ * Apply the left algorithm to move and orient corners 
+ */
 void leftOLL(cube *self, char *movements, int nb);
 
+/**
+ * Apply the right algorithm to move and orient corners   
+ */
 void rightOLL(cube *self, char *movements, int nb);
 
 #endif

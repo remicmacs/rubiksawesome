@@ -74,7 +74,7 @@ bool firstLayerDone(cube *self);
  * Second Layer related functions
  *-------------------------------*/
 /**
- * Test if white corners are on the UP face and correctly placed beetween the correct faces.
+ * Test if white corners are on top face and correctly placed beetween the correct faces.
  */
 char *placeSecondLayer(cube *self);
 
