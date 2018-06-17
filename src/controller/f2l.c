@@ -489,6 +489,7 @@ char *placeSecondLayer(cube *self){
 	char all_colors[4] = {'b','g','r','o'};
 	cube * goal = initCube();
 	edge elt = {0};
+	if(!secondLayerDone(self)){
 	self->rotate(self,U);
 	self->rotate(self,R);
 	self->rotate(self,Ui);
@@ -498,6 +499,7 @@ char *placeSecondLayer(cube *self){
 	self->rotate(self,Fi);
 	self->rotate(self,R);
 	strcat(movements, "U R Ui Ri F Ri Fi R "); // Execute one time the right algo to be sure that no edges stay stuck.
+	}
 
 	while(!secondLayerDone(self))
 	{

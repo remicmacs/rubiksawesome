@@ -61,6 +61,7 @@ char * doYellowCross(cube *self){
     int tries = 0;
     int pattern = 0;
 
+    if(!crossDone){
     while(!crossDone && tries < 9){ // TEMPORARY : exit if stuck
         tries++;
         pattern = findYellowPattern(self, movements);
@@ -76,6 +77,7 @@ char * doYellowCross(cube *self){
                 break;
         }
         crossDone = yellowCrossDone(self);
+    }
     }
     return movements;
 }
