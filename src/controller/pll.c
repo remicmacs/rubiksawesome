@@ -24,13 +24,9 @@ int isLastLayerEdgesPlaced(cube *self){
 	positionCube(pattern,'g','y');
 	positionCube(pattern,'g','y');
 	test = patternMatches(clone,pattern);
-
-		if(test){
-			printCube(pattern);
-			printCube(clone);
-			sleep(1);
-			return 1;
-		}
+	if(test){
+		return 1;
+	}
 	return 0;
 }
 
@@ -90,6 +86,7 @@ void *inverseEdges(cube *self, char *movements)
 
 char *placeEdgesLastLayer(cube *self){
 	char *movements = ec_malloc(sizeof(char)*600);
+	*movements = '\0';
 	strcat(movements,positionCommand(self,'g','y'));
 	positionCube(self,'g','y');
 
@@ -134,42 +131,48 @@ bool isLastLayerDone(cube *self){
 }
 char *orientCornersLastLayer(cube *self){
 	char *movements = ec_malloc(sizeof(char)*600);
-			self->rotate(self,Ri);
-			self->rotate(self,F);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,Fi);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,R);
-			strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
+	*movements = '\0';
+
+	self->rotate(self,Ri);
+	self->rotate(self,F);
+	self->rotate(self,Ri);
+	self->rotate(self,Bi);
+	self->rotate(self,Bi);
+	self->rotate(self,R);
+	self->rotate(self,Fi);
+	self->rotate(self,Ri);
+	self->rotate(self,Bi);
+	self->rotate(self,Bi);
+	self->rotate(self,R);
+	self->rotate(self,R);
+	strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
 
 	while(!isLastLayerDone(self)){
 		for(int i=0; i<4; i++){
-		self->rotate(self,U);
-		strcat(movements,"U ");
-		if((self->cube[F][0][1] == self->cube[F][0][1]) && (self->cube[L][0][2] == self->cube[L][0][1])){
-			self->rotate(self,Ri);
-			self->rotate(self,F);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,Fi);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,R);
-			strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
+			self->rotate(self,U);
+			strcat(movements,"U ");
+			if((self->cube[F][0][1] == self->cube[F][0][1]) \
+					&& (self->cube[L][0][2] == self->cube[L][0][1])){
+				self->rotate(self,Ri);
+				self->rotate(self,F);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,Fi);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,R);
+				strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
+			}
 		}
-		}
-		printCube(self);
-				}
+			}
+
+debug("Final cube");
+printCube(self);
+
 
 	return movements;
 

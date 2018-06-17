@@ -138,8 +138,8 @@ strcat(whiteCrossStr, placeEdgesLLStr);
 //	printMoveArray(disp);
 //	printCube(work);
 //
-//char * orientCornersLLStr = orientCornersLastLayer(work);
-//strcat(whiteCrossStr, orientCornersLLStr);
+char * orientCornersLLStr = orientCornersLastLayer(work);
+strcat(whiteCrossStr, orientCornersLLStr);
 //	move * orientCornersLL = commandParser(orientCornersLLStr);
 //
 move * disp = commandParser(whiteCrossStr);
