@@ -24,6 +24,10 @@ There is a single function in it at the moment called `exitFatal()`. This functi
 
 A simplified version of the Jessica Fridrich algorithm was implemented. This algorithm is divided into three successive steps. The cube is oriented to have yellow side on the top and white side on the bottom, a side being represented by it central piece.
 
+![Fridrich's algorithm](docs/img/fridrich.png)
+
+
+
 ### `f2l.c`
 F2L acronym stands for "First Two Layers". It consists to achieve the two first layers of the cube that is to say 1 face and 2 outlines. There are three stages for F2L :
 #### White cross
