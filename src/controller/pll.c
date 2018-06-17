@@ -145,13 +145,13 @@ char *orientCornersLastLayer(cube *self){
 	self->rotate(self,R);
 	self->rotate(self,R);
 	strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
-	while(!isLastLayerDone(self) && finished == false){
+	while(!isLastLayerDone(self) || finished == false){
 		for(int i=0; i<4; i++){
 			if(finished == false){
 			self->rotate(self,U);
 			strcat(movements,"U ");
 			}
-			if(((self->cube[F][0][1] == self->cube[F][0][1]) \
+			if(((self->cube[F][0][0] == self->cube[F][0][1]) \
 					&& (self->cube[L][0][2] == self->cube[L][0][1])) && finished == false)
 			{
 				self->rotate(self,Ri);
@@ -177,8 +177,24 @@ char *orientCornersLastLayer(cube *self){
 					}
 				}
 			}
+			printf("%d\n",finished);
 			printCube(self);
 		}
+			if(finished ==false)
+			{	self->rotate(self,Ri);
+				self->rotate(self,F);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,Fi);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,R);
+				strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");}
+
 	}
 	return movements;
 
