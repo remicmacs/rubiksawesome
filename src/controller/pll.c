@@ -80,6 +80,7 @@ void *inverseEdges(cube *self, char *movements)
 	self->rotate(self,Ri);
 	self->rotate(self,Fi);
 	strcat(movements, "R U Ri Ui Ri F R2 Ui Ri Ui R U Ri Fi ");
+	return NULL;
 }
 
 
