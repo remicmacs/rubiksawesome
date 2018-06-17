@@ -62,7 +62,7 @@ move * fakeSolve(move * initSequence, mvstack history) {
 }
 
 move * trueSolve(cube *self){
-	cube * goal = initCube();
+	//cube * goal = initCube();
 	cube * work = self->copy(self);
 
 	char * whiteCrossStr = doWhiteCross(work);

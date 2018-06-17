@@ -8,7 +8,7 @@ The lighting uses ambiant, diffuse and specular lighting. Ambiant lighting is a 
 
 We set the light parameters in the `generateView()` function. Setting the light parameters is done by setting the colors (in RGBA) of the ambiant, diffuse and specular light. We usually set them all to white with more or less power.
 
-After setting the light parameters, we need to set the material parameters before drawing the objects. The material parameters describes how the material reacts to each type of lights. Because of the types of lights used (diffuse and specular), we need to correctly set the normal vector of the face that is going to be drawn. As described in [VIEW](./VIEW.md), in our program, each face has a normal vector set upon generation.
+After setting the light parameters, we need to set the material parameters before drawing the objects. The material parameters describes how the material reacts to each type of lights. Because of the types of lights used (diffuse and specular), we need to correctly set the normal vector of the face that is going to be drawn. In our program, each face has a normal vector set upon generation.
 
 ## Creating the rubik's cube
 

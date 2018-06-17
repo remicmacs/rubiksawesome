@@ -4,14 +4,14 @@ int isLastLayerEdgesPlaced(cube *self){
 	cube * clone = self->copy(self);
 	cube * pattern = self->copy(self);
 	pattern = voidCube(pattern);
-	move faces[4] = {F,B,R,L};
-	char colors[4] = {'g','b','o','r'};
+	//move faces[4] = {F,B,R,L};
+	//char colors[4] = {'g','b','o','r'};
 	for(int index = 0 ; index < 3 ; index++){
 		for (int jindex = 0 ; jindex < 3 ; jindex++){
 			if(jindex != 1 && index != 1){
 			}
 			else{
-				pattern->cube[U][index][jindex] = 'y'; 
+				pattern->cube[U][index][jindex] = 'y';
 			}
 		}
 	}
@@ -33,14 +33,14 @@ bool isCorrectPosition(cube *self){
 	cube * clone = self->copy(self);
 	cube * pattern = self->copy(self);
 	pattern = voidCube(pattern);
-	move faces[4] = {F,B,R,L};
-	char colors[4] = {'g','b','o','r'};
+	//move faces[4] = {F,B,R,L};
+	//char colors[4] = {'g','b','o','r'};
 	for(int index = 0 ; index < 3 ; index++){
 		for (int jindex = 0 ; jindex < 3 ; jindex++){
 			if(jindex == 1 && index == 1){
 			}
 
-			pattern->cube[U][index][jindex] = 'y'; 
+			pattern->cube[U][index][jindex] = 'y';
 		}
 	}
 	pattern->cube[R][0][1] = 'g';
@@ -52,7 +52,7 @@ bool isCorrectPosition(cube *self){
 	positionCube(pattern,'g','y');
 	bool test = false;
 	for(int i = 0; i <4; i++){
-		clone->rotate(clone,U);	
+		clone->rotate(clone,U);
 		test = patternMatches(clone,pattern);
 		if(test){
 			return true;
@@ -116,7 +116,7 @@ char *placeEdgesLastLayer(cube *self){
 		}
 	}
 	printCube(self);
-	return movements;	
+	return movements;
 }
 
 bool isLastLayerDone(cube *self){
@@ -133,7 +133,7 @@ char *orientCornersLastLayer(cube *self){
 	char *movements = ec_malloc(sizeof(char)*600);
 	*movements = '\0';
 	bool finished =false;
-	if(!isLastLayerDone(self)){ 
+	if(!isLastLayerDone(self)){
 		self->rotate(self,Ri);
 		self->rotate(self,F);
 		self->rotate(self,Ri);
@@ -201,4 +201,3 @@ char *orientCornersLastLayer(cube *self){
 	return movements;
 
 }
-

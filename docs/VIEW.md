@@ -9,11 +9,11 @@ When moving the cubes, 2 things have to be done:
 
 ### Moving the vertices
 
-Moving the vertices is done by the functions `rotateFaceX()`, `rotateFaceY()` and `rotateFaceZ()`. Those functions uses trigonometry to move each vertices around an axis. When this has been done, we save the new position into the vertices.
+Moving the vertices is done by the functions `rotateFaceX()`, `rotateFaceY()` and `rotateFaceZ()`. Those functions uses trigonometry to move each vertices around an axis. When this has been done, we save the new position into the vertices. Those functions allows a rotation of a given angle.
 
-### Moving the Matrices
+### Moving the matrices
 
-Moving the vertices is done by the functions `rotateDataX()`, `rotateDataY()` and `rotateDataZ()`. A matrice has to be rotated 90° or -90° per movement. The techniques for easily rotating a matrix are as following:
+Moving the matrices is done by the functions `rotateDataX()`, `rotateDataY()` and `rotateDataZ()`. A matrix has to be rotated 90° or -90° per movement. The techniques for easily rotating a matrix are as following:
 
 * Rotating 90°
 	1. Transpose the matrix

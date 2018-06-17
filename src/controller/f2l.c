@@ -6,9 +6,9 @@ bool edgePlaced(cube *self){
 	for(int i=0; i <4; i++){
 		e = searchWhiteEdge(self,colors[i]);
 		if (
-				correctPositionCross(self,e) == false 
+				correctPositionCross(self,e) == false
 				&& (
-					(!isEdgeOnFace(e,U) || isEdgeOnFace(e,D)) 
+					(!isEdgeOnFace(e,U) || isEdgeOnFace(e,D))
 					|| !(isEdgeOnFace(e,U) || isEdgeOnFace(e,D))
 				   )
 		   ) {
@@ -77,7 +77,7 @@ char *doWhiteCross(cube* self){
 					//					fprintf(stderr, "After fprintf, before strcat\n");
 					strcat(movements, "F U Fi ");
 
-				} 
+				}
 				else if (e.tiles[0].col == 0 && e.tiles[1].col == 2) {
 					debug("stuck2\n");
 					debug("Debug printing cube");
@@ -91,7 +91,7 @@ char *doWhiteCross(cube* self){
 					//						printf("Null\n");
 					//					fprintf(stderr, "before strcat %s\n", movements);
 					strcat(movements, "Fi U F ");
-				} 
+				}
 				else if((isEdgeOnFace(e,D)) \
 						&& (self->cube[U][2][1] != 'w' \
 							&& self->cube[F][0][1] != 'w'))
@@ -135,10 +135,10 @@ char *doWhiteCross(cube* self){
 						strPosition = positionCommand(self,getColorTile(self,e.tiles[1]),'y');
 						strcat(movements, strPosition);
 						positionCube(self,getColorTile(self,e.tiles[1]),'y');
-						while(((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) \
-									&& (self->cube[U][2][1] != getColorTile(self,e.tiles[1])) \
-									||  (self->cube[F][0][1] != getColorTile(self,e.tiles[1])) \
-									&& (self->cube[U][2][1] != getColorTile(self,e.tiles[0]))) \
+						while((((self->cube[F][0][1] != getColorTile(self,e.tiles[0])) \
+									&& (self->cube[U][2][1] != getColorTile(self,e.tiles[1]))) \
+									||  ((self->cube[F][0][1] != getColorTile(self,e.tiles[1])) \
+									&& (self->cube[U][2][1] != getColorTile(self,e.tiles[0])))) \
 								&& ((getColorTile(self,e.tiles[1]) != self->cube[F][1][1]))) {
 							self->rotate(self,U);
 							strcat(movements, "U ");
@@ -335,7 +335,7 @@ bool firstLayerDone(cube *self){
 			if(jindex == 1 && index == 1){
 			}
 			else{
-				clone->cube[D][index][jindex] = 'w'; 
+				clone->cube[D][index][jindex] = 'w';
 			}
 		}
 	}
@@ -345,7 +345,7 @@ bool firstLayerDone(cube *self){
 				if(jindex == 1 && index == 1){
 				}
 				else{
-					clone->cube[faces[faceIndex]][index][jindex] = colors[faceIndex]; 
+					clone->cube[faces[faceIndex]][index][jindex] = colors[faceIndex];
 				}
 			}
 		}
@@ -370,7 +370,7 @@ bool secondLayerDone(cube *self){
 			if(jindex == 1 && index == 1){
 			}
 			else{
-				pattern->cube[D][index][jindex] = 'w'; 
+				pattern->cube[D][index][jindex] = 'w';
 			}
 		}
 	}
@@ -380,12 +380,12 @@ bool secondLayerDone(cube *self){
 				if(jindex == 1 && index == 1){
 				}
 				else{
-					pattern->cube[faces[faceIndex]][index][jindex] = colors[faceIndex]; 
+					pattern->cube[faces[faceIndex]][index][jindex] = colors[faceIndex];
 				}
 			}
 		}
 	}
-	bool test = patternMatches(clone,pattern);
+	bool test = patternMatches(clone, pattern);
 	debug("pattern");
 	printCube(pattern);
 	debug("clone");
@@ -486,8 +486,8 @@ char *placeSecondLayer(cube *self){
 	*movements = '\0';
 	char edges[4][2]= {{'b','r'},{'b','o'},{'g','o'}, {'g','r'}};
 	char colors[2] = {'b','g'};
-	char all_colors[4] = {'b','g','r','o'};
-	cube * goal = initCube();
+	//char all_colors[4] = {'b','g','r','o'};
+	//cube * goal = initCube();
 	edge elt = {0};
 	if(!secondLayerDone(self)){
 	self->rotate(self,U);
@@ -506,14 +506,14 @@ char *placeSecondLayer(cube *self){
 		for(int faces = 0; faces < 2;faces++){
 			for(int e = 0; e < 4;e++){
 				strcat(movements,positionCommand(self,colors[faces],'y'));
-				positionCube(self,colors[faces],'y');   
+				positionCube(self,colors[faces],'y');
 				elt = searchEdge(self, edges[e][0], edges[e][1]);
 				if(isEdgeOnFace(elt,U)){
 					while(!isEdgeOnFace(elt,F)){
 						self->rotate(self,U);
 						strcat(movements, "U ");
 						elt = searchEdge(self, edges[e][0], edges[e][1]);
-					} 
+					}
 					if (self->cube[F][0][1] == self->cube[F][1][1] \
 							&& self->cube[U][2][1] == self->cube[R][1][1] )
 					{
@@ -540,8 +540,8 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,Fi);
 						strcat(movements, "Ui Li U L U F Ui Fi ");
 
-					} 
-					else if (self->cube[F][0][1] == self->cube[L][1][1] \ 
+					}
+					else if (self->cube[F][0][1] == self->cube[L][1][1] \
 							&& self->cube[U][2][1] == self->cube[F][1][1])
 					{
 						self->rotate(self,Ui);
@@ -563,7 +563,7 @@ char *placeSecondLayer(cube *self){
 						strcat(movements, "Ui Li U L U F Ui Fi Ui Li U L U F Ui Fi ");
 					}
 					else if( self->cube[F][0][1] == self->cube[R][1][1] \
-							&& self->cube[U][2][1] == self->cube[F][1][1]) 
+							&& self->cube[U][2][1] == self->cube[F][1][1])
 					{
 						self->rotate(self,U);
 						self->rotate(self,R);
@@ -622,7 +622,7 @@ char *placeSecondLayer(cube *self){
 						self->rotate(self,U2);
 						strcat(movements, "R Ui Ri F Ri Fi R U2 ");
 					}
-				
+
 					else
 					{
 
@@ -697,4 +697,3 @@ elt = searchEdge(self, edges[e][0], edges[e][1]);
 	}
 	return movements;
 }
-

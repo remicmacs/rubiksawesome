@@ -4,8 +4,8 @@ bool yellowCrossDone(cube *self){
     cube * clone = self->copy(self);
     clone = voidCube(clone);
     positionCube(clone,'g','y');
-    move faces[4] = {F,B,R,L};
-    char colors[4] = {'g','b','o','r'};
+    //move faces[4] = {F,B,R,L};
+    //char colors[4] = {'g','b','o','r'};
     for(int index = 0 ; index < 3 ; index++){
         for (int jindex = 0 ; jindex < 3 ; jindex++){
             if(jindex == 1 && index == 1){
@@ -13,7 +13,7 @@ bool yellowCrossDone(cube *self){
             else if(jindex != 1 && index != 1){
             }
             else{
-                clone->cube[U][index][jindex] = 'y'; 
+                clone->cube[U][index][jindex] = 'y';
             }
         }
     }
@@ -26,13 +26,13 @@ bool yellowFaceDone(cube *self){
     cube * clone = self->copy(self);
     clone = voidCube(clone);
     positionCube(clone,'g','y');
-    move faces[4] = {F,B,R,L};
-    char colors[4] = {'g','b','o','r'};
+    //move faces[4] = {F,B,R,L};
+    //char colors[4] = {'g','b','o','r'};
     for(int index = 0 ; index < 3 ; index++) {
         for (int jindex = 0 ; jindex < 3 ; jindex++) {
             if(jindex == 1 && index == 1) {
             } else {
-                clone->cube[U][index][jindex] = 'y'; 
+                clone->cube[U][index][jindex] = 'y';
             }
         }
     }
@@ -92,7 +92,7 @@ void rightOLL(cube *self, char *movements, int nb){
         self->rotate(self, R);
         self->rotate(self, Ui);
         self->rotate(self, Ri);
-        strcat(movements, "R U2 Ri Ui R Ui Ri "); 
+        strcat(movements, "R U2 Ri Ui R Ui Ri ");
     }
 }
 
@@ -106,7 +106,7 @@ void leftOLL(cube *self, char *movements, int nb){
         self->rotate(self, Li);
         self->rotate(self, U);
         self->rotate(self, L);
-        strcat(movements, "Li Ui Ui L U Li U L "); 
+        strcat(movements, "Li Ui Ui L U Li U L ");
     }
 }
 
@@ -163,7 +163,7 @@ char * orientYellowCorners(cube *self){
 		&& self->cube[R][0][0] == 'y' \
 		&& self->cube[B][0][2] == 'y' \
 		&& self->cube[B][0][0] == 'y'  )
-        {   
+        {
             rightOLL(self,movements,1);
             self->rotate(self,U);
             rightOLL(self,movements,1);
@@ -214,5 +214,3 @@ strcat(movements,positionCommand(self, 'g', 'y'));
     debug("findYellowPattern(), return 1");
     return pattern;
 }
-
-
