@@ -22,7 +22,31 @@ There is a single function in it at the moment called `exitFatal()`. This functi
 
 ## Solving algorithms
 
-ALEX INSERT YOUR MAGIC HERE
+A simplified version of the Jessica Fridrich algorithm was implemented. This algorithm is divided into three successive steps. The cube is oriented to have yellow side on the top and white side on the bottom, a side being represented by it central piece.
+
+### `f2l.c`
+F2L acronym stands for "First Two Layers". It consists to achieve the two first layers of the cube that is to say 1 face and 2 outlines. There are three stages for F2L :
+#### White cross
+The white cross is done when all whites edges are aligned with the corresponding center color. A white cross must appear on the white side.
+#### Orientation of white edges
+This step consists to place correctly a white corner beetween his two reference colors with the white color oriented down. When all the corners are placed, the white side must be enterely white, and the first outline must have each of its sides colors corresponding to the central color.
+### Place second layer
+To finish F2L, each of non-yellow edges need to be inserted beetween its correct two centrals colors.
+
+### `oll.c`
+OLL acronym stands for "Orient Last Layer". It consists to obtain a yellow side on the top of the cube. There is two stages for OLL :
+#### Yellow cross
+Like the white cross, the yellow cross is made up of all the yellow edges. Nevertheless, the goal here is to obtain a cross regardless of edges position. The yellow cross have to appear on the yellow face.
+#### Orientation of yellow edges
+To finish the yellow side, each corners must be oriented so that the yellow color is on the top.
+### `pll.c`
+PLL acronym stands for "Place Last Layer". It consits to solve the cube by finish the yellow face and its outline. There are two stages for PLL :
+#### Place last layer edges
+Rotate the position of yellow edges in order to create a cross fitting each edge with the correct center color.
+#### Orientation of last layer corners
+Rotate the position of the yellow corners until to obtain a finished layer. Every corner must be beetween its two reference colors to be rightly placed.
+
+After this last step, the Rubik’s cube is finally solved.
 
 ## Game flow logic
 ### `arguments.c`

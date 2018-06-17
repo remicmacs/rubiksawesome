@@ -176,22 +176,17 @@ move * mvCat(move * array1, move * array2) {
     move * arrayCat;
     int size1 = sizeOfMoveArray(array1);
     int size2 = sizeOfMoveArray(array2);
-
     arrayCat = (move *) ec_malloc(sizeof(move) * (size1+size2-1));
     int i = 0;
     for ( ; i < size1 ; i++) {
         *(arrayCat+i) = *(array1+i);
     }
 
-    fprintf(stderr, "in mvCat() : first array is added = ");
-    printMoveArray(arrayCat);
     i-=1;
     for ( ; i-size1 <= size2 ; i++) {
         *(arrayCat+i) = *(array2+(i-size1));
     }
 
-    fprintf(stderr, "in mvCat() : second array is added = ");
-    printMoveArray(arrayCat);
     return arrayCat;
 }
 

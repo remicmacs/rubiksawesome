@@ -7,7 +7,7 @@
 #include "src/controller/patternComparator.h"
 
 int main(int argc, char **argv) {
-    srand(0);                      // Seeding random command
+    srand(time(NULL));                      // Seeding random command
     printf( "    _ _ _\n"
             "  /_/_/_/\\ \n"
             " /_/_/_/\\/\\\n"
@@ -17,34 +17,42 @@ int main(int argc, char **argv) {
             "  \\_\\_\\_\\/ \nWELCOME TO RUBIKSAWESOME !!!\n");
     mode gameMode = argParsing(argc, argv); // Identify game mode
 
-    // Initializing data and graphic environment
+    /* Initializing data and graphic environment */
     setSDL();
     rubikview mainView = generateView();
     mvqueue moveQueue = initQueue();
     mvstack moveStack = initQueue();
     cube * cubeData = initCube();
     cube * finishedCube = initCube();
-    // Scramble (or not) and saving init sequence for dev purposes
+
+    /* Scramble (or not) and saving init sequence for dev purposes */
     move * initSequence = initGame(cubeData, &mainView, gameMode, argv);
 
-    // Solving sequence
+    /* Solving sequence */
     mvqueue solveQueue = initQueue();
     move * winSequence = (move *)malloc(sizeof(move));
     *winSequence = (move)-1;
 
-     while (1) { // Main loop
+    /*
+     * Main loop
+     * Updates the view and take action depending on the move returned
+     */
+    while (1) {
     mainView.update(&mainView, moveQueue, moveStack, solveQueue);
+
+    if (patternMatches(cubeData, finishedCube)
+        && mainView.animStack == NULL
+        && !mainView.gameWon) {
+        playWinningSequence(&mainView);
+    }
 
     if (!isEmpty(moveQueue)) {
       move newMove = dequeue(moveQueue);
       if (newMove == *(head(solveQueue, 1))) {
           pop(solveQueue);
-          mainView.animate(&mainView, newMove, false);
+          mainView.animate(&mainView, newMove, true);
           cubeData->rotate(cubeData, newMove);
           cubeData->print(cubeData);
-          if (patternMatches(cubeData, finishedCube)) {
-              playWinningSequence(&mainView);
-          }
       } else {
         if (newMove == RETURN) {
           if (!isEmpty(moveStack)) {
@@ -66,20 +74,15 @@ int main(int argc, char **argv) {
         } else if (newMove == SOLVE_PLS) {
 
             /* Let's call the solver */
+            //winSequence = expandCommand(fakeSolve(initSequence, moveStack));
             winSequence = trueSolve(cubeData);
-            printf("Cube solved: \n");
-	          printMoveArray(winSequence);
             /* We store it in a queue for the view */
             solveQueue = toMvQueue(winSequence);
 
             // TEMPORARY DISPLAY
-            int index = -1;
-            move aMove = (move)-1;
             fprintf(stderr, "Solving sequence : \n");
-            while((int) (aMove = winSequence[++index]) != -1) {
-              fprintf(stderr, "[%s]", mapMoveToCode(aMove));
-            }
-            fprintf(stderr, "\n");
+            printQueue(solveQueue);
+
         } else {
           mainView.animate(&mainView, newMove, false);
           cubeData->rotate(cubeData, newMove);

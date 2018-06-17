@@ -534,23 +534,24 @@ void printTile(cube *self, tile elt)
     pattern->cube[elt.face][elt.row][elt.col] = self->cube[elt.face][elt.row][elt.col];
     pattern->print(pattern);
     printf("{f:%d,r:%d,c:%d}\n",elt.face,elt.row,elt.col);
+    destroyCube(pattern);
 
 }
 
 void printEdge(cube *self, edge elt)
 {
-    printf("\n-- Display Edge --\n");
+    fprintf(stderr, "\n-- Display Edge --\n");
     cube * pattern = copyCube(self);
     pattern = voidCube(pattern);
     for(int i=0; i< 2;i++){
         pattern->cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col] = self->cube[elt.tiles[i].face][elt.tiles[i].row][elt.tiles[i].col];
-
     }
     pattern->print(pattern);
     for(int i=0; i< 2;i++){
-        printf("{f:%d,r:%d,c:%d}\n",elt.tiles[i].face,elt.tiles[i].row,elt.tiles[i].col);
+        fprintf(stderr, "{f:%d,r:%d,c:%d}\n",elt.tiles[i].face,elt.tiles[i].row,elt.tiles[i].col);
     }
-    printf("--------------------\n");
+    fprintf(stderr, "--------------------\n");
+    destroyCube(pattern);
 }
 
 char getColorTile(cube *self, tile elt)
@@ -592,7 +593,7 @@ corner defineCorner(tile elt){
 
 void printCorner(cube *self, corner elt)
 {
-    printf("\n-- Display Corner --\n");
+    fprintf(stderr, "\n-- Display Corner --\n");
     cube * pattern = copyCube(self);
     pattern = voidCube(pattern);
     for(int i=0; i< 3;i++){
@@ -601,7 +602,7 @@ void printCorner(cube *self, corner elt)
     }
     pattern->print(pattern);
     for(int i=0; i< 3;i++){
-        printf("{f:%d,r:%d,c:%d}\n",elt.tiles[i].face,elt.tiles[i].row,elt.tiles[i].col);
+        fprintf(stderr, "{f:%d,r:%d,c:%d}\n",elt.tiles[i].face,elt.tiles[i].row,elt.tiles[i].col);
     }
-    printf("--------------------\n");
+    fprintf(stderr, "--------------------\n");
 }

@@ -24,13 +24,9 @@ int isLastLayerEdgesPlaced(cube *self){
 	positionCube(pattern,'g','y');
 	positionCube(pattern,'g','y');
 	test = patternMatches(clone,pattern);
-
-		if(test){
-			printCube(pattern);
-			printCube(clone);
-			sleep(1);
-			return 1;
-		}
+	if(test){
+		return 1;
+	}
 	return 0;
 }
 
@@ -90,9 +86,9 @@ void *inverseEdges(cube *self, char *movements)
 
 char *placeEdgesLastLayer(cube *self){
 	char *movements = ec_malloc(sizeof(char)*600);
-	positionCube(self,'g','y');
+	*movements = '\0';
 	strcat(movements,positionCommand(self,'g','y'));
-	strcat(movements, " ");
+	positionCube(self,'g','y');
 	while(self->cube[F][0][1] != 'g'){
 		self->rotate(self,U);
 		strcat(movements,"U ");
@@ -112,14 +108,13 @@ char *placeEdgesLastLayer(cube *self){
 			self->rotate(self,U);
 			self->rotate(self,R);
 			self->rotate(self,R);
-			strcat(movements, "Ri U Ri Ui Ri Ui Ri U R U R U R R ");
+			strcat(movements, "Ri U Ri Ui Ri Ui Ri U R U R R ");
 		}
 		if(self->cube[L][0][1] == 'o' && self->cube[R][0][1] == 'r'){
 			inverseEdges(self, movements);
 		}
 	}
 	printCube(self);
-	debug("Edges Yellow error");
 	return movements;	
 }
 
@@ -131,46 +126,76 @@ bool isLastLayerDone(cube *self){
 	positionCube(pattern,'g','y');
 	bool test = patternMatches(clone,pattern);
 	return test;
-
 }
+
 char *orientCornersLastLayer(cube *self){
 	char *movements = ec_malloc(sizeof(char)*600);
-			self->rotate(self,Ri);
-			self->rotate(self,F);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,Fi);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,R);
-			strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
-
-	while(!isLastLayerDone(self)){
+	*movements = '\0';
+	bool finished =false;
+	self->rotate(self,Ri);
+	self->rotate(self,F);
+	self->rotate(self,Ri);
+	self->rotate(self,Bi);
+	self->rotate(self,Bi);
+	self->rotate(self,R);
+	self->rotate(self,Fi);
+	self->rotate(self,Ri);
+	self->rotate(self,Bi);
+	self->rotate(self,Bi);
+	self->rotate(self,R);
+	self->rotate(self,R);
+	strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
+	while(!isLastLayerDone(self) || finished == false){
 		for(int i=0; i<4; i++){
-		self->rotate(self,U);
-		if((self->cube[F][0][1] == self->cube[F][0][1]) && (self->cube[L][0][2] == self->cube[L][0][1])){
-			self->rotate(self,Ri);
-			self->rotate(self,F);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,Fi);
-			self->rotate(self,Ri);
-			self->rotate(self,Bi);
-			self->rotate(self,Bi);
-			self->rotate(self,R);
-			self->rotate(self,R);
-			strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
-		}
-		}
-		printCube(self);
+			if(finished == false){
+			self->rotate(self,U);
+			strcat(movements,"U ");
+			}
+			if(((self->cube[F][0][0] == self->cube[F][0][1]) \
+					&& (self->cube[L][0][2] == self->cube[L][0][1])) && finished == false)
+			{
+				self->rotate(self,Ri);
+				self->rotate(self,F);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,Fi);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,R);
+				strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");
+				for(int e=0; e<4; e++){
+					if(isLastLayerDone(self)){
+						finished = true;
+					}
+					if(finished ==false){
+						self->rotate(self,U);
+						strcat(movements,"U ");
+					}
 				}
+			}
+			printf("%d\n",finished);
+			printCube(self);
+		}
+			if(finished ==false)
+			{	self->rotate(self,Ri);
+				self->rotate(self,F);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,Fi);
+				self->rotate(self,Ri);
+				self->rotate(self,Bi);
+				self->rotate(self,Bi);
+				self->rotate(self,R);
+				self->rotate(self,R);
+				strcat(movements, "Ri F Ri Bi Bi R Fi Ri Bi Bi R R ");}
 
+	}
 	return movements;
 
 }
