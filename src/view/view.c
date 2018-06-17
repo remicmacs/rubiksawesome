@@ -99,7 +99,7 @@ rubikview generateView() {
 
   /* Create light components and assign them to GL_LIGHT0 */
   GLfloat ambientLight[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-  GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+  GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8f, 1.0f };
   GLfloat specularLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
   GLfloat position[] = { -1.0f, 0, 0, 1.0f };
   glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
@@ -272,18 +272,18 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       }
     }
 
-    /*Press I to show the instructions overlay */
+    /* Press I to show the instructions overlay */
     if (event.key.keysym.sym == SDLK_i && keyPressed) {
       mainView->instructionsDisplayed = !mainView->instructionsDisplayed;
       imageChanged = true;
     }
 
-    /*Press escape to quit */
+    /* Press escape to quit */
     if (event.key.keysym.sym == SDLK_ESCAPE && keyPressed) {
       closeWindow();
     }
 
-    /*FOR DEBUGGING PURPOSE ONLY : solve the game automatically */
+    /* FOR DEBUGGING PURPOSE ONLY : solve the game automatically */
     if (event.key.keysym.sym == SDLK_F12 && keyPressed && mainView->windowDisplayed) {
       move * moves = toMvArray(solveMoves);
       for (int i = 0; (int)moves[i] != -1; i++) {
@@ -292,7 +292,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       imageChanged = true;
     }
 
-    /*FOR DEBUGGING PURPOSE ONLY : Win/unwin the game */
+    /* FOR DEBUGGING PURPOSE ONLY : Win/unwin the game */
     if (event.key.keysym.sym == SDLK_F10 && keyPressed) {
       mainView->gameWon = !mainView->gameWon;
       if (mainView->gameWon) {
@@ -300,7 +300,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       }
       imageChanged = true;
     }
-    
+
     /*FOR DEBUGGING PURPOSE ONLY :solve  the game */
     if (event.key.keysym.sym == SDLK_F11 && keyPressed) {
         enqueue(moveQueue, SOLVE_PLS);
@@ -308,7 +308,14 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
         imageChanged = true;
     }
 
-    /*Press F2 to start a new game */
+    /* FOR DEBUGGING PURPOSE ONLY :solve  the game */
+    if (event.key.keysym.sym == SDLK_F11 && keyPressed) {
+        enqueue(moveQueue, SOLVE_PLS);
+        mainView->windowToDisplay = true;
+        imageChanged = true;
+    }
+
+    /* Press F2 to start a new game */
     if(event.key.keysym.sym == SDLK_F2 && keyPressed) {
       enqueue(moveQueue, RESTART);
     }
@@ -321,7 +328,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
       continue;
     }
 
-    /*Make a move request in case a key has been pressed */
+    /* Make a move request in case a key has been pressed */
     if (keyPressed) {
       move newMove = getNextMove(event.key.keysym.sym, keyShortcut);
       if (newMove != (move)-1) {
@@ -341,7 +348,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
     }
   }
 
-  /*Clear the screen */
+  /* Clear the screen */
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /*
@@ -351,13 +358,13 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  /*Set the camera position and orientation */
+  /* Set the camera position and orientation */
   gluLookAt(mainCamera->position.x, mainCamera->position.y, mainCamera->position.z, 0, 0, 0, 0, 0, 1);
 
-  /*Draw the skybox before anything */
+  /* Draw the skybox before anything */
   drawSkybox(mainView->texStore.skybox);
 
-  /*Set the lightings parameters */
+  /* Set the lightings parameters */
   GLfloat light_diffuse[] = {1, 1, 1, 1};
   GLfloat light_specular[] = {0.9, 0.9, 0.9, 1};
 
@@ -367,7 +374,7 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   glMateriali(GL_FRONT, GL_SHININESS, 96);
   glEnable(GL_COLOR_MATERIAL);
 
-  /*Draw the 3D stuffs */
+  /* Draw the 3D stuffs */
   drawCubes(mainView->rubikCube);
   if (mainView->instructionsDisplayed) {
     drawInstructions(mainView->instructions, keyShortcut);
@@ -399,31 +406,31 @@ void update(rubikview * mainView, mvqueue moveQueue, mvstack moveStack, mvqueue 
   glPushMatrix();
   glLoadIdentity();
 
-  /*Start drawing in 2D */
+  /* Start drawing in 2D */
   glEnable(GL_TEXTURE_2D);
 
-  /*Draw history, xyz instruction and the winning creepy guy if needed */
+  /* Draw history, xyz instruction and the winning creepy guy if needed */
   drawHistory(mainView->texStore, moveStack);
   drawXYZInstruction(mainView->texStore, keystate[SDL_SCANCODE_LSHIFT]);
   if (mainView->gameWon) {
     drawWinning(mainView->texStore);
   }
 
-  /*Stop drawin in 3D */
+  /* Stop drawin in 3D */
   glDisable(GL_TEXTURE_2D);
 
-  /*We pop the projection and modelview matrices we used in 2D */
+  /* We pop the projection and modelview matrices we used in 2D */
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
-  /*We reenable the lights and depth testing for 3D */
+  /* We reenable the lights and depth testing for 3D */
   glDepthMask(GL_TRUE);
   glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 
-  /*Displaying final screen */
+  /* Displaying final screen */
   glFlush();
   SDL_GL_SwapWindow(mainView->mainWindow);
 
